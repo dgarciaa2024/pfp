@@ -14,7 +14,9 @@
           <div class="card-header">
             <h1 class="card-title">LISTA DE ESTADOS DE CANJES</h1>
             <div class="card-tools">
+            @if ($permiso_insercion == 1)
               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo +</button>
+              @endif
               <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
 
             </div>

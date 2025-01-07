@@ -1,9 +1,12 @@
+
+@php use Illuminate\Support\Facades\Auth; @endphp
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Portal de Fidelizaciòn</title>
+  <title>Portal de Fidelización</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -45,13 +48,25 @@
   <!-- summernote -->
   <link rel="stylesheet" href="plugins/summernote/summernote-bs4.min.css">
 
-  < <style>
-    /* Estilo personalizado para aplicar el color rojo vino (#800020)  .main-header.navbar {
-      background-color: #800020;
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+
+  <!--input type="text" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();"-->
+
+
+
+
+
+  <style>
+    /* Estilo personalizado para aplicar el color rojo vino (#DC3545)  .main-header.navbar {
+      background-color: #DC3545;
     } */
 
    /*  body {
-      background-color: #800020;
+      background-color: #DC3545;
     }*/
    
     .main-sidebar {
@@ -91,7 +106,7 @@
         <div class="navbar-search-block">
           <form class="form-inline">
             <div class="input-group input-group-sm">
-              <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+              <input class="form-control form-control-navbar" type="search" placeholder="Buscar" aria-label="Buscar">
               <div class="input-group-append">
                 <button class="btn btn-navbar" type="submit">
                   <i class="fas fa-search"></i>
@@ -106,12 +121,7 @@
       </li>
 
       <!--Menú desplegable de mensajes en la barra de navegación -->
-      <!-- Messages Dropdown-->
-     <!-- Notificaciones -->
-      <!-- Notifications Dropdown Menu -->
-      
-          
-
+    
       <li class="nav-item dropdown user-menu">
         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
           <img src="../../dist/img/Foto_perfil.png" class="user-image img-circle elevation-2" alt="User Image">
@@ -160,6 +170,8 @@
     </ul>
   </nav>
   <!-- /.navbar -->
+  
+  <!-- /FIN DEL MENU DE MENSAJES, NOTIFICACIONES -->
   
   <!-- /FIN DEL MENU DE MENSAJES, NOTIFICACIONES -->
 
@@ -224,7 +236,7 @@
   </aside>
   <!-- /.control-sidebar -->
 
-<!-- ./wrapper -->    
+<!-- ./wrapper -->
 
 
 <!-- jQuery -->
@@ -279,14 +291,38 @@
 <script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 
+
+  <!-- Select2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+
 <!-- Page specific script -->
 <script>
   $(function () {
     $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,"info": true,
+      "responsive": true,
+      "lengthChange": false,
+      "autoWidth": false,
+      "info": true,
       "buttons": false,
+      "language": {
+        "decimal": ",",
+        "thousands": ".",
+        "lengthMenu": "Mostrar MENU registros por página",
+        "zeroRecords": "No se encontraron resultados",
+        "info": "Mostrando START a END de TOTAL registros",
+        "infoEmpty": "No hay registros disponibles",
+        "infoFiltered": "(filtrado de MAX registros totales)",
+        "search": "Buscar:",
+        "paginate": {
+          "first": "Primero",
+          "last": "Último",
+          "next": "Siguiente",
+          "previous": "Anterior"
+        }
+      }
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
- 
 
     $('#example2').DataTable({
       "paging": true,
@@ -296,10 +332,56 @@
       "info": true,
       "autoWidth": true,
       "responsive": true,
+      "language": {
+        "decimal": ",",
+        "thousands": ".",
+        "lengthMenu": "Mostrar MENU registros por página",
+        "zeroRecords": "No se encontraron resultados",
+        "info": "Mostrando inicio a fin de TOTAL registros",
+        "infoEmpty": "No hay registros disponibles",
+        "infoFiltered": "(filtrado de MAX registros totales)",
+        "search": "Buscar:",
+        "paginate": {
+          "first": "Primero",
+          "last": "Último",
+          "next": "Siguiente",
+          "previous": "Anterior"
+        }
+      }
     });
-}); 
+
+    $("#TablaCanje").DataTable({
+    "responsive": true,
+    "lengthChange": false,
+    "autoWidth": false,
+    "buttons": [
+        {
+            extend: "excel",
+            text: '<i class="fa fa-file-excel-o"></i>   Excel',
+            className: 'btn btn-success',
+            exportOptions: {
+                columns: ':not(:last-child)' // Excluye la última columna (Acciones)
+            }
+        }
+    ],
+    "language": {
+        "decimal": ",",
+        "thousands": ".",
+        "lengthMenu": "Mostrar _MENU_ registros por página",
+        "zeroRecords": "No se encontraron resultados",
+        "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+        "infoEmpty": "No hay registros disponibles",
+        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+        "search": "Buscar:",
+        "paginate": {
+            "first": "Primero",
+            "last": "Último",
+            "next": "Siguiente",
+            "previous": "Anterior"
+        }
+    }
+}).buttons().container().appendTo('#TablaCanje_wrapper .col-md-6:eq(0)');
+
+
+  });
 </script>
-
-</body>
-</html>
-

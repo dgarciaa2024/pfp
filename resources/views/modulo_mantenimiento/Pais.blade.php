@@ -14,7 +14,9 @@
           <div class="card-header">
             <h1 class="card-title">LISTA DE PAISES</h1>
             <div class="card-tools">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo +</button>
+            @if($permiso_insercion == 1)
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+ NUEVO</button>
+              @endif
               <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
 
             </div>
@@ -51,9 +53,9 @@
                                       
                   <th>
                     <div class="btn-group" role="group" aria-label="Basic example">
-
-                      <a type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-editor-{{$Pais['id_pais']}}">Actualizar <i class="bi bi-pencil-fill"></i> </a>
-
+                    @if($permiso_edicion == 2)
+                        <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-editor-{{$Pais['id_pais']}}"><i class="bi bi-pencil-fill"></i> ACTUALIZAR</a>
+                      @endif
                     </div>
                   </th>
                 </tr>

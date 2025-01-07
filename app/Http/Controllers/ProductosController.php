@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 //incluimos Http
 use Illuminate\Support\Facades\Http;
-
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductosController extends Controller
 {
@@ -23,7 +22,31 @@ class ProductosController extends Controller
         $tabla_administracion = Http::get('http://localhost:3000/get_via_administracion');
         $tabla_laboratorio = Http::get('http://localhost:3000/get_laboratorios');
        
-        
+         // Manejo de sesión y permisos
+         $usuario = session('usuario'); // Obtener usuario desde la sesión
+
+         // Permisos predeterminados
+         $permiso_insercion = 2;
+         $permiso_actualizacion = 2;
+         $permiso_eliminacion = 2;
+ 
+         if ($usuario) {
+             $idRolUsuario = $usuario['id_rol']; // Obtener el rol del usuario desde la sesión
+ 
+             // Consultar permisos en la base de datos para el rol y objeto 5 (productos)
+             $permisos = DB::table('pfp_schema.tbl_permiso')
+                 ->where('id_rol', $idRolUsuario)
+                 ->where('id_objeto', 14) // ID del objeto que corresponde a "productos"
+                 ->first();
+ 
+             // Si se encuentran permisos para este rol y objeto, asignarlos
+             if ($permisos) {
+                 $permiso_insercion = $permisos->permiso_creacion;
+                 $permiso_actualizacion = $permisos->permiso_actualizacion;
+                 $permiso_eliminacion = $permisos->permiso_eliminacion;
+             }
+         }
+ 
         
         
         return view('modulo_operaciones.Productos')->with([
@@ -33,8 +56,11 @@ class ProductosController extends Controller
         'tblunidad'=> json_decode($tabla_unidad,true),
         'tblmarca'=> json_decode($tabla_marca,true),
         'tblespecialidad'=> json_decode($tabla_especialidad,true),
-        'tblFARMACEUTICA'=> json_decode($tabla_farmaceutica,true),
-        'Productos'=> json_decode($response,true)
+        'tblfarmaseutica'=> json_decode($tabla_farmaceutica,true),
+        'Productos'=> json_decode($response,true),
+        'permiso_insercion' => $permiso_insercion,
+        'permiso_actualizacion' => $permiso_actualizacion,
+        'permiso_eliminacion' => $permiso_eliminacion,
     ]);
     }
 

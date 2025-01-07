@@ -12,8 +12,11 @@
             <div class="card-header">
               <h1 class="card-title">LISTA DE PARAMETROS</h1>
               <div class="card-tools">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo</button>
-                <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
+                  <!-- Botón NUEVO condicionado a permiso de inserción -->
+                  @if ($permiso_insercion == 1)
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+ NUEVO</button>
+                            @endif
+                            <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
               </div>
             </div>
 
@@ -26,7 +29,7 @@
                     <th>Parametro</th>
                     <th>Valor</th>
                     <th>Usuario</th>
-                    <th>fecha creacion</th>
+                    <th>Fecha Creacion</th>
                     <th>Creado Por</th>
                     <th>Accion</th>
                   </tr>
@@ -43,8 +46,11 @@
 
                     <th>
                       <div class="btn-group" role="group" aria-label="Basic example">
-                        <a type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-editor-{{$Parametro['id_parametro']}}">Actualizar <i class="bi bi-pencil-fill"></i> </a>
-                        
+                      @if ($permiso_actualizacion == 1)
+                                                    <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-editor-{{ $Parametro['id_parametro'] }}">
+                                                        <i class="bi bi-pencil-fill"></i> ACTUALIZAR
+                                                    </a>
+                                                    @endif
                         <!-- Botón de eliminar -->
                         <a type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-delete-{{$Parametro['id_parametro']}}">Eliminar <i class="bi bi-trash-fill"></i> </a>
                       </div>

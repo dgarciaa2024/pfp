@@ -11,7 +11,9 @@
             <div class="card-header">
               <h1 class="card-title">MARCA DE PRODUCTOS</h1>
               <div class="card-tools">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo +</button>
+                @if ($permiso_insercion == 1)
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+ NUEVO</button>
+                            @endif
                 <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
 
               </div>
@@ -41,8 +43,11 @@
                                                               <th>
                       <div class="btn-group" role="group" aria-label="Basic example">
 
-                        <a type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-editor-{{$Marca['id_marca_producto']}}">Actualizar <i class="bi bi-pencil-fill"></i> </a>
-
+                      @if ($permiso_actualizacion == 1)
+                                                    <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-editor-{{ $Marca['id_marca_producto'] }}">
+                                                        <i class="bi bi-pencil-fill"></i> ACTUALIZAR
+                                                    </a>
+                                                @endif
                       </div>
                     </th>
                   </tr>

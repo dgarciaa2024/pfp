@@ -4,6 +4,26 @@
 
 <br>
 <div value="{{$con=0}}"></div>
+@if (session('status_message'))
+<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="statusModalLabel">Notificación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ session('status_message') }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+@endif
 <section class="content">
   <div class="container-fluid">
     <div class="row">
@@ -14,8 +34,9 @@
           <div class="card-header">
             <h1 class="card-title">LISTA DE CANJES</h1>
             <div class="card-tools">
+            @if ($permiso_insercion == 1)
               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo +</button>
-              <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
+              @endif
 
             </div>
           </div>
@@ -24,7 +45,7 @@
           <div class="card-body">
             <!--Tarjeta_BODY-->
             <!--Tabla-->
-            <table id="example1" class="table table-bordered table-striped table-responsive">
+            <table id="TablaCanje" class="table table-bordered table-striped table-responsive">
               <!--Tabla_CABEZA-->
               <thead class=" text-center bg-danger blue text-white ">
                 <tr>
@@ -94,9 +115,9 @@
     </div>
   </div>
 </section>
-<div x-data='dataHandler(@json($Facturas),@json($tblpaciente), @json($tblproducto), @json($Canjes))'>
+<div x-data='dataHandler(@json($Facturas),@json($tblpaciente), @json($tblproducto), @json($Canjes), @json($tblfarmacia))'>
   <script>
-    function dataHandler(facturas, pacientes, productos, canjes) {
+    function dataHandler(facturas, pacientes, productos, canjes, farmacias) {
       return {
         canjeHabilitado: false
         , registroSeleccionado: false
@@ -107,13 +128,25 @@
         , comentariosSeleccionado: false
         , cantidadCanjes: 0
         , canjeMensaje: ''
+        , farmaciaId: ''
         , pacienteId: ''
         , productoId: ''
         , productoNombre: ''
         , pacienteNombre: ''
         , emailPaciente: ''
+        , nombre_farmacia: ''
+        , rtn_farmacia: ''
+        , nombre_paciente: ''
+        , apellido_paciente: ''
+        , dni_paciente: ''
+        , telefono_paciente: ''
+        , correo_paciente: ''
+        , nombre_producto: ''
+        , cantidad: ''
+        , forma_farmaceutica: ''
+        , fecha_registro: ''
+        , comentarios: ''
         , verificarCanje: function() {
-          console.log(94, facturas, pacientes, productos, canjes)
           const pacienteSeleccionado = pacientes.find(p => p.id_paciente == this.pacienteId);
           const productoSeleccionado = productos.find(p => p.id_producto == this.productoId);
           const {
@@ -132,7 +165,19 @@
             return
           }
           const canjesPaciente = canjes.filter(c => c.dni_paciente == pacienteSeleccionado.dni_paciente && c.nombre_producto == productoSeleccionado.nombre_producto).length;
-          console.log(111, canjesPaciente, canjes_max_anual)
+          const farmaciaSeleccionada = farmacias.find(f => f.id_farmacia == this.farmaciaId);
+          this.nombre_farmacia = farmaciaSeleccionada.nombre_farmacia
+          this.rtn_farmacia = farmaciaSeleccionada.rtn_farmacia
+          this.nombre_paciente = pacienteSeleccionado.nombre_paciente
+          this.apellido_paciente = pacienteSeleccionado.apellido_paciente
+          this.dni_paciente = pacienteSeleccionado.dni_paciente
+          this.telefono_paciente = pacienteSeleccionado.celular
+          this.correo_paciente = pacienteSeleccionado.email
+          this.nombre_producto = productoSeleccionado.nombre_producto
+          this.cantidad = canje
+          this.forma_farmaceutica = productoSeleccionado.forma_farmaceutica
+          this.fecha_registro = (new Date).toISOString().split('T')[0].split('-').reverse().join('/')
+          this.comentarios = this.obs
           if (canjesPaciente >= canjes_max_anual) {
             this.canjeMensaje = 'El paciente ya alcanzo el maximo de canjes';
             return;
@@ -184,7 +229,7 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Farmacia</label>
-                  <select id="farmacia" name="farmacia" class="form-control" @change='farmaciaSeleccionada = true' required>
+                  <select x-model="farmaciaId" id="farmacia" name="farmacia" class="form-control" @change='farmaciaSeleccionada = true' required>
                     <option>SELECCIONA</option>
                     @foreach ($tblfarmacia as $tbl)
                     <option value="{{ $tbl['id_farmacia']}}">{{$tbl["rtn_farmacia"]}}</option>
@@ -230,8 +275,18 @@
               <input type="hidden" id="email" name="email" class="form-control" x-model="emailPaciente">
               <input type="hidden" id="productoNombre" name="productoNombre" class="form-control" x-model="productoNombre">
               <input type="hidden" id="pacienteNombre" name="pacienteNombre" class="form-control" x-model="pacienteNombre">
-
-
+              <input type="hidden" id="nombre_farmacia" name="nombre_farmacia" x-model="nombre_farmacia">
+              <input type="hidden" id="rtn_farmacia" name="rtn_farmacia" x-model="rtn_farmacia">
+              <input type="hidden" id="nombre_paciente" name="nombre_paciente" x-model="nombre_paciente">
+              <input type="hidden" id="apellido_paciente" name="apellido_paciente" x-model="apellido_paciente">
+              <input type="hidden" id="dni_paciente" name="dni_paciente" x-model="dni_paciente">
+              <input type="hidden" id="telefono_paciente" name="telefono_paciente" x-model="telefono_paciente">
+              <input type="hidden" id="correo_paciente" name="correo_paciente" x-model="correo_paciente">
+              <input type="hidden" id="nombre_producto" name="nombre_producto" x-model="nombre_producto">
+              <input type="hidden" id="cantidad" name="cantidad" x-model="cantidad">
+              <input type="hidden" id="forma_farmaceutica" name="forma_farmaceutica" x-model="forma_farmaceutica">
+              <input type="hidden" id="fecha_registro" name="fecha_registro" x-model="fecha_registro">
+              <input type="hidden" id="comentarios" name="comentarios" x-model="comentarios">
 
               <div class="col-12">
                 <div class="form-group">

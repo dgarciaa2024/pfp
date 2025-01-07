@@ -155,9 +155,9 @@
 
         <div class="row mb-3">
           <div class="col-12 text-center">
-            <div class="icheck-primary">
+            <!--  <div class="icheck-primary">
               <input type="checkbox" id="remember" name="remember">
-              <label for="remember">Recordar mi nombre de usuario</label>
+             <label for="remember">Recordar mi nombre de usuario</label> -->
             </div>
           </div>
         </div>
@@ -175,7 +175,7 @@
         @endif
       </form>
 
-      <br><a href="forgot-password">Olvide mi usuario o contraseña</a>
+      <br><a href="ForgotPassword">Olvide mi usuario o contraseña</a>
       <p class="mb-1">
         
       </p>

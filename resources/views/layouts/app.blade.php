@@ -1,103 +1,116 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal de Fidelización</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'Portal Fidelización')</title>
+    
+    <!-- Enlace a CSS de Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Fuentes y Estilos -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="dist/css/adminlte.min.css">
+    <!-- Fuente personalizada -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
-  <!-- Estilos Personalizados -->
-  <style>
-    .navbar {
-      background-color: #800020;
-    }
-    .navbar a {
-      color: #fff;
-    }
-    .navbar a:hover {
-      color: #ffd700;
-    }
-    .main-footer {
-      background-color: #800020;
-      color: #fff;
-    }
-    .main-footer a {
-      color: #ffd700;
-    }
-    .content-wrapper {
-      min-height: calc(100vh - 100px);
-    }
-  </style>
+    <!-- Estilos personalizados -->
+    <style>
+        body {
+            font-family: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+            font-size: 14px; /* Reducimos el tamaño general */
+            background: linear-gradient(to bottom, #ffffff, #f3f4f6);
+            color: #333;
+            line-height: 1.5;
+        }
+        .navbar {
+            background-color: #800020;
+        }
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+            font-weight: 600;
+            font-size: 16px; /* Tamaño de fuente más pequeño para la barra de navegación */
+        }
+        .navbar-brand:hover, .nav-link:hover {
+            color: #FFD700 !important;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 22px; /* Reducimos el tamaño del título principal */
+        }
+        .btn-primary {
+            background-color: #800020;
+            border-color: #FF2D20;
+        }
+        .btn-primary:hover {
+            background-color: #e0241d;
+            border-color: #e0241d;
+        }
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #a7f3d0;
+            font-size: 13px; /* Tamaño más pequeño para las alertas */
+        }
+    </style>
+
+    @stack('styles')
 </head>
-<body class="hold-transition layout-top-nav">
-  <div class="wrapper">
+<body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-      <a class="navbar-brand" href="{{ url('/') }}">Portal de Fidelización</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-          @guest
-            <li class="nav-item">
-              <a class="nav-link" href="{{ route('login') }}">Iniciar Sesión</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ route('register') }}">Registrarse</a>
-            </li>
-          @else
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ Auth::user()->nombre_usuario }}
-              </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="AdministrarPerfil">Perfil</a>
-                <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                  @csrf
-                  <button type="submit" class="dropdown-item">Cerrar Sesión</button>
-                </form>
-              </div>
-            </li>
-          @endguest
-        </ul>
-      </div>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="{{ url('/') }}">Portal de Fidelización de Pacientes</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                @guest
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">Iniciar Sesión</a>
+                    </li>
+                @else
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            Cerrar Sesión
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </li>
+                @endguest
+            </ul>
+        </div>
     </nav>
-    <!-- End Navbar -->
 
-    <!-- Main Content -->
-    <div class="content-wrapper">
-      <div class="content-header text-center mt-5">
-        <img src="dist/img/AcercaDe.png" alt="Portal de Fidelización" class="img-fluid mb-4" style="max-width: 400px;">
-        <h1 class="text-gray">¡Bienvenido al Portal de Fidelización!</h1>
-        <p class="text-gray">
-          Estamos dedicados a ofrecer una experiencia de atención excepcional, brindando a nuestros pacientes y colaboradores una plataforma confiable y fácil de usar para gestionar todos sus procesos de manera eficiente y segura.
-        </p>
-      </div>
-    </div>
-    <!-- End Main Content -->
+    <!-- Contenedor principal -->
+    <div class="container mt-4">
+        
+        <!-- Título visible siempre -->
+        <h1 class="mb-4 text-center">@yield('title', 'Recuperación de Contraseña')</h1>
 
-    <!-- Footer -->
-    <footer class="main-footer text-center">
-      <strong>Derechos Reservados &copy; 2024 <a href="https://www.unah.edu.hn/">UNAH</a>.</strong>
-      <div class="float-right d-none d-sm-inline-block">
-        <b>Versión</b> 0.1
-      </div>
-    </footer>
-    <!-- End Footer -->
+        @if (session('status'))
+            <div class="alert alert-success" role="alert">
+                {{ session('status') }}
+            </div>
+        @endif
 
-  </div>
-  <!-- End Wrapper -->
+        <!-- Aquí inyectamos el contenido de otras vistas -->
+        @yield('content')
+        
 
-  <!-- Scripts -->
-  <script src="plugins/jquery/jquery.min.js"></script>
-  <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="dist/js/adminlte.min.js"></script>
+    <!-- Scripts de JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    @stack('scripts')
+   
+
 </body>
+
 </html>

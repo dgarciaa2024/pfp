@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 //incluimos Http
 use Illuminate\Support\Facades\Http;
-
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FarmaciasController extends Controller
 {
@@ -22,6 +21,30 @@ class FarmaciasController extends Controller
         $tabla_contacto = Http::get('http://localhost:3000/get_contactos');
        
         
+        // Manejo de sesión y permisos
+        $usuario = session('usuario'); // Obtener usuario desde la sesión
+
+        // Permisos predeterminados
+        $permiso_insercion = 2;
+        $permiso_actualizacion = 2;
+        $permiso_eliminacion = 2;
+
+        if ($usuario) {
+            $idRolUsuario = $usuario['id_rol']; // Obtener el rol del usuario desde la sesión
+
+            // Consultar permisos en la base de datos para el rol y objeto 4 (farmacias)
+            $permisos = DB::table('pfp_schema.tbl_permiso')
+                ->where('id_rol', $idRolUsuario)
+                ->where('id_objeto', 13) // ID del objeto que corresponde a "farmacias"
+                ->first();
+
+            // Si se encuentran permisos para este rol y objeto, asignarlos
+            if ($permisos) {
+                $permiso_insercion = $permisos->permiso_creacion;
+                $permiso_actualizacion = $permisos->permiso_actualizacion;
+                $permiso_eliminacion = $permisos->permiso_eliminacion;
+            }
+        }
 
 
         return view('modulo_operaciones.Farmacias')->with([//vista
@@ -31,7 +54,10 @@ class FarmaciasController extends Controller
         'tblentidad'=> json_decode($tabla_entidad,true),
         'tblusuario'=> json_decode($tabla_usuario,true),
         'tblsucursal'=> json_decode($tabla_sucursal,true),
-        'Farmacias'=> json_decode($response,true)
+        'Farmacias'=> json_decode($response,true),
+        'permiso_insercion' => $permiso_insercion,
+        'permiso_actualizacion' => $permiso_actualizacion,
+        'permiso_eliminacion' => $permiso_eliminacion,
 
     ]);
     }

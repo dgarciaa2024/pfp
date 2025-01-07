@@ -12,8 +12,11 @@
             <div class="card-header">
               <h1 class="card-title">LISTA DE OBJETOS</h1>
               <div class="card-tools">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo +</button>
-                <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
+               <!-- Botón NUEVO condicionado a permiso de inserción -->
+               @if ($permiso_insercion == 1)
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+ NUEVO</button>
+                            @endif
+                            <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
               </div>
             </div>
 
@@ -26,7 +29,7 @@
                     <th>Nombre Objeto</th>
                     <th>Descripcion</th>
                     <th>Estado</th>
-                    <th>fecha creacion</th>
+                    <th>Fecha Creacion</th>
                     <th>Creado Por</th>
                     <th>Accion</th>
                   </tr>
@@ -43,10 +46,15 @@
 
                     <th>
                       <div class="btn-group" role="group" aria-label="Basic example">
-                        <a type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-editor-{{$Objeto['id_objeto']}}">Actualizar <i class="bi bi-pencil-fill"></i> </a>
+                      @if ($permiso_actualizacion == 1)
+                                                    <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-editor-{{ $Objeto['id_objeto'] }}">
+                                                        <i class="bi bi-pencil-fill"></i> ACTUALIZAR
+                                                    </a>
+                                                @endif
+                     <!--  <a type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-editor-{{$Objeto['id_objeto']}}"> <i class="bi bi-pencil-fill"></i> </a> -->
                         
                         <!-- Botón de eliminar -->
-                        <a type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-delete-{{$Objeto['id_objeto']}}">Eliminar <i class="bi bi-trash-fill"></i> </a>
+                        <a type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-delete-{{$Objeto['id_objeto']}}"> <i class="bi bi-trash-fill"></i> </a>
                       </div>
                     </th>
                   </tr>
@@ -63,7 +71,7 @@
   </section>
 
 
-  <!-- MODAL EDITAR LABORATORIO -->
+  <!-- MODAL EDITAR OBJETO -->
 
 
 

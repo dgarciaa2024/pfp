@@ -1,258 +1,120 @@
-<!--MODULO USUARIOS-->
-<li class="nav-item">
-  <a href="#" class="nav-link">
-    <i class="nav-icon fas fa-lock"></i>
-    <p>
-      Seguridad
-      <i class="right fas fa-angle-left"></i>
-    </p>
-  </a>
-  <ul class="nav nav-treeview">
-    <li class="nav-item">
-      <a href="{{ url('Usuarios') }}" class="nav-link">
-        <i class="far fa-user nav-icon"></i>
-        <p>Usuarios</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Roles') }}" class="nav-link">
-        <i class="fas fa-user-cog nav-icon"></i>
-        <p>Roles</p>
-      </a>
-    </li>
+@php
+    $id_rol = auth()->check() ? auth()->user()->id_rol : null;
 
-    <li class="nav-item">
-      <a href="{{ url('Permisos') }}" class="nav-link">
-        <i class="fas fa-key nav-icon"></i>
-        <p>Permisos</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Parametros') }}" class="nav-link">
-        <i class="fas fa-cog nav-icon"></i>
-        <p>Parametros</p>
-      </a>
-    </li>
+    // Obtener permisos activos y objetos permitidos para el rol actual
+    $permisos = \App\Models\Permiso::where('id_rol', $id_rol)
+                ->where('permiso_consultar', 1) // Verificar permiso de consulta
+                ->get();
 
-    <li class="nav-item">
-      <a href="{{ url('Bitacora') }}" class="nav-link">
-        <i class="fas fa-book nav-icon"></i>
-        <p>Bitacora</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Objeto') }}" class="nav-link">
-        <i class="fas fa-box nav-icon"></i>
-        <p>Objeto</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Backup_Restore') }}" class="nav-link">
-        <i class="fas fa-database"></i>
+    $objetosPermitidos = $permisos->pluck('id_objeto')->toArray();
 
-        <p>Backup / Restaurar</p>
-      </a>
-    </li>
+    // Menús y Submenús
+    $menuGrupos = [
+        'Seguridad' => [
+            11 => ['nombre' => 'Usuarios', 'icono' => 'fas fa-users'],
+            7 => ['nombre' => 'Backup/Restore', 'icono' => 'fas fa-database'],
+            6 => ['nombre' => 'Bitácora', 'icono' => 'fas fa-clipboard-list'],
+            5 => ['nombre' => 'Objeto', 'icono' => 'fas fa-cubes'],
+            3 => ['nombre' => 'Parámetro', 'icono' => 'fas fa-sliders-h'],
+            4 => ['nombre' => 'Permisos', 'icono' => 'fas fa-key'],
+            2 => ['nombre' => 'Roles', 'icono' => 'fas fa-user-tag'],
+        ],
+        'Operaciones' => [
+            32 => ['nombre' => 'Distribuidor', 'icono' => 'fas fa-truck'],
+            34 => ['nombre' => 'Sucursal', 'icono' => 'fas fa-store'],
+            13 => ['nombre' => 'Farmacias', 'icono' => 'fas fa-prescription-bottle-alt'],
+            12 => ['nombre' => 'Laboratorios', 'icono' => 'fas fa-vials'],
+            15 => ['nombre' => 'Pacientes', 'icono' => 'fas fa-procedures'],
+            14 => ['nombre' => 'Productos', 'icono' => 'fas fa-box-open'],
+            33 => ['nombre' => 'Contacto', 'icono' => 'fas fa-address-book'],
+            26 => ['nombre' => 'Tipo Contacto', 'icono' => 'fas fa-address-card'],
+            25 => ['nombre' => 'Tipo Entidad', 'icono' => 'fas fa-building'],
+        ],
+        'Canjes' => [
+            10 => ['nombre' => 'Canjes', 'icono' => 'fas fa-exchange-alt'],
+            18 => ['nombre' => 'Devoluciones', 'icono' => 'fas fa-undo'],
+            17 => ['nombre' => 'Facturas', 'icono' => 'fas fa-file-invoice'],
+            16 => ['nombre' => 'Estado Canje', 'icono' => 'fas fa-check-circle'],
+            24 => ['nombre' => 'Tipo Registro', 'icono' => 'fas fa-clipboard'],
+        ],
+        'Mantenimiento' => [
+            29 => ['nombre' => 'Departamento', 'icono' => 'fas fa-map-marked-alt'],
+            23 => ['nombre' => 'Especialidad', 'icono' => 'fas fa-user-md'],
+            1 => ['nombre' => 'Estado', 'icono' => 'fas fa-toggle-on'],
+            20 => ['nombre' => 'Forma Farmacéutica', 'icono' => 'fas fa-pills'],
+            19 => ['nombre' => 'Marca', 'icono' => 'fas fa-tags'],
+            30 => ['nombre' => 'Municipio', 'icono' => 'fas fa-city'],
+            27 => ['nombre' => 'País', 'icono' => 'fas fa-flag'],
+            22 => ['nombre' => 'Unidad de Medida', 'icono' => 'fas fa-ruler'],
+            21 => ['nombre' => 'Vía Administración', 'icono' => 'fas fa-syringe'],
+            28 => ['nombre' => 'Zona', 'icono' => 'fas fa-map'],
+            36 => ['nombre' => 'REVISAR CUAL ES SOLICITADO EN PERMISO', 'icono' => 'fas fa-map'],
+        ],
+    ];
 
+    // Asociar cada id_objeto con una URL específica
+    $urlsPorObjeto = [
+        11 => 'Usuarios',
+        7 => 'Backup_Restore',
+        6 => 'Bitacora',
+        5 => 'Objetos',
+        3 => 'Parametros',
+        4 => 'Permisos',
+        2 => 'Roles',
+        32 => 'Distribuidor',
+        34 => 'Sucursal',
+        13 => 'Farmacias',
+        12 => 'Laboratorios',
+        15 => 'Pacientes',
+        14 => 'Productos',
+        33 => 'Contacto',
+        26 => 'TipoContacto',
+        25 => 'TipoEntidad',
+        10 => 'Canjes',
+        18 => 'Devoluciones',
+        17 => 'Facturas',
+        16 => 'EstadoCanje',
+        24 => 'TipoRegistro',
+        29 => 'Departamento',
+        23 => 'Especialidad',
+        1 => 'Estado',
+        20 => 'FormaFarmaceutica',
+        19 => 'Marca',
+        30 => 'Municipio',
+        27 => 'Pais',
+        22 => 'UnidadMedida',
+        21 => 'ViaAdministracion',
+        28 => 'Zona',
+        36 => 'Revisar',
+    ];
+@endphp
 
-  </ul>
-</li>
+<!-- Generación Dinámica de Menús -->
+@foreach($menuGrupos as $grupo => $items)
+    @php
+        // Filtrar items por permisos disponibles
+        $itemsPermitidos = array_filter($items, fn($item, $id) => in_array($id, $objetosPermitidos), ARRAY_FILTER_USE_BOTH);
+    @endphp
 
-<!-- FIN DEL MODULO USARIO-->
-
-
-
-<!--MODULO DE OPERACIONES-->
-<li class="nav-item">
-  <a href="#" class="nav-link">
-    <i class="nav-icon fas fa-edit"></i>
-    <p>
-      Registro
-      <i class="fas fa-angle-left right"></i>
-    </p>
-  </a>
-  <ul class="nav nav-treeview">
-    <li class="nav-item">
-      <a href="{{ url('Laboratorios') }}" class="nav-link">
-        <i class="fas fa-flask nav-icon"></i>
-        <p>Laboratorios</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Farmacias') }}" class="nav-link">
-        <i class="fas fa-clinic-medical nav-icon"></i>
-        <p>Farmacias</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Productos') }}" class="nav-link">
-        <i class="fas fa-capsules nav-icon"></i>
-        <p>Productos</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Pacientes') }}" class="nav-link">
-        <i class="fas fa-user-injured nav-icon"></i>
-        <p>Pacientes</p>
-      </a>
-    </li>
-  </ul>
-</li><!-- FIN DEL MODULO OPERACIONES-->
-
-
-
-
-<!-- MODULO FACTURAS Y CANJES-->
-<li class="nav-item">
-  <a href="#" class="nav-link">
-    <i class="nav-icon fas fa-table"></i>
-    <p>
-      Ventas
-      <i class="fas fa-angle-left right"></i>
-    </p>
-  </a>
-  <ul class="nav nav-treeview">
-    <li class="nav-item">
-      <a href="{{ url('Facturas') }}" class="nav-link">
-        <i class="fas fa-file-invoice nav-icon"></i>
-        <p>Facturas</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Canjes') }}" class="nav-link">
-        <i class="fas fa-exchange-alt nav-icon"></i>
-        <p>Canjes</p>
-      </a>
-    </li>
-
-
-    <li class="nav-item">
-      <a href="{{ url('Devoluciones') }}" class="nav-link">
-        <i class="fas fa-sync-alt nav-icon"></i>
-        <p>Devoluciones</p>
-      </a>
-    </li>
-  </ul>
-</li><!-- FIN DEL MODULO FACTURAS Y CANJES-->
-
-
-<!-- MODULO MANTENIMIENTO-->
-<li class="nav-item">
-  <a href="#" class="nav-link">
-    <i class="fas fa-wrench nav-icon"></i>
-    <p>
-      Datos Maestros
-      <i class="fas fa-angle-left right"></i>
-    </p>
-  </a>
-  <ul class="nav nav-treeview">
-    <li class="nav-item">
-      <a href="{{ url('Marca') }}" class="nav-link">
-        <i class="fas fa-tag nav-icon"></i>
-        <p>Marca Producto</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('FormaFarmaceutica') }}" class="nav-link">
-        <i class="fas fa-archive nav-icon"></i>
-        <p>Forma Farmaceutica</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Estado_Canje') }}" class="nav-link">
-        <i class="fas fa-spinner nav-icon"></i>
-        <p>Estado Canje</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('ViaAdministracion') }}" class="nav-link">
-        <i class="fas fa-syringe nav-icon"></i>
-        <p>Via Administracion</p>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="{{ url('UnidadMedida') }}" class="nav-link">
-        <i class="fas fa-balance-scale"></i>
-
-        <p>Unidad de Medida</p>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="{{ url('Especialidad') }}" class="nav-link">
-        <i class="fas fa-stethoscope"></i>
-
-        <p>Especialidad</p>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="{{ url('TipoRegistro') }}" class="nav-link">
-        <i class="fas fa-file-alt nav-icon"></i>
-        <p>Tipo Registro</p>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="{{ url('TipoEntidad') }}" class="nav-link">
-        <i class="fas fa-building nav-icon"></i>
-        <p>Tipo Entidad</p>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="{{ url('TipoContacto') }}" class="nav-link">
-        <i class="fas fa-address-book nav-icon"></i>
-        <p>Tipo Contacto</p>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="{{ url('Estado') }}" class="nav-link">
-        <i class="fas fa-toggle-on nav-icon"></i> <!-- Alternar encendido/apagado -->
-        <p>Estado</p>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="{{ url('Pais') }}" class="nav-link">
-        <i class="fas fa-map nav-icon"></i>
-        <p>Pais</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Zona') }}" class="nav-link">
-        <i class="fas fa-map-pin nav-icon"></i>
-        <p>zona</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Departamento') }}" class="nav-link">
-        <i class="fas fa-map-marked-alt nav-icon"></i>
-        <p>Departamento</p>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="{{ url('Municipio') }}" class="nav-link">
-        <i class="fas fa-landmark nav-icon"></i>
-        <p>Municipio</p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{{ url('Contacto') }}" class="nav-link">
-        <i class="fas fa-phone nav-icon"></i>
-        <p>Contacto</p>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="{{ url('Sucursal') }}" class="nav-link">
-        <i class="fas fa-map-marker-alt nav-icon"></i>
-        <p>Sucursal</p>
-      </a>
-    </li>
-
-  </ul>
-</li><!-- FIN DEL MODULO mantenimiento-->
+    @if(count($itemsPermitidos) > 0)
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-folder"></i>
+                <p>
+                    {{ $grupo }}
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                @foreach($itemsPermitidos as $id_objeto => $item)
+                    <li class="nav-item">
+                        <a href="{{ url($urlsPorObjeto[$id_objeto] ?? '#') }}" class="nav-link">
+                            <i class="{{ $item['icono'] }} nav-icon"></i>
+                            <p>{{ $item['nombre'] }}</p>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </li>
+    @endif
+@endforeach

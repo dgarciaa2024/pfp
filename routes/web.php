@@ -2,10 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\ForgotPasswordController;
-
-
-
+use App\Http\Controllers\AdministrarPerfilController;
 
 //RUTAS DEL SISTEMA 
 
@@ -14,34 +11,14 @@ Route::get('/', function () { return view('layouts.Login'); });
 
 // Ruta de verificación de login
 Route::post('/login_verificar', [LoginController::class, 'verificar_Login']);
-
-
-   
-
 // middleware auth
 Route::middleware(['auth'])->group(function () {
 Route::get('/inicio', function () { return view('inicio'); });
-
-Route::get('/VistaLaboratorio', function () { return view('VistaLaboratorio'); });
-Route::get('/VistaFarmacia', function () { return view('VistaFarmacia'); });
-Route::get('/VistaDistribuidor', function () { return view('VistaDistribuidor'); });
-Route::get('/VistaPaciente', function () { return view('VistaPaciente'); });
    
 
-//Route::get( 'Login',  [App\Http\Controllers\LoginController::class,            'index']);    //Accion  Login
-Route::get( 'Generar',  [App\Http\Controllers\GenerarController::class,            'index']);    //Accion  Login
-Route::get( 'GenerarExcel',  [App\Http\Controllers\GenerarExcelController::class,            'index']);    //Accion  Login
 
-//MODULO DE SEGURIDAD
+//MODULO DE SEGURIDAD CORRECTO
 
-//MODULO DE SEGURIDAD
-
-
-Route::get('Permisos', [App\Http\Controllers\PermisoController::class, 'index']);
-Route::get('Parametros', [App\Http\Controllers\ParametroController::class, 'index']);
-Route::get('Bitacora', [App\Http\Controllers\BitacoraController::class, 'index']);
-
-Route::get('Backup_Restore', [App\Http\Controllers\Backup_RestoreController::class, 'index']);
 
 Route::get('CambiarContrasena', [App\Http\Controllers\CambiarContrasenaController::class, 'index']);
 Route::get('AdministrarPerfil', [App\Http\Controllers\AdministrarPerfilController::class, 'index']);
@@ -49,8 +26,6 @@ Route::get('AdministrarPerfil', [App\Http\Controllers\AdministrarPerfilControlle
 
 
 //MODULO DE CANJES
-
-Route::get('Devoluciones', [App\Http\Controllers\DevolucionController::class, 'index']);
 
 
 
@@ -176,6 +151,17 @@ Route::post('agregar_factura',[App\Http\Controllers\FacturaController::class, 's
 //-------------------------------------------CANJES
 Route::get('Canjes', [App\Http\Controllers\CanjeController::class, 'index']);
 Route::post('agregar_registrocanje',[App\Http\Controllers\CanjeController::class, 'store']);
+//MODULO DE OTRAS PAGINAS
+
+Route::get('acerca', [App\Http\Controllers\acercaController::class, 'index']);
+Route::get('terminos', [App\Http\Controllers\terminosController::class, 'index']);
+Route::get('politica_privacidad', [App\Http\Controllers\politica_privacidadController::class, 'index']);
+
+//-------------------------------------------PARAMETRO
+Route::get('Parametros', [App\Http\Controllers\ParametroController::class, 'index']);
+Route::post('agregar_parametro',[App\Http\Controllers\ParametroController::class, 'store']);
+Route::put('editar_parametro', [App\Http\Controllers\ParametroController::class, 'update']);
+Route::delete('eliminar_parametro/{id_parametro}', [App\Http\Controllers\ParametroController::class, 'destroy']);
 
 //-------------------------------------------OBJETOS
 Route::get('Objeto', [App\Http\Controllers\ObjetoController::class, 'index']);
@@ -183,37 +169,22 @@ Route::post('agregar_objeto',[App\Http\Controllers\ObjetoController::class, 'sto
 Route::put('editar_objeto', [App\Http\Controllers\ObjetoController::class, 'update']);
 Route::delete('eliminar_objeto/{id_objeto}', [App\Http\Controllers\ObjetoController::class, 'destroy']);
 
-//-------------------------------------------PARAMETRO
-Route::get('Parametro', [App\Http\Controllers\ParametroController::class, 'index']);
-Route::post('agregar_parametro',[App\Http\Controllers\ParametroController::class, 'store']);
-Route::put('editar_parametro', [App\Http\Controllers\ParametroController::class, 'update']);
-Route::delete('eliminar_parametro/{id_parametro}', [App\Http\Controllers\ParametroController::class, 'destroy']);
-
 //-------------------------------------------permiso
-Route::get('Permiso', [App\Http\Controllers\PermisoController::class, 'index']);
+Route::get('Permisos', [App\Http\Controllers\PermisoController::class, 'index']);
 Route::post('agregar_permiso',[App\Http\Controllers\PermisoController::class, 'store']);
 Route::put('editar_permiso', [App\Http\Controllers\PermisoController::class, 'update']);
 Route::delete('eliminar_permiso/{id_permiso}', [App\Http\Controllers\PermisoController::class, 'destroy']);
 
 
-
+//-----------------------------------------Distribuidor
+Route::get('Distribuidor', [App\Http\Controllers\DistribuidorController::class, 'index']);
+Route::post('agregar_distribuidor',[App\Http\Controllers\DistribuidorController::class, 'store']);
+Route::put('editar_distribuidor', [App\Http\Controllers\DistribuidorController::class, 'update']);
 
 
 
 }); //aqui termina middleware auth dega
 
-
-
-//MODULO DE OTRAS PAGINAS
-
-Route::get('acerca', [App\Http\Controllers\acercaController::class, 'index']);
-Route::get('terminos', [App\Http\Controllers\terminosController::class, 'index']);
-Route::get('politica_privacidad', [App\Http\Controllers\politica_privacidadController::class, 'index']);
-
-
-
-
-//20112024
 
 use App\Http\Controllers\PdfController;
 
@@ -226,57 +197,27 @@ Route::get('/descargar-pdf', [PdfController::class, 'createPDF'])->name('pdf.dow
 Route::get('/descargar-pdf-factura', [PdfController::class, 'createPDF2'])->name('pdf.downloadfactura');
 
 
-
-
-
-
-
-
-//  Administrar perfil"
-use App\Http\Controllers\AdministrarPerfilController;
-
-Route::get('/forgot-password', function () {
-    return view('modulo_usuarios.forgot-password');
-})->name('password.request');
-
-
-
+// Ruta para cerrar sesión
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+//cambiar contraseña
 
+use App\Http\Controllers\CambiarContrasenaController;
 
+Route::get('/cambiar-contrasena', [CambiarContrasenaController::class, 'index'])->name('cambiar-contrasena');
 
+// Ruta para mostrar el formulario de cambio de contraseña
+Route::get('/cambiar-contrasena', [CambiarContrasenaController::class, 'index'])->name('cambiar-contrasena.index')->middleware('auth');
 
-
-
-
-
-
-
-//rutas DEGA
-Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
-
-// Ruta para enviar el enlace de restablecimiento
-Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.sendResetLink');
-
-
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/Login', [LoginController::class, 'login'])->name('login.perform'); // Acción Login
-
-use App\Http\Controllers\Auth\RegisterController;
-
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
-
-use App\Http\Controllers\PasswordController;
-Route::post('/reset-password', [PasswordController::class, 'resetPassword'])->name('password.reset');
-
-
-
+// Ruta para procesar el formulario de cambio de contraseña
+Route::post('/cambiar-contrasena', [CambiarContrasenaController::class, 'store'])->name('cambiar-contrasena.store')->middleware('auth');
 
 
 //rutas admin perfil
+
+
+
+
 Route::get('/administrar-perfil', [AdministrarPerfilController::class, 'index'])
     ->name('administrarPerfil.index')
     ->middleware('auth'); // Asegúrate de que el usuario esté autenticado
@@ -298,27 +239,45 @@ Route::put('/perfil/update', [PerfilController::class, 'update'])->name('adminis
 
 
 Route::get('/administrar-perfil', [AdministrarPerfilController::class, 'index'])->name('AdministrarPerfil');
+Route::get('/AdministrarPerfil', [AdministrarPerfilController::class, 'index'])->name('administrarPerfil');
+
 //fin rutas admin perfil
 
 
 
-use App\Http\Controllers\CambiarContrasenaController;
 
-// Ruta para mostrar el formulario de cambio de contraseña
-Route::get('/cambiar-contrasena', [CambiarContrasenaController::class, 'index'])->name('cambiar-contrasena.index')->middleware('auth');
-
-// Ruta para procesar el formulario de cambio de contraseña
-Route::post('/cambiar-contrasena', [CambiarContrasenaController::class, 'store'])->name('cambiar-contrasena.store')->middleware('auth');
-
-Route::get('/AdministrarPerfil', [AdministrarPerfilController::class, 'index'])->name('administrarPerfil');
+//rutas DEGA
 
 
-use App\Http\Controllers\LogoutController;
-// Ruta para cerrar sesión
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/Login', [LoginController::class, 'login'])->name('login.perform'); // Acción Login
+
+
+
+
+
+
+Route::post('/reset-password', [PasswordController::class, 'resetPassword'])->name('password.reset');
+
+
+
+
+//  Administrar perfil"
+
+use App\Http\Controllers\ForgotPasswordController;
+
+
+
+Route::get('/ForgotPassword', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
+
+// Ruta para enviar el enlace de restablecimiento
+Route::post('/ForgotPassword', [ForgotPasswordController::class, 'sendResetLink'])->name('password.sendResetLink');
+
+
+
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 
-
-//rutas Jairo
 

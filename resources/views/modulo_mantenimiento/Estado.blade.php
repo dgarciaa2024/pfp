@@ -13,7 +13,9 @@
                 <div class="card-header">
                     <h1 class="card-title">LISTA DE ESTADOS</h1>
                     <div class="card-tools">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#model_agregar">AGREGAR</button>
+                    @if($permiso_insercion == 1)
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#model_agregar">AGREGAR</button>
+                            @endif
                     <a href="{{ url('inicio') }}" class="btn btn-secondary">Volver</a>
                    
                     </div>
@@ -44,7 +46,11 @@
                                     <td>{{ $Estado["estado"]}}</td>
 
                                     <td class="project-actions text-right">
-                      <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#model_editar-{{ $Estado['id_estado']}}">    <i class="bi bi-pencil"></i> Actualizar </button>
+                                    @if ($permiso_actualizacion == 1)
+                                                    <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-editor-{{ $Estado['id_estado'] }}">
+                                                        <i class="bi bi-pencil-fill"></i> ACTUALIZAR
+                                                    </a>
+                                                @endif
                       </td>
                                 </tr>
                             @endforeach
