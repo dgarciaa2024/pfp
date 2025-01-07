@@ -12,7 +12,7 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h1 class="card-title">LISTA DE PACIENTES</h1>
+              <h1 class="card-title">LISTA DE PACIENTE</h1>
               <div class="card-tools">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo +</button>
                 <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
