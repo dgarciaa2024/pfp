@@ -49,7 +49,7 @@ class DistribuidorController extends Controller
          }
      }
 
-     return view('modulo_operaciones.Distribuidor')->with([//vista
+     return view('modulo_operaciones.Distribuidor')->with([//vistas
        
         'tblcontacto'=> json_decode($tabla_contacto,true),
         'tblestado'=> json_decode($tabla_estado,true),
