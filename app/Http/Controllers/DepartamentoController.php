@@ -19,7 +19,7 @@ class DepartamentoController extends Controller
 
 
  // Manejo de sesión y permisos
- $usuario = session('usuario'); // Obtener usuario desde la sesión
+ $usuario = session('usuario'); // Obtener usuario desde la sesiónnnnnnnnnnn
 
  // Permisos predeterminados
  $permiso_insercion = 2;
