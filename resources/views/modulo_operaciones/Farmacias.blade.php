@@ -10,7 +10,7 @@
           <div class="card">
             <!-- Tarjeta Cabeza -->
             <div class="card-header">
-              <h1 class="card-title">LISTA DE FARMACIAS</h1>
+              <h1 class="card-title">LISTA DE FARMACIASSSSSSS 09012025</h1>
               <div class="card-tools">
               @if($permiso_insercion == 1)
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+NUEVO</button>
