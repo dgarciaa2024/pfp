@@ -10,7 +10,11 @@
           <div class="card">
             <!-- Tarjeta Cabeza -->
             <div class="card-header">
+<<<<<<< Updated upstream
               <h1 class="card-title">LISTA DE FARMACIAS--</h1>
+=======
+              <h1 class="card-title">LISTA DE FARMACIASSSSSSS 10012025</h1>
+>>>>>>> Stashed changes
               <div class="card-tools">
               @if($permiso_insercion == 1)
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+NUEVO</button>
