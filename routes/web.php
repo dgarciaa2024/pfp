@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdministrarPerfilController;
+use App\Http\Controllers\Backup_RestoreController;
 
 //RUTAS DEL SISTEMA 
 
@@ -162,6 +163,14 @@ Route::get('Parametros', [App\Http\Controllers\ParametroController::class, 'inde
 Route::post('agregar_parametro',[App\Http\Controllers\ParametroController::class, 'store']);
 Route::put('editar_parametro', [App\Http\Controllers\ParametroController::class, 'update']);
 Route::delete('eliminar_parametro/{id_parametro}', [App\Http\Controllers\ParametroController::class, 'destroy']);
+
+
+//-----------------BACKUP RESTORE
+Route::get('Backup_Restore', [App\Http\Controllers\Backup_RestoreController ::class, 'index']);
+Route::get('/backup-restore', [Backup_RestoreController::class, 'index'])->name('backup.index');
+Route::post('/backup-create', [Backup_RestoreController::class, 'createBackup'])->name('backup.create');
+Route::post('/backup-restore', [Backup_RestoreController::class, 'restoreBackup'])->name('backup.restore');
+
 
 //-------------------------------------------OBJETOS
 Route::get('Objeto', [App\Http\Controllers\ObjetoController::class, 'index']);
