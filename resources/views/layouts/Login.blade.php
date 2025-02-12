@@ -175,7 +175,7 @@
         @endif
       </form>
 
-      <br><a href="ForgotPassword">Olvide mi usuario o contraseña</a>
+      <br><a href="ForgotPassword">Olvide mi contraseña</a>
       <p class="mb-1">
         
       </p>

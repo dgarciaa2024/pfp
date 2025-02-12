@@ -1,6 +1,5 @@
-@extends ('layouts.principal')
+@extends('layouts.principal')
 @section('content')
-
 
 <br>
 <div value="{{$con=0}}"></div>
@@ -54,7 +53,7 @@
                   <td>{{ $Usuario["id_usuario"]}}</td>
                   <td>{{ $Usuario["usuario"]}}</td>
                   <td>{{ $Usuario["nombre_usuario"]}}</td>
-                  <td>{{ $Usuario["contrasena"]}}</td>
+                  <td>********</td> <!-- Contraseña oculta -->
                   <td>{{ $Usuario["rol"]}}</td>
                   <td>{{ $Usuario["fecha_ultima_conexion"]}}</td>
                   <td>{{ $Usuario["fecha_vencimiento"]}}</td>
@@ -92,7 +91,7 @@
       <div class="modal-header">
         <h4 class="modal-title">Actualizar USUARIO</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+          <span aria-hidden="true">×</span>
         </button>
       </div>
 
@@ -120,14 +119,14 @@
             <div class="col-12">
               <div class="form-group">
                 <label for="">Contraseña</label>
-                <input type="password" id="contra" name="contra" class="form-control" value="{{$Usuario['contrasena']}}" required>
+                <input type="password" id="contra" name="contra" class="form-control" value="{{$Usuario['contrasena']}}" required readonly>
               </div>
             </div>
 
             <div class="col-12">
               <div class="form-group">
                 <label for="">Rol</label>
-                <select id="rol" name="rol" class="form-control" requied>
+                <select id="rol" name="rol" class="form-control" required>
                   @foreach ($tblrol as $tbl)
                   <option value="{{ $tbl['id_rol']}}" selected> {{$tbl["rol"]}}</option>
                   @endforeach
@@ -152,17 +151,13 @@
             <div class="col-12">
               <div class="form-group">
                 <label for="">Estado</label>
-                <select id="estdo" name="estdo" class="form-control" requied>
+                <select id="estdo" name="estdo" class="form-control" required>
                   @foreach ($tblestado as $tbl)
                   <option value="{{ $tbl['id_estado'] }}" selected>{{$tbl["estado"]}}</option>
                   @endforeach
                 </select>
               </div>
             </div>
-
-
-
-
 
           </div>
         </div>
@@ -182,8 +177,6 @@
 
 <!--AGREGAR TIPO ENTIDAD-->
 
-
-
 <div class="modal fade" id="modal-default">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -192,7 +185,7 @@
       <div class="modal-header">
         <h4 class="modal-title">AGREGAR UN NUEVO USUARIO</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+          <span aria-hidden="true">×</span>
         </button>
       </div>
 
@@ -218,14 +211,14 @@
             <div class="col-12">
               <div class="form-group">
                 <label for="">Contraseña</label>
-                <input type="password" id="contra" name="contra" class="form-control" required>
+                <input type="password" id="contra" name="contra" class="form-control" readonly value="Generada automáticamente" required>
               </div>
             </div>
 
             <div class="col-12">
               <div class="form-group">
                 <label for="">Rol</label>
-                <select id="rol" name="rol" class="form-control" requied>
+                <select id="rol" name="rol" class="form-control" required>
                   <option>Selecciona</option>
                   @foreach ($tblrol as $tbl)
                   <option value="{{ $tbl['id_rol']}}">{{$tbl["rol"]}}</option>
@@ -248,16 +241,11 @@
               </div>
             </div>
 
-
-
             <div class="col-6">
               <div class="form-group">
                 <label for="">Estado</label>
-                <select id="estdo" name="estdo" class="form-control" requied>
-                  <option>Selecciona</option>
-                  @foreach ($tblestado as $tbl)
-                  <option value="{{ $tbl['id_estado']}}">{{$tbl["estado"]}}</option>
-                  @endforeach
+                <select id="estdo" name="estdo" class="form-control" required>
+                  <option value="2" selected>Pendiente</option>
                 </select>
               </div>
             </div>

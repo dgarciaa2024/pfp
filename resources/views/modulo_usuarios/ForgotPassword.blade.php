@@ -6,16 +6,16 @@
     <form action="{{ route('password.sendResetLink') }}" method="POST">
         @csrf
         <div class="form-group">
-            <label for="usuario">Ingrese su usuario para enviar un correo electrónico de recuperación de contraseña</label>
+            <label for="email">Ingrese su email para enviar un correo electrónico de recuperación de contraseña</label>
             <input type="text" 
-                   name="usuario" 
-                   id="usuario" 
+                   name="email" 
+                   id="email" 
                    class="form-control" 
                    required 
-                   minlength="{{ config('database.usuario_length') }}" 
-                   maxlength="{{ config('database.usuario_length') }}" 
-                   style="text-transform: uppercase;">
-            @error('usuario')
+                   minlength="{{ config('database.email_length') }}" 
+                   maxlength="{{ config('database.email_length') }}" >
+                   
+            @error('email')
                 <div class="alert alert-danger">{{ $message }}</div>
             @enderror
         </div>

@@ -22,7 +22,7 @@
             line-height: 1.5;
         }
         .navbar {
-            background-color: #800020;
+            background-color: #dc3545;
         }
         .navbar-brand, .nav-link {
             color: #fff !important;
@@ -42,7 +42,7 @@
             font-size: 22px; /* Reducimos el tamaño del título principal */
         }
         .btn-primary {
-            background-color: #800020;
+            background-color: #dc3545;
             border-color: #FF2D20;
         }
         .btn-primary:hover {

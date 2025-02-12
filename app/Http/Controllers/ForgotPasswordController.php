@@ -19,17 +19,17 @@ class ForgotPasswordController extends Controller
     {
         // Validación de entrada
         $request->validate([
-            'usuario' => 'required|string|max:255',  // Asegúrate de definir un tamaño máximo
+            'email' => 'required|string|max:255|email',  // Añadido 'email' para validar el formato del correo
         ]);
 
         // Obtener el usuario en mayúsculas
-        $usuario = strtoupper($request->input('usuario'));
+        $email = ($request->input('email'));
 
         // Buscar el usuario en la base de datos
-        $user = DB::table('pfp_schema.tbl_usuario')->where('usuario', $usuario)->first();
+        $user = DB::table('pfp_schema.tbl_usuario')->where('email', $email)->first();
 
         if (!$user) {
-            return back()->withErrors(['usuario' => 'El usuario no existe.']);
+            return back()->withErrors(['email' => 'El email no existe.']);
         }
 
         // Generar una nueva contraseña temporal

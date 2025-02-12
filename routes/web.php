@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdministrarPerfilController;
 use App\Http\Controllers\Backup_RestoreController;
+use App\Http\Controllers\BitacoraController;
 
 //RUTAS DEL SISTEMA 
 
@@ -102,6 +103,8 @@ Route::put('editar_farmaceutica', [App\Http\Controllers\FormaFarmaceuticaControl
 Route::get('Usuarios', [App\Http\Controllers\UsuarioController::class, 'index']);
 Route::post('agregar_usuario',[App\Http\Controllers\UsuarioController::class, 'store']);
 Route::put('editar_usuario', [App\Http\Controllers\UsuarioController::class, 'update']);
+// 
+Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
 
 //-------------------------------------TBLA PACIENTES
 
@@ -166,14 +169,41 @@ Route::delete('eliminar_parametro/{id_parametro}', [App\Http\Controllers\Paramet
 
 
 //-----------------BACKUP RESTORE
-Route::get('Backup_Restore', [App\Http\Controllers\Backup_RestoreController ::class, 'index']);
+
+
+
+
+
+
+// Ruta para acceder a la vista de Backup y Restore
+Route::get('/Backup_Restore', function () {
+    return view('modulo_usuarios.Backup_Restore');
+})->name('backup.restore.view');
+
+// Ruta para crear un backup
+Route::post('/Backup_Restore/create', [Backup_RestoreController::class, 'backup'])->name('backup.restore.create');
+
+// Ruta para restaurar un backup
+Route::post('/Backup_Restore/restore', [Backup_RestoreController::class, 'restore'])->name('backup.restore.restore');
+
+
 Route::get('/backup-restore', [Backup_RestoreController::class, 'index'])->name('backup.index');
 Route::post('/backup-create', [Backup_RestoreController::class, 'createBackup'])->name('backup.create');
-Route::post('/backup-restore', [Backup_RestoreController::class, 'restoreBackup'])->name('backup.restore');
+
+
+//-----------------BITACORA
+
+
+
+
+Route::get('/Bitacora', [BitacoraController::class, 'index'])->name('bitacora.index');
+Route::get('/Bitacora', [BitacoraController::class, 'index'])->name('bitacora.index');
+//Route::get('/bbitacora', [BitacoraController::class, 'index'])->middleware('log.route');
+//Route::get('/log', [BitacoraController::class, 'method'])->name('log.route');
 
 
 //-------------------------------------------OBJETOS
-Route::get('Objeto', [App\Http\Controllers\ObjetoController::class, 'index']);
+Route::get('Objetos', [App\Http\Controllers\ObjetoController::class, 'index']);
 Route::post('agregar_objeto',[App\Http\Controllers\ObjetoController::class, 'store']);
 Route::put('editar_objeto', [App\Http\Controllers\ObjetoController::class, 'update']);
 Route::delete('eliminar_objeto/{id_objeto}', [App\Http\Controllers\ObjetoController::class, 'destroy']);
@@ -210,16 +240,31 @@ Route::get('/descargar-pdf-factura', [PdfController::class, 'createPDF2'])->name
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 //cambiar contraseña
-
 use App\Http\Controllers\CambiarContrasenaController;
+use App\Http\Controllers\CambiarContrasenaNewController;
 
-Route::get('/cambiar-contrasena', [CambiarContrasenaController::class, 'index'])->name('cambiar-contrasena');
+// Rutas para cambiar contraseña voluntariamente (usuarios existentes)
+Route::get('/cambiar-contrasena', [CambiarContrasenaController::class, 'index'])
+    ->name('cambiar-contrasena.index')
+    ->middleware('auth');
 
-// Ruta para mostrar el formulario de cambio de contraseña
-Route::get('/cambiar-contrasena', [CambiarContrasenaController::class, 'index'])->name('cambiar-contrasena.index')->middleware('auth');
+Route::post('/cambiar-contrasena', [CambiarContrasenaController::class, 'store'])
+    ->name('cambiar-contrasena.store')
+    ->middleware('auth');
 
-// Ruta para procesar el formulario de cambio de contraseña
-Route::post('/cambiar-contrasena', [CambiarContrasenaController::class, 'store'])->name('cambiar-contrasena.store')->middleware('auth');
+// Rutas para cambiar contraseña para nuevos usuarios
+Route::get('/cambiar-contrasena-new', [CambiarContrasenaNewController::class, 'index'])
+    ->name('cambiar-contrasena-new.index')
+    ->middleware('auth');
+
+Route::post('/cambiar-contrasena-new', [CambiarContrasenaNewController::class, 'store'])
+    ->name('cambiar-contrasena-new.store')
+    ->middleware('auth');
+
+    Route::get('/cambiar-contrasena', [CambiarContrasenaController::class, 'showFormWithLiveFeedback']);
+Route::post('/cambiar-contrasena/evaluate', [CambiarContrasenaController::class, 'evaluatePasswordStrengthLive']);
+Route::post('/cambiar-contrasena/submit', [CambiarContrasenaController::class, 'handleFormSubmission']);
+Route::post('/cambiar-contrasena/update-strength', [CambiarContrasenaController::class, 'updatePasswordStrengthLive']);
 
 
 //rutas admin perfil

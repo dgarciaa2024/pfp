@@ -5,31 +5,29 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class CambiarContrasenaController extends Controller
+class CambiarContrasenaNewController extends Controller
 {
     public function index()
     {
         if (!auth()->check()) {
             return redirect()->route('login');
         }
-        return view('modulo_usuarios.CambiarContrasena');
+        return view('modulo_usuarios.CambiarContrasenaNew');
     }
 
     public function store(Request $request)
     {
         if (!auth()->check()) {
-            return redirect()->route('login')->with('error', 'You must be logged in to change your password.');
+            return redirect()->route('login')->with('error', 'Debe iniciar sesión para cambiar su contraseña.');
         }
         // Obtener el usuario autenticado en mayúsculas
         $usuario = strtoupper(auth()->user()->usuario);
-        $contrasenaActual = $request->input('contrasena_actual');
         $nuevaContrasena = $request->input('nueva_contrasena');
         $confirmarContrasena = $request->input('confirmar_contrasena');
 
         // Validaciones de las contraseñas
         $request->validate([
-            'contrasena_actual' => 'required',
-            'nueva_contrasena' => 'required|min:8|max:20|different:contrasena_actual',
+            'nueva_contrasena' => 'required|min:8|max:20',
             'confirmar_contrasena' => 'required|same:nueva_contrasena',
         ]);
 
@@ -37,11 +35,6 @@ class CambiarContrasenaController extends Controller
         $user = DB::table('pfp_schema.tbl_usuario')
                     ->where('usuario', $usuario)
                     ->first();
-
-        // Verificar que el usuario exista y que la contraseña actual coincida
-        if (!$user || $contrasenaActual !== $user->contrasena) {
-            return redirect()->back()->withErrors(['contrasena_actual' => 'La contraseña actual es incorrecta.']);
-        }
 
         // Evaluar la fuerza de la nueva contraseña
         $passwordStrength = $this->evaluatePasswordStrength($nuevaContrasena);
@@ -55,13 +48,18 @@ class CambiarContrasenaController extends Controller
             return redirect()->back()->withErrors(['confirmar_contrasena' => 'La confirmación de la contraseña no coincide.']);
         }
 
-        // Actualizar la nueva contraseña en la base de datos y cambiar el estado a 'Activo'
+        // Verificar que la nueva contraseña no sea igual a la actual en la BD
+        if ($nuevaContrasena === $user->contrasena) {
+            return redirect()->back()->withErrors(['nueva_contrasena' => 'No puede utilizar una contraseña utilizada anteriormente.'])->withInput();
+        }
+
+        // Actualizar la nueva contraseña en la base de datos y cambiar el estado a 'PENDIENTE'
         DB::table('pfp_schema.tbl_usuario')
             ->where('id_usuario', $user->id_usuario)
             ->update([
                 'contrasena' => $nuevaContrasena, 
                 'fecha_modificacion' => now(),   // Cambiar fecha de modificación
-                'id_estado' => 1 // Assuming '1' is 'Activo'
+                'id_estado' => 4 // Assuming '4' is 'PENDIENTE'
             ]);
 
         // Redirigir a la vista de AdministrarPerfil con un mensaje de éxito y la evaluación de la contraseña
@@ -128,7 +126,7 @@ class CambiarContrasenaController extends Controller
             return redirect()->route('login');
         }
         
-        return view('modulo_usuarios.CambiarContrasena', [
+        return view('modulo_usuarios.CambiarContrasenaNew', [
             'passwordStrength' => 'No password entered yet'
         ]);
     }
@@ -140,7 +138,7 @@ class CambiarContrasenaController extends Controller
         $passwordStrength = $this->evaluatePasswordStrength($password);
 
         // Return the view with the strength feedback
-        return view('modulo_usuarios.CambiarContrasena', [
+        return view('modulo_usuarios.CambiarContrasenaNew', [
             'passwordStrength' => 'Strength: ' . $passwordStrength
         ]);
     }

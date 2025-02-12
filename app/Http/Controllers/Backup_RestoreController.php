@@ -2,67 +2,75 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log; // Importar el facade Log
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class Backup_RestoreController extends Controller
 {
-    private $dbUser = 'admin_pfp';
-    private $dbPassword = 'PFP_BD_2024';
-    private $dbName = 'nombre_de_tu_bd';
-
-    public function createBackup()
+    // Método para crear el backup
+    public function backup()
     {
-        Log::info('Backup process started.');
-        
-        $backupFile = storage_path('app/backups/backup_' . date('Y_m_d_His') . '.sql');
-        $command = sprintf(
-            'PGPASSWORD="%s" pg_dump -U %s -F c -b -v -f %s %s',
-            $this->dbPassword,
-            $this->dbUser,
-            $backupFile,
-            $this->dbName
-        );
+        // Ruta del archivo de backup
+        $filename = 'backup_' . now()->format('Y_m_d_H_i_s') . '.sql';
+        $backupPath = storage_path('app/backups/' . $filename);
 
-        $result = null;
-        $output = null;
-        exec($command, $output, $result);
-
-        if ($result === 0) {
-            Log::info('Backup created successfully.');
-            return redirect()->back()->with('success', 'Backup creado exitosamente.');
-        } else {
-            Log::error('Error creating backup.', ['output' => $output]);
-            return redirect()->back()->with('error', 'Error al crear el backup.');
+        // Crear la carpeta de backups si no existe
+        if (!File::exists(storage_path('app/backups'))) {
+            File::makeDirectory(storage_path('app/backups'), 0755, true);
         }
-    }   
 
-    public function restoreBackup(Request $request)
+        // Construir el comando pg_dump para generar un archivo SQL codificado
+        $command = "pg_dump --host=" . env('DB_HOST') .
+                   " --port=" . env('DB_PORT') .
+                   " --username=" . env('DB_USERNAME') .
+                   " --dbname=" . env('DB_DATABASE') .
+                   " --no-password --inserts --encoding=UTF8 > \"$backupPath\"";
+
+        // Ejecutar el comando
+        putenv('PGPASSWORD=' . env('DB_PASSWORD')); // Establecer la contraseña temporalmente
+        $output = null;
+        $result_code = null;
+        exec($command, $output, $result_code);
+
+        // Verificar si el comando tuvo éxito
+        if ($result_code !== 0) {
+            return back()->with('error', 'Hubo un error al crear el backup. Código de error: ' . $result_code);
+        }
+
+        return back()->with('success', 'El backup se ha creado correctamente en: ' . $filename);
+    }
+
+    // Método para restaurar el backup
+    public function restore(Request $request)
     {
+        // Validar el archivo cargado
         $request->validate([
-            'backup_file' => 'required|file|mimes:sql',
+            'backup_file' => 'required|file',
         ]);
 
-        $backupFile = $request->file('backup_file')->storeAs('backups', 'restore_' . time() . '.sql');
-        $backupFilePath = storage_path('app/' . $backupFile);
-        $command = sprintf(
-            'PGPASSWORD="%s" pg_restore -U %s -d %s -v %s',
-            $this->dbPassword,
-            $this->dbUser,
-            $this->dbName,
-            $backupFilePath
-        );
+        // Guardar el archivo cargado temporalmente
+        $uploadedFile = $request->file('backup_file');
+        $filePath = storage_path('app/backups/' . $uploadedFile->getClientOriginalName());
+        $uploadedFile->move(storage_path('app/backups'), $uploadedFile->getClientOriginalName());
 
-        $result = null;
+        // Construir el comando psql para restaurar el archivo SQL
+        $command = "psql --host=" . env('DB_HOST') .
+                   " --port=" . env('DB_PORT') .
+                   " --username=" . env('DB_USERNAME') .
+                   " --dbname=" . env('DB_DATABASE') .
+                   " --no-password -f \"$filePath\"";
+
+        // Ejecutar el comando
+        putenv('PGPASSWORD=' . env('DB_PASSWORD')); // Establecer la contraseña temporalmente
         $output = null;
-        exec($command, $output, $result);
+        $result_code = null;
+        exec($command, $output, $result_code);
 
-        if ($result === 0) {
-            return redirect()->back()->with('success', 'Base de datos restaurada exitosamente.');
-        } else {
-            return redirect()->back()->with('error', 'Error al restaurar la base de datos.');
+        // Verificar si el comando tuvo éxito
+        if ($result_code !== 0) {
+            return back()->with('error', 'Hubo un error al restaurar el backup. Código de error: ' . $result_code);
         }
+
+        return back()->with('success', 'La base de datos se ha restaurado correctamente desde el archivo: ' . $uploadedFile->getClientOriginalName());
     }
 }

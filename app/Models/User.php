@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Helpers\LoggerHelper;
 
 class User extends Authenticatable
 {
@@ -87,5 +88,28 @@ class User extends Authenticatable
             'preguntas_contestadas' => $data['preguntas_contestadas'], 
             'id_estado' => $data['id_estado'],
         ]);
+    }
+
+    /**
+     * Boot method para registrar eventos de creación, actualización y eliminación.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Evento de creación
+        static::created(function ($model) {
+            LoggerHelper::log('Creación', "Se creó el registro con ID {$model->id_usuario} en la tabla Users.", $model->id_usuario);
+        });
+
+        // Evento de actualización
+        static::updated(function ($model) {
+            LoggerHelper::log('Actualización', "Se actualizó el registro con ID {$model->id_usuario} en la tabla Users.", $model->id_usuario);
+        });
+
+        // Evento de eliminación
+        static::deleted(function ($model) {
+            LoggerHelper::log('Eliminación', "Se eliminó el registro con ID {$model->id_usuario} en la tabla Users.", $model->id_usuario);
+        });
     }
 }

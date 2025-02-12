@@ -1,25 +1,23 @@
 <?php
 
 namespace App\Http\Controllers;
-//incluimos Http
-use Illuminate\Support\Facades\Http;
-
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BitacoraController extends Controller
 {
+    /**
+     * Muestra los registros de la bitácora en una vista paginada.
+     */
     public function index()
     {
-        //$response = 'Usuarios';
+        // Recuperar registros desde la tabla de bitácora
+        $logs = DB::table('pfp_schema.tbl_bitacora')
+            ->orderBy('fecha', 'desc') // Ordenar por la fecha más reciente
+            ->paginate(10); // Paginación: 10 registros por página
 
-        return view('modulo_usuarios.Bitacora');  // Asegúrate de tener una vista llamada 'crear_usuario.blade.php'
-       
-        // return view('modulo_usuarios.Usuarios')->with('Usuarios', json_decode($response,true));
-    }
-
-    public function store(Request $request)
-    {
-        
+        // Retornar la vista de la bitácora con los registros
+        return view('modulo_usuarios.bitacora', compact('logs'));
     }
 }

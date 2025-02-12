@@ -14,8 +14,11 @@
             <div class="card-header">
               <h1 class="card-title">LISTA DE PACIENTE</h1>
               <div class="card-tools">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo +</button>
-                <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
+              @if ($permiso_insercion == 1)
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+ NUEVO</button>
+                            @endif
+              <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
+
 
               </div>
             </div>
@@ -64,7 +67,12 @@
                     <td>{{ $Paciente["genero"]}}</td>
                     <th>
                       <div>
-                        <a type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-editor-{{$Paciente['id_paciente']}}">Actualizar <i class="bi bi-pencil-fill"></i> </a>
+                      <div class="btn-group" role="group" aria-label="Basic example">
+                    @if ($permiso_actualizacion == 1)
+                                                    <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-editor-{{ $Medida['id_unidad_medida'] }}">
+                                                        <i class="bi bi-pencil-fill"></i> ACTUALIZAR
+                                                    </a>
+                                                @endif
                         <a type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-historial" @click='pacienteSeleccionado={{$Paciente["dni_paciente"]}}'>Historial <i class="bi bi-clipboard"></i> </a>
                       </div>
                     </th>
@@ -189,6 +197,7 @@
           <div class="modal-footer justify-content-between">
             <button type="button" class="btn btn-default" data-dismiss="modal">CANCELAR</button>
             <button type="submit" class="btn btn-primary">Actualizar</button>
+            
           </div>
         </form>
 
