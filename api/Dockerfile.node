@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 # Copiar archivos del proyecto
 COPY package*.json ./
-RUN npm install
+RUN npm install -g nodemon && npm install
 
 # Copiar el código de la API
 COPY . .

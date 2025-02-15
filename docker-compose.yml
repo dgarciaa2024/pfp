@@ -5,8 +5,6 @@ services:
             context: .
             dockerfile: Dockerfile.laravel
         container_name: laravel_app
-        volumes:
-            - .:/var/www
         ports:
             - "3003:3003"
         env_file:

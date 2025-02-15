@@ -12,22 +12,25 @@ RUN apk update && \
     unzip \
     curl
 
-# Configurar y compilar las extensiones (GD, PDO, PDO_PGSQL y ZIP)
+# Instalar Composer (si no lo has copiado desde otra imagen)
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Configurar y compilar las extensiones (GD, PDO, PDO_PGSQL, ZIP y BC Math)
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
-    docker-php-ext-install -j$(nproc) gd pdo pdo_pgsql zip
+    docker-php-ext-install -j$(nproc) gd pdo pdo_pgsql zip bcmath
 
 # Configurar Git para evitar el error de "dubious ownership"
 RUN git config --global --add safe.directory /var/www/html
-
-# Copiar Composer desde la imagen oficial
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Establecer directorio de trabajo y copiar el código de la aplicación
 WORKDIR /var/www/html
 COPY . .
 
 # Instalar dependencias de Composer
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install
 
+# Exponer el puerto en el que Laravel se ejecutará
 EXPOSE 3003
-CMD ["php","artisan", "serve", "--host=0.0.0.0", "--port=3003"]
+
+# El comando por defecto para levantar Laravel (usando artisan serve)
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=3003"]
