@@ -1,0 +1,33 @@
+FROM php:8.2-fpm-alpine
+
+# Actualizar apk e instalar dependencias necesarias, incluyendo libzip-dev
+RUN apk update && \
+    apk add --no-cache \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    libpq-dev \
+    libzip-dev \
+    git \
+    unzip \
+    curl
+
+# Configurar y compilar las extensiones (GD, PDO, PDO_PGSQL y ZIP)
+RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
+    docker-php-ext-install -j$(nproc) gd pdo pdo_pgsql zip
+
+# Configurar Git para evitar el error de "dubious ownership"
+RUN git config --global --add safe.directory /var/www/html
+
+# Copiar Composer desde la imagen oficial
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Establecer directorio de trabajo y copiar el código de la aplicación
+WORKDIR /var/www/html
+COPY . .
+
+# Instalar dependencias de Composer
+RUN composer install --no-dev --optimize-autoloader
+
+EXPOSE 9000
+CMD ["php-fpm"]

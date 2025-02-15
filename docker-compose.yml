@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+    laravel:
+        build:
+            context: .
+            dockerfile: Dockerfile.laravel
+        container_name: laravel_app
+        volumes:
+            - .:/var/www
+        ports:
+            - "3003:3003"
+        env_file:
+            - .env
+        environment:
+            - APP_ENV=production
+
+    api:
+        build:
+            context: ./api
+            dockerfile: Dockerfile.node
+        container_name: node_api
+        ports:
+            - "3002:3002"
+        env_file:
+            - .env
+        environment:
+            - NODE_ENV=production
+            - DB_HOST=${DB_HOST}
+            - DB_PORT=${DB_PORT}
+            - DB_DATABASE=${DB_NAME}
+            - DB_USERNAME=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
