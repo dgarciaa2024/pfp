@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 3002
 
 # Comando de inicio
-CMD ["node", "index.js"]
+CMD ["nodemon", "index.js"]

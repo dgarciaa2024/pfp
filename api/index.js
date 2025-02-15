@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ limit: "600mb", extended: true }));
 // Conectar a la base de datos (PostgreSQL)
 
 // Ejecutar el server en un puerto específico
-app.listen(3000, () =>
+app.listen(3002, () =>
     console.log(
         "Server Running en el puerto:3000, y conectado a la bd: " +
             process.env.DB_NAME
