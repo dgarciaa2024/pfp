@@ -1,6 +1,7 @@
 // Constante para el paquete de PostgreSQL
 require("dotenv").config();
 const { Pool } = require("pg");
+const multer = require("multer");
 const bodyParser = require("body-parser");
 // Constante para el paquete Express
 const express = require("express");
@@ -10,17 +11,22 @@ var app = express();
 const bp = require("body-parser");
 // Enviando los datos JSON a NodeJS API
 app.use(bp.json());
-app.use(bodyParser.json({ limit: "600mb" })); // Para JSON
-app.use(bodyParser.urlencoded({ limit: "600mb", extended: true }));
+app.use(bodyParser.json({ limit: "50mb" })); // Para JSON
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 // Conectar a la base de datos (PostgreSQL)
-
+const { LocalStorage } = require("node-localstorage");
+const { restart } = require("nodemon");
+const localStorage = new LocalStorage("./scratch");
 // Ejecutar el server en un puerto específico
 app.listen(3002, () =>
     console.log(
-        "Server Running en el puerto:3000, y conectado a la bd: " +
+        "Server Running en el puerto:3002, y conectado a la bd: " +
             process.env.DB_NAME
     )
 );
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const pgClient = new Pool({
     user: process.env.DB_USER,
@@ -39,6 +45,49 @@ pgClient
     .then(() => console.log("✅ Conectado a PostgreSQL en Amazon RDS"))
     .catch((err) => console.error("❌ Error de conexión a PostgreSQL:", err));
 
+const requestLogger = (req, res, next) => {
+    console.log(44, req.url);
+    if (req.url === "/save_credential") return next();
+    const formatModulo = (input) => {
+        let parts = input.split("_");
+
+        if (parts.length === 1) {
+            return input.replace("/", "");
+        } else {
+            return parts.slice(1).join(" ").toUpperCase();
+        }
+    };
+    if (req.method != "GET") {
+        const accion =
+            req.method === "POST"
+                ? "CREAR"
+                : req.method
+                ? "ACTUALIZAR"
+                : "ELIMINAR";
+        const accion_pasada = "POST"
+            ? "CREÓ"
+            : req.method
+            ? "ACTUALIZÓ"
+            : "ELIMINÓ";
+        const modulo = formatModulo(req.url);
+        const {
+            usuario: { id: id_usuario },
+        } = JSON.parse(localStorage.getItem("credenciales"));
+
+        pgClient.query(
+            `INSERT INTO pfp_schema.tbl_bitacora (id_usuario, id_objeto, accion, descripcion) VALUES (${id_usuario},'${modulo}' ,'${accion}', 'SE ${accion_pasada} UN REGISTRO DE ${modulo}');`
+        );
+    }
+    next();
+};
+
+// Usar el middleware en todas las rutas
+app.use(requestLogger);
+app.post("/save_credential", (req, res) => {
+    console.log("salvar credenciales", req.body);
+    localStorage.setItem("credenciales", JSON.stringify(req.body));
+    res.status(200).send("Credenciales guardadas exitosamente");
+});
 // Procedimiento para obtener todos los estados
 app.get("/estados", (req, res) => {
     pgClient.query("SELECT * FROM pfp_schema.get_estados()", (err, result) => {
@@ -2090,7 +2139,8 @@ app.put("/update_paciente", (req, res) => {
 
 // Procedimiento para actualizar  registro en la tabla TBL_FACTURA
 app.get("/get_facturas", (req, res) => {
-    const query = "SELECT * FROM pfp_schema.get_factura()";
+    const query =
+        "SELECT * FROM pfp_schema.get_factura() spf LEFT JOIN LATERAL (SELECT numero_factura FROM pfp_schema.tbl_factura f WHERE f.id_factura = spf.id_factura) ON TRUE";
 
     pgClient.query(query, (err, result) => {
         if (!err) {
@@ -2105,33 +2155,57 @@ app.get("/get_facturas", (req, res) => {
 });
 
 // Procedimiento para insertar un registro en la tabla TBL_FACTURA
-app.post("/insert_factura", (req, res) => {
-    console.log(req.body);
-    const { factura, id_paciente, id_producto, cantidad_producto } = req.body;
+app.post("/insert_factura", upload.single("factura"), async (req, res) => {
+    const { id_paciente, id_producto, cantidad_producto, numero } = req.body;
+    const imagenBase64 = req.file.buffer.toString("base64");
+    const tipoImagen = req.file.mimetype;
+    const imagenBase64ConTipo = `data:${tipoImagen};base64,${imagenBase64}`;
     // Validación de los campos
-    if (!factura || !id_paciente || !id_producto || !cantidad_producto) {
+    if (
+        !imagenBase64 ||
+        !id_paciente ||
+        !id_producto ||
+        !cantidad_producto ||
+        !numero
+    ) {
         return res
             .status(400)
             .send(
-                "Todos los campos son requeridos (factura, id_paciente, id_producto, cantidad_producto)"
+                "Todos los campos son requeridos (factura, id_paciente, id_producto, cantidad_producto, numero)"
             );
     }
-
-    // Modificamos la consulta para recibir el mensaje de salida
-    const query = "CALL pfp_schema.insert_factura($1, $2, $3, $4, $5)";
-    const values = [factura, id_paciente, id_producto, cantidad_producto, null];
-
-    // Ejecutar la consulta
-    pgClient.query(query, values, (err, result) => {
-        if (!err) {
-            const mensaje =
-                result.rows[0]?.mensaje || "Factura insertada exitosamente";
-            res.status(201).send(mensaje);
-        } else {
-            console.log(err);
-            res.status(500).send("Error al insertar la factura");
-        }
-    });
+    const exist = await pgClient.query(
+        "SELECT COUNT(*) FROM pfp_schema.tbl_factura WHERE numero_factura = $1",
+        [numero]
+    );
+    if (parseInt(exist.rows[0].count))
+        return res.status(500).send("El número de factura ya existe");
+    try {
+        // Modificamos la consulta para recibir el mensaje de salida
+        const query = "CALL pfp_schema.insert_factura($1, $2, $3, $4, $5)";
+        const values = [
+            imagenBase64ConTipo,
+            id_paciente,
+            id_producto,
+            cantidad_producto,
+            null,
+        ];
+        // Ejecutar la consulta
+        await pgClient.query(query, values);
+        const result = await pgClient.query(
+            "SELECT id_factura FROM pfp_schema.tbl_factura ORDER BY id_factura DESC LIMIT 1"
+        );
+        console.log(result.rows);
+        await pgClient.query(
+            "UPDATE pfp_schema.tbl_factura SET numero_factura = $1 WHERE id_factura = $2",
+            [numero, result.rows[0].id_factura]
+        );
+        const mensaje =
+            result.rows.id_registro || "Factura insertada exitosamente";
+        res.status(201).send(mensaje);
+    } catch (e) {
+        res.status(500).send("No se pudo ingresar la factura");
+    }
 });
 
 // Procedimiento para actualizar un registro en la tabla TBL_FACTURA
@@ -2344,7 +2418,10 @@ app.post("/insert_registro", (req, res) => {
                 console.error("Error al insertar el registro:", err);
                 res.status(500).send("Error al insertar el registro");
             } else {
-                res.status(200).send("Registro insertado exitosamente");
+                const {
+                    usuario: { nombreUsuario },
+                } = JSON.parse(localStorage.getItem("credenciales"));
+                res.status(200).send(nombreUsuario);
             }
         }
     );
