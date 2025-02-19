@@ -11,8 +11,8 @@ class RolController extends Controller
     public function index()
     {
         // Consultar datos desde la API
-        $response = Http::get('http://localhost:3000/get_roles');
-        $tabla_estado = Http::get('http://localhost:3000/estados');
+        $response = Http::get('http://localhost:3002/get_roles');
+        $tabla_estado = Http::get('http://localhost:3002/estados');
 
         // Manejo de sesión y permisos
         $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -51,7 +51,7 @@ class RolController extends Controller
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3000/insert_rol', [
+        $response = Http::post('http://localhost:3002/insert_rol', [
             'rol' => $request->get('rol'),
             'descripcion' => $request->get('descripcion'),
             'id_estado' => $request->get('estdo'),
@@ -62,7 +62,7 @@ class RolController extends Controller
 
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3000/update_rol', [
+        $response = Http::put('http://localhost:3002/update_rol', [
             'id_rol' => $request->get('cod'),
             'rol' => $request->get('rol'),
             'descripcion' => $request->get('descripcion'),

@@ -12,8 +12,8 @@ class TipoEntidadController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3000/get_tipo_entidad');
-        $tabla_estado = Http::get('http://localhost:3000/estados');
+        $response = Http::get('http://localhost:3002/get_tipo_entidad');
+        $tabla_estado = Http::get('http://localhost:3002/estados');
 
        
         // Manejo de sesión y permisos
@@ -52,7 +52,7 @@ return view('modulo_mantenimiento.TipoEntidad')->with([
 public function store(Request $request)
 {
   
-        $response = Http::post('http://localhost:3000/insert_tipo_entidad', [
+        $response = Http::post('http://localhost:3002/insert_tipo_entidad', [
             'tipo_entidad' => $request->get('tipo'),
             'id_estado' => $request->get('estdo')
         ]);
@@ -64,7 +64,7 @@ public function store(Request $request)
 public function update(Request $request)
 {
    
-        $response = Http::put('http://localhost:3000/update_tipo_entidad', [
+        $response = Http::put('http://localhost:3002/update_tipo_entidad', [
             'id_tipo_entidad' => $request->get('cod'),
             'tipo_entidad' => $request->get('tipo'),
             'id_estado' => $request->get('estdo'),

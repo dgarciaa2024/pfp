@@ -14,9 +14,9 @@ class UnidadMedidaController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3000/get_unidad_medida');
-        $tabla_estado = Http::get('http://localhost:3000/estados');
-        $tabla_rol = Http::get('http://localhost:3000/get_roles');
+        $response = Http::get('http://localhost:3002/get_unidad_medida');
+        $tabla_estado = Http::get('http://localhost:3002/estados');
+        $tabla_rol = Http::get('http://localhost:3002/get_roles');
  
         // Manejo de sesión y permisos
         $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -54,7 +54,7 @@ if ($permisos) {
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3000/insert_unidad_medida', [
+        $response = Http::post('http://localhost:3002/insert_unidad_medida', [
             'unidad_medida' => $request->get('unidad'),
              'id_estado' => $request->get('estdo')
           
@@ -69,7 +69,7 @@ if ($permisos) {
     
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3000/update_unidad_medida', [
+        $response = Http::put('http://localhost:3002/update_unidad_medida', [
             'id_unidad_medida' => $request->get('cod'),
             'unidad_medida' => $request->get('unidad'),
             'id_estado' => $request->get('estdo'),

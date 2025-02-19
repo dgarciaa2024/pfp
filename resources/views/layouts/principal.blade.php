@@ -1,4 +1,3 @@
-
 @php use Illuminate\Support\Facades\Auth; @endphp
 
 <!DOCTYPE html>
@@ -18,18 +17,18 @@
   <!-- iconos de bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-   <!-- DataTables -->
-   <link rel="stylesheet" href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 
   <!--Jquier-->
   <script src="{{asset('/plugins/jquery/jquery.js')}} "></script>
-  
-   <!-- Theme style -->
-   <link rel="stylesheet" href="dist/css/adminlte.min.css">
 
-    <!--cosas del modal-->
+  <!-- Theme style -->
+  <link rel="stylesheet" href="dist/css/adminlte.min.css">
+
+  <!--cosas del modal-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
@@ -65,15 +64,15 @@
       background-color: #DC3545;
     } */
 
-   /*  body {
+    /*  body {
       background-color: #DC3545;
     }*/
-   
+
     .main-sidebar {
       background-color: #800020;
     }
-</style>
 
+  </style>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -87,7 +86,7 @@
   <!--TODO LO DEL MENU -->
   <!-- Navbar FONDO BLACO DEL MENU-->
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Left navbar links -->  
+    <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
@@ -121,7 +120,7 @@
       </li>
 
       <!--Menú desplegable de mensajes en la barra de navegación -->
-    
+
       <li class="nav-item dropdown user-menu">
         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
           <img src="../../dist/img/Foto_perfil.png" class="user-image img-circle elevation-2" alt="User Image">
@@ -129,11 +128,11 @@
         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <!-- User image -->
           <li class="user-header bg-primary">
-  <img src="../../dist/img/Foto_perfil.png" class="img-circle elevation-2" alt="User Image">
-  <p>
-    <small>{{ Auth::check() ? Auth::user()->nombre_usuario : 'Invitado' }}</small>
-  </p>
-</li>
+            <img src="../../dist/img/Foto_perfil.png" class="img-circle elevation-2" alt="User Image">
+            <p>
+              <small>{{ Auth::check() ? Auth::user()->nombre_usuario : 'Invitado' }}</small>
+            </p>
+          </li>
           <!-- Menu Body -->
           <li class="user-body">
             <div class="row">
@@ -146,17 +145,17 @@
           <!-- Menu Footer-->
           <li class="user-footer">
             <a href="AdministrarPerfil" class="btn btn-default btn-flat">PERFIL</a>
-            
-             <!-- Boton Logout o cierre de sesión-->
-             <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-    @csrf
-    <button type="submit" class="btn btn-default btn-flat">CERRAR SESIÓN</button>
-</form>
+
+            <!-- Boton Logout o cierre de sesión-->
+            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+              @csrf
+              <button type="submit" class="btn btn-default btn-flat">CERRAR SESIÓN</button>
+            </form>
 
           </li>
         </ul>
       </li>
-      
+
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
           <i class="fas fa-expand-arrows-alt"></i>
@@ -170,14 +169,15 @@
     </ul>
   </nav>
   <!-- /.navbar -->
-  
+
   <!-- /FIN DEL MENU DE MENSAJES, NOTIFICACIONES -->
-  
+
   <!-- /FIN DEL MENU DE MENSAJES, NOTIFICACIONES -->
 
   <!-- /BARRA DEL MENU LADO IZQUIERDO -->
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4"><!-- NO TE OLVIDES QUE AQUI VA EL COLOR-->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- NO TE OLVIDES QUE AQUI VA EL COLOR-->
     <!-- Brand Logo -->
     <a href="" class="brand-link">
       <img src="dist/img/Foto_perfil.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
@@ -185,7 +185,7 @@
     </a>
 
     <!-- Sidebar -->
-    <div class="sidebar">  
+    <div class="sidebar">
       <!-- LOS MODULOS -->
       <!-- Sidebar Menu -->
       <nav class="mt-2">
@@ -193,20 +193,20 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
 
-               @include('layouts.modulos')
-         
+          @include('layouts.modulos')
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
-      </div> 
-      <!-- /FIN DEN MENU -->
+    </div>
+    <!-- /FIN DEN MENU -->
     <!-- /.sidebar -->
   </aside>
- 
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-   <!-- contenido para los modulos por si se quiere agregar  @yield('content')  -->
-  <!-- /.content-wrapper -->
+    <!-- contenido para los modulos por si se quiere agregar  @yield('content')  -->
+    <!-- /.content-wrapper -->
     <!-- Content Header (Page header) -->
     <!--<div class="container text-center mt-5">
     <img src="dist/img/AcercaDe.png" alt="Portal de Fidelización" class="img-fluid mb-4" style="max-width: 400px;">
@@ -216,12 +216,12 @@
     </p>
     
   </div>-->
-    </div> 
+  </div>
 
 
 
 
-   <!--ESTE ES EL FINAL -->
+  <!--ESTE ES EL FINAL -->
   <!-- /.content-wrapper -->
   <footer class="main-footer">
     <strong>Derechos Reservados &copy; 2024 <a href="https://www.unah.edu.hn/">UNAH</a></strong>
@@ -236,60 +236,61 @@
   </aside>
   <!-- /.control-sidebar -->
 
-<!-- ./wrapper -->
+  <!-- ./wrapper -->
 
 
-<!-- jQuery -->
-<script src="plugins/jquery/jquery.min.js"></script>
-<!-- jQuery UI 1.11.4 -->
-<script src="plugins/jquery-ui/jquery-ui.min.js"></script>
-<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-<script>
-  $.widget.bridge('uibutton', $.ui.button)
-</script>
-<!-- Bootstrap 4 -->
-<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- ChartJS -->
-<script src="plugins/chart.js/Chart.min.js"></script>
-<!-- Sparkline -->
-<script src="plugins/sparklines/sparkline.js"></script>
-<!-- JQVMap -->
-<script src="plugins/jqvmap/jquery.vmap.min.js"></script>
-<script src="plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
-<!-- jQuery Knob Chart -->
-<script src="plugins/jquery-knob/jquery.knob.min.js"></script>
-<!-- daterangepicker -->
-<script src="plugins/moment/moment.min.js"></script>
-<script src="plugins/daterangepicker/daterangepicker.js"></script>
-<!-- Tempusdominus Bootstrap 4 -->
-<script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-<!-- Summernote -->
-<script src="plugins/summernote/summernote-bs4.min.js"></script>
-<!-- overlayScrollbars -->
-<script src="plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-<!-- AdminLTE App -->
-<script src="dist/js/adminlte.js"></script>
-<!-- AdminLTE for demo purposes -->
-<!--<script src="dist/js/demo.js"></script>-->
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="dist/js/pages/dashboard.js"></script>
+  <!-- jQuery -->
+  <script src="plugins/jquery/jquery.min.js"></script>
+  <!-- jQuery UI 1.11.4 -->
+  <script src="plugins/jquery-ui/jquery-ui.min.js"></script>
+  <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+  <script>
+    $.widget.bridge('uibutton', $.ui.button)
+
+  </script>
+  <!-- Bootstrap 4 -->
+  <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- ChartJS -->
+  <script src="plugins/chart.js/Chart.min.js"></script>
+  <!-- Sparkline -->
+  <script src="plugins/sparklines/sparkline.js"></script>
+  <!-- JQVMap -->
+  <script src="plugins/jqvmap/jquery.vmap.min.js"></script>
+  <script src="plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+  <!-- jQuery Knob Chart -->
+  <script src="plugins/jquery-knob/jquery.knob.min.js"></script>
+  <!-- daterangepicker -->
+  <script src="plugins/moment/moment.min.js"></script>
+  <script src="plugins/daterangepicker/daterangepicker.js"></script>
+  <!-- Tempusdominus Bootstrap 4 -->
+  <script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+  <!-- Summernote -->
+  <script src="plugins/summernote/summernote-bs4.min.js"></script>
+  <!-- overlayScrollbars -->
+  <script src="plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+  <!-- AdminLTE App -->
+  <script src="dist/js/adminlte.js"></script>
+  <!-- AdminLTE for demo purposes -->
+  <!--<script src="dist/js/demo.js"></script>-->
+  <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+  <script src="dist/js/pages/dashboard.js"></script>
 
 
 
 
-<!-- DataTables  & Plugins -->
-<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-<script src="../../plugins/jszip/jszip.min.js"></script>
-<script src="../../plugins/pdfmake/pdfmake.min.js"></script>
-<script src="../../plugins/pdfmake/vfs_fonts.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+  <!-- DataTables  & Plugins -->
+  <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+  <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+  <script src="../../plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+  <script src="../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+  <script src="../../plugins/jszip/jszip.min.js"></script>
+  <script src="../../plugins/pdfmake/pdfmake.min.js"></script>
+  <script src="../../plugins/pdfmake/vfs_fonts.js"></script>
+  <script src="../../plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+  <script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
+  <script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 
 
   <!-- Select2 JS -->
@@ -297,91 +298,90 @@
 
 
 
-<!-- Page specific script -->
-<script>
-  $(function () {
-    $("#example1").DataTable({
-      "responsive": true,
-      "lengthChange": false,
-      "autoWidth": false,
-      "info": true,
-      "buttons": false,
-      "language": {
-        "decimal": ",",
-        "thousands": ".",
-        "lengthMenu": "Mostrar MENU registros por página",
-        "zeroRecords": "No se encontraron resultados",
-        "info": "Mostrando START a END de TOTAL registros",
-        "infoEmpty": "No hay registros disponibles",
-        "infoFiltered": "(filtrado de MAX registros totales)",
-        "search": "Buscar:",
-        "paginate": {
-          "first": "Primero",
-          "last": "Último",
-          "next": "Siguiente",
-          "previous": "Anterior"
+  <!-- Page specific script -->
+  <script>
+    $(function() {
+      $("#example1").DataTable({
+        "responsive": true
+        , "lengthChange": false
+        , "autoWidth": false
+        , "info": true
+        , "buttons": false
+        , "language": {
+          "decimal": ","
+          , "thousands": "."
+          , "lengthMenu": "Mostrar MENU registros por página"
+          , "zeroRecords": "No se encontraron resultados"
+          , "info": "Mostrando START a END de TOTAL registros"
+          , "infoEmpty": "No hay registros disponibles"
+          , "infoFiltered": "(filtrado de MAX registros totales)"
+          , "search": "Buscar:"
+          , "paginate": {
+            "first": "Primero"
+            , "last": "Último"
+            , "next": "Siguiente"
+            , "previous": "Anterior"
+          }
         }
-      }
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": true,
-      "searching": true,
-      "ordering": true,
-      "info": true,
-      "autoWidth": true,
-      "responsive": true,
-      "language": {
-        "decimal": ",",
-        "thousands": ".",
-        "lengthMenu": "Mostrar MENU registros por página",
-        "zeroRecords": "No se encontraron resultados",
-        "info": "Mostrando inicio a fin de TOTAL registros",
-        "infoEmpty": "No hay registros disponibles",
-        "infoFiltered": "(filtrado de MAX registros totales)",
-        "search": "Buscar:",
-        "paginate": {
-          "first": "Primero",
-          "last": "Último",
-          "next": "Siguiente",
-          "previous": "Anterior"
+      $('#example2').DataTable({
+        "paging": true
+        , "lengthChange": true
+        , "searching": true
+        , "ordering": true
+        , "info": true
+        , "autoWidth": true
+        , "responsive": true
+        , "language": {
+          "decimal": ","
+          , "thousands": "."
+          , "lengthMenu": "Mostrar MENU registros por página"
+          , "zeroRecords": "No se encontraron resultados"
+          , "info": "Mostrando inicio a fin de TOTAL registros"
+          , "infoEmpty": "No hay registros disponibles"
+          , "infoFiltered": "(filtrado de MAX registros totales)"
+          , "search": "Buscar:"
+          , "paginate": {
+            "first": "Primero"
+            , "last": "Último"
+            , "next": "Siguiente"
+            , "previous": "Anterior"
+          }
         }
-      }
+      });
+
+      $("#TablaCanje").DataTable({
+        "responsive": true
+        , "lengthChange": false
+        , "autoWidth": false
+        , "buttons": [{
+          extend: "excel"
+          , text: '<i class="fa fa-file-excel-o"></i>   Excel'
+          , className: 'btn btn-success'
+          , exportOptions: {
+            columns: ':not(:last-child)' // Excluye la última columna (Acciones)
+          }
+        }]
+        , "language": {
+          "decimal": ","
+          , "thousands": "."
+          , "lengthMenu": "Mostrar _MENU_ registros por página"
+          , "zeroRecords": "No se encontraron resultados"
+          , "info": "Mostrando _START_ a _END_ de _TOTAL_ registros"
+          , "infoEmpty": "No hay registros disponibles"
+          , "infoFiltered": "(filtrado de _MAX_ registros totales)"
+          , "search": "Buscar:"
+          , "paginate": {
+            "first": "Primero"
+            , "last": "Último"
+            , "next": "Siguiente"
+            , "previous": "Anterior"
+          }
+        }
+      }).buttons().container().appendTo('#TablaCanje_wrapper .col-md-6:eq(0)');
+
+
     });
 
-    $("#TablaCanje").DataTable({
-    "responsive": true,
-    "lengthChange": false,
-    "autoWidth": false,
-    "buttons": [
-        {
-            extend: "excel",
-            text: '<i class="fa fa-file-excel-o"></i>   Excel',
-            className: 'btn btn-success',
-            exportOptions: {
-                columns: ':not(:last-child)' // Excluye la última columna (Acciones)
-            }
-        }
-    ],
-    "language": {
-        "decimal": ",",
-        "thousands": ".",
-        "lengthMenu": "Mostrar _MENU_ registros por página",
-        "zeroRecords": "No se encontraron resultados",
-        "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-        "infoEmpty": "No hay registros disponibles",
-        "infoFiltered": "(filtrado de _MAX_ registros totales)",
-        "search": "Buscar:",
-        "paginate": {
-            "first": "Primero",
-            "last": "Último",
-            "next": "Siguiente",
-            "previous": "Anterior"
-        }
-    }
-}).buttons().container().appendTo('#TablaCanje_wrapper .col-md-6:eq(0)');
-
-
-  });
-</script>
+  </script>

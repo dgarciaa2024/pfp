@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -9,15 +10,16 @@ use App\Mail\ResetPasswordMail; // Add this line
 use App\Mail\ResetPasswordNewMail; // Add this line
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Crypt;
 
 class UsuarioController extends Controller
 {
     public function index()
     {
-        $response = Http::get('http://localhost:3000/get_usuarios');
-        $tabla_estado = Http::get('http://localhost:3000/estados');
-        $tabla_rol = Http::get('http://localhost:3000/get_roles');
-        
+        $response = Http::get('http://localhost:3002/get_usuarios');
+        $tabla_estado = Http::get('http://localhost:3002/estados');
+        $tabla_rol = Http::get('http://localhost:3002/get_roles');
+
         // Manejo de sesión y permisos
         $usuario = session('usuario'); // Obtener usuario desde la sesión
 
@@ -48,10 +50,18 @@ class UsuarioController extends Controller
         // dd(session('usuario'), $permiso_insercion, $permiso_actualizacion, $permiso_eliminacion);
 
         // Retornar vista con datos y permisos
+        $response_mapped = array_map(function ($item) {
+            try {
+                $item['contrasena'] = Crypt::decryptString($item['contrasena']);
+                return $item;
+            } catch (DecryptException $e) {
+                return $item;
+            }
+        }, json_decode($response, true));
         return view('modulo_usuarios.Usuarios')->with([
             'tblrol' => json_decode($tabla_rol, true),
             'tblestado' => json_decode($tabla_estado, true),
-            'Usuarios' => json_decode($response, true),
+            'Usuarios' => $response_mapped,
             'permiso_insercion' => $permiso_insercion,
             'permiso_actualizacion' => $permiso_actualizacion,
             'permiso_eliminacion' => $permiso_eliminacion,
@@ -67,10 +77,10 @@ class UsuarioController extends Controller
             ->value('valor');
         $duracionContrasena = $duracionContrasena ? (int) $duracionContrasena : 0;
 
-        $response = Http::post('http://localhost:3000/insert_usuario', [
+        $response = Http::post('http://localhost:3002/insert_usuario', [
             'usuario' => $request->get('usu'),
             'nombre_usuario' => $request->get('nom_usu'),
-            'contrasena' => $newPassword,
+            'contrasena' => Crypt::encryptString($newPassword),
             'id_rol' => $request->get('rol'),
             'email' => $request->get('correo'),
             'primer_ingreso' => 1,
@@ -86,11 +96,11 @@ class UsuarioController extends Controller
 
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3000/update_usuario', [
+        $response = Http::put('http://localhost:3002/update_usuario', [
             'id_usuario' => $request->get('cod'),
             'usuario' => $request->get('usu'),
             'nombre_usuario' => $request->get('nom_usu'),
-            'contrasena' => $request->get('contra'),
+            'contrasena' => Crypt::encryptString($request->get('contra')),
             'id_rol' => $request->get('rol'),
             'email' => $request->get('correo'),
             'primer_ingreso' => $request->get('ingreso'),

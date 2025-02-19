@@ -14,10 +14,10 @@ class PermisoController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3000/get_permisos');
-        $tabla_estado = Http::get('http://localhost:3000/estados');
-        $tabla_objeto= Http::get('http://localhost:3000/get_objetos');
-        $tabla_rol = Http::get('http://localhost:3000/get_roles');
+        $response = Http::get('http://localhost:3002/get_permisos');
+        $tabla_estado = Http::get('http://localhost:3002/estados');
+        $tabla_objeto= Http::get('http://localhost:3002/get_objetos');
+        $tabla_rol = Http::get('http://localhost:3002/get_roles');
 
          // Manejo de sesión y permisos
          $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -59,7 +59,7 @@ class PermisoController extends Controller
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3000/insert_permiso', [
+        $response = Http::post('http://localhost:3002/insert_permiso', [
             'id_rol' => $request->get('rol'),
             'id_objeto' => $request->get('objeto'),
             'permiso_creacion' => $request->get('permiso_creacion'),
@@ -74,7 +74,7 @@ class PermisoController extends Controller
 
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3000/update_permiso', [
+        $response = Http::put('http://localhost:3002/update_permiso', [
             'id_permiso' => $request->get('cod'),
             'id_rol' => $request->get('rol'),
             'id_objeto' => $request->get('objeto'),
@@ -92,7 +92,7 @@ class PermisoController extends Controller
     public function destroy($id_permiso)
     {
         // Lógica para eliminar el objeto de la base de datos
-        $response = Http::delete('http://localhost:3000/delete_permiso', [
+        $response = Http::delete('http://localhost:3002/delete_permiso', [
             'id_permiso' => $id_permiso
         ]);
     

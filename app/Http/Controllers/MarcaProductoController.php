@@ -9,66 +9,66 @@ class MarcaProductoController extends Controller
 {
     public function index()
     {
-        $response = Http::get('http://localhost:3000/get_marca_producto');
-        $tabla_estado = Http::get('http://localhost:3000/estados');
+        $response = Http::get('http://localhost:3002/get_marca_producto');
+        $tabla_estado = Http::get('http://localhost:3002/estados');
 
-         // Manejo de sesión y permisos
-         $usuario = session('usuario'); // Obtener usuario desde la sesión
+        // Manejo de sesión y permisos
+        $usuario = session('usuario'); // Obtener usuario desde la sesión
 
-         // Permisos predeterminados
-         $permiso_insercion = 2;
-         $permiso_actualizacion = 2;
-         $permiso_eliminacion = 2;
- 
-         if ($usuario) {
-             $idRolUsuario = $usuario['id_rol']; // Obtener el rol del usuario desde la sesión
- 
-             // Consultar permisos en la base de datos para el rol y objeto 1 (usuarios)
-             $permisos = DB::table('pfp_schema.tbl_permiso')
-                 ->where('id_rol', $idRolUsuario)
-                 ->where('id_objeto', 19) // ID del objeto que corresponde a "marca producto"
-                 ->first();
- 
+        // Permisos predeterminados
+        $permiso_insercion = 2;
+        $permiso_actualizacion = 2;
+        $permiso_eliminacion = 2;
+
+        if ($usuario) {
+            $idRolUsuario = $usuario['id_rol']; // Obtener el rol del usuario desde la sesión
+
+            // Consultar permisos en la base de datos para el rol y objeto 1 (usuarios)
+            $permisos = DB::table('pfp_schema.tbl_permiso')
+                ->where('id_rol', $idRolUsuario)
+                ->where('id_objeto', 19) // ID del objeto que corresponde a "marca producto"
+                ->first();
+
             // Si se encuentran permisos para este rol y objeto, asignarlos
             if ($permisos) {
-             $permiso_insercion = $permisos->permiso_creacion;
-             $permiso_actualizacion = $permisos->permiso_actualizacion;
-             $permiso_eliminacion = $permisos->permiso_eliminacion;
-         }
-     }
-            return view('modulo_mantenimiento.Marca')->with([ 
-             
-            'Marcas'=> json_decode($response,true),
-            'tblestado'=> json_decode($tabla_estado,true),
+                $permiso_insercion = $permisos->permiso_creacion;
+                $permiso_actualizacion = $permisos->permiso_actualizacion;
+                $permiso_eliminacion = $permisos->permiso_eliminacion;
+            }
+        }
+        return view('modulo_mantenimiento.Marca')->with([
+
+            'Marcas' => json_decode($response, true),
+            'tblestado' => json_decode($tabla_estado, true),
             'permiso_insercion' => $permiso_insercion,
             'permiso_actualizacion' => $permiso_actualizacion,
             'permiso_eliminacion' => $permiso_eliminacion,
         ]);
-       
-       
+
+
     }
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3000/insert_marca_producto', [
-        'marca_producto' => $request->get('marca'),
-        'id_estado' => $request->get('estdo')
-    ]);
-    return redirect('Marca');
-}
+        $response = Http::post('http://localhost:3002/insert_marca_producto', [
+            'marca_producto' => $request->get('marca'),
+            'id_estado' => $request->get('estdo')
+        ]);
+        return redirect('Marca');
+    }
 
-public function update(Request $request)
-{
-    $response = Http::put('http://localhost:3000/update_marca_producto', [
-        'id_marca_producto' => $request->get('cod'),
-        'marca_producto' => $request->get('marca'),
-         'id_estado' => $request->get('estdo'),
-        
-    ]);
+    public function update(Request $request)
+    {
+        $response = Http::put('http://localhost:3002/update_marca_producto', [
+            'id_marca_producto' => $request->get('cod'),
+            'marca_producto' => $request->get('marca'),
+            'id_estado' => $request->get('estdo'),
 
-    return redirect('Marca');
+        ]);
 
-}
+        return redirect('Marca');
+
+    }
 
 
 }

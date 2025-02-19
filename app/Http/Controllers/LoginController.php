@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
@@ -22,24 +24,38 @@ class LoginController extends Controller
     {
         // Buscar al usuario por nombre de usuario
         $usuario = User::where('nombre_usuario', $request->nombre_usuario)->first();
-
+        $response = Http::post('http://localhost:3002/save_credential', [
+            'usuario' => [
+                'id' => $usuario->id_usuario,
+                'nombreUsuario' => $usuario->nombre_usuario,
+                'idRol' => $usuario->id_rol,
+            ]
+        ]);
         if ($usuario) {
             // Consultar el estado del usuario en la tabla pfp_schema.tbl_usuario
             $estadoUsuario = DB::table('pfp_schema.tbl_usuario')
                 ->where('nombre_usuario', $request->nombre_usuario)
                 ->first(); // Aquí obtenemos todo el registro para usar fecha_vencimiento
-
+            $pwd = "";
+            try {
+                $pwd = Crypt::decryptString($estadoUsuario->contrasena);
+            } catch (DecryptException $e) {
+                $pwd = $estadoUsuario->contrasena;
+            }
             if ($estadoUsuario && $estadoUsuario->id_estado == 4) { // Assuming 4 is 'Pendiente'
                 // Asegurarse de que la contraseña ingresada coincida con la de la base de datos
-                if ($request->contrasena === $estadoUsuario->contrasena) {
+
+                if ($request->contrasena === $pwd) {
                     Auth::login($usuario); // Log them in even if they are pending
-                    session(['usuario' => [
-                        'id' => $usuario->id,
-                        'nombre_usuario' => $usuario->nombre_usuario,
-                        'id_rol' => $usuario->id_rol,
-                        'estadoc' => 'PENDIENTE' // Optionally store the state
-                    ]]);
-                    return redirect()->route('cambiar-contrasena-new.index'); 
+                    session([
+                        'usuario' => [
+                            'id' => $usuario->id,
+                            'nombre_usuario' => $usuario->nombre_usuario,
+                            'id_rol' => $usuario->id_rol,
+                            'estadoc' => 'PENDIENTE' // Optionally store the state
+                        ]
+                    ]);
+                    return redirect()->route('cambiar-contrasena-new.index');
                 } else {
                     return back()->withErrors([
                         'login' => 'Usuario o contraseña incorrectos. Favor intente nuevamente.',
@@ -62,9 +78,8 @@ class LoginController extends Controller
                 // Consultar intentos fallidos actuales (implementando una lógica alternativa)
                 $intentosKey = 'intentos_fallidos_' . $request->nombre_usuario; // Clave de sesión por usuario
                 $intentosFallidos = session($intentosKey, 0); // Si no existe, será 0
-
                 // Verificar si la contraseña es correcta (sin encriptación)
-                if ($request->contrasena === $estadoUsuario->contrasena) {
+                if ($request->contrasena === $pwd) {
                     // Restablecer los intentos fallidos
                     session([$intentosKey => 0]);
 
@@ -72,11 +87,13 @@ class LoginController extends Controller
                     Auth::login($usuario);
 
                     // Guardar datos relevantes del usuario en la sesión
-                    session(['usuario' => [
-                        'id' => $usuario->id,
-                        'nombre_usuario' => $usuario->nombre_usuario,
-                        'id_rol' => $usuario->id_rol,
-                    ]]);
+                    session([
+                        'usuario' => [
+                            'id' => $usuario->id,
+                            'nombre_usuario' => $usuario->nombre_usuario,
+                            'id_rol' => $usuario->id_rol,
+                        ]
+                    ]);
 
                     // Guardar fecha de vencimiento en la base de datos
                     $duracionContrasena = DB::table('pfp_schema.tbl_parametro')
@@ -132,7 +149,7 @@ class LoginController extends Controller
     public function verificar_Login(Request $request)
     {
         // Obtener los usuarios desde el endpoint
-        $response = Http::get('http://localhost:3000/get_usuarios');
+        $response = Http::get('http://localhost:3002/get_usuarios');
         $usuarios = json_decode($response->body(), true);
 
         // Recibir los datos del formulario
@@ -152,12 +169,14 @@ class LoginController extends Controller
             }
 
             // Guardar datos relevantes del usuario en la sesión
-            session(['usuario' => [
-                'id_usuario' => $usuarioAutenticado['id_usuario'],
-                'nombre_usuario' => $usuarioAutenticado['nombre_usuario'],
-                'email' => $usuarioAutenticado['email'],
-                'id_rol' => $usuarioAutenticado['id_rol'],
-            ]]);
+            session([
+                'usuario' => [
+                    'id_usuario' => $usuarioAutenticado['id_usuario'],
+                    'nombre_usuario' => $usuarioAutenticado['nombre_usuario'],
+                    'email' => $usuarioAutenticado['email'],
+                    'id_rol' => $usuarioAutenticado['id_rol'],
+                ]
+            ]);
 
             // Iniciar sesión en el sistema
             Auth::loginUsingId($usuarioAutenticado['id_usuario']); // Añadido para autenticación

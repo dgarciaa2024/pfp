@@ -12,20 +12,42 @@
           <div class="card-header">
             <h1 class="card-title">LISTA DE FACTURAS DE PRODUCTOS CANJEABLES</h1>
             <div class="card-tools">
-            @if ($permiso_insercion == 1)
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+ NUEVO</button>
-                            @endif
+              @if ($permiso_insercion == 1)
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+ NUEVO</button>
+              @endif
 
-                            <a href="{{ url('') }}" class="btn btn-secondary">VOLVER</a>
+              <a href="{{ url('') }}" class="btn btn-secondary">VOLVER</a>
             </div>
           </div>
           <!-- Cuerpo de la tarjeta -->
           <div class="card-body">
+            <script>
+              function mostrarImagen(img) {
+                document.getElementById('modal-img').src = img.src;
+              }
+
+            </script>
+            <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Imagen en tamaño completo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body text-center">
+                    <img id="modal-img" class="img-fluid" alt="Imagen ampliada">
+                  </div>
+                </div>
+              </div>
+            </div>
             <!-- Tabla -->
             <table id="TablaCanje" class="table table-bordered table-striped table-responsive">
               <thead class="text-center bg-danger text-white">
                 <tr>
                   <th>Id</th>
+                  <th>Numero</th>
                   <th>Factura</th>
                   <th>Dni Paciente</th>
                   <th>Nombre Paciente</th>
@@ -34,14 +56,15 @@
                   <th>Cantidad Producto</th>
                   <th>Fecha</th>
                   <th>Atendio</th>
-                 <!--  <th>Accion</th>-->
+                  <!--  <th>Accion</th>-->
                 </tr>
               </thead>
               <tbody>
                 @foreach ($Facturas as $Factura)
                 <tr>
                   <td>{{ $Factura['id_factura'] }}</td>
-                  <td><img src="{{ $Factura['factura'] }}" width="100px" height="100px"></td>
+                  <td>{{ $Factura['numero_factura'] }}</td>
+                  <td><img src="{{ $Factura['factura'] }}" class="img-thumbnail mt-3" style="width: 200px; cursor: pointer;" data-toggle="modal" data-target="#imageModal" onclick="mostrarImagen(this)" /></td>
                   <td>{{ $Factura['dni_paciente'] }}</td>
                   <td>{{ $Factura['nombre_paciente'] }}</td>
                   <td>{{ $Factura['apellido_paciente'] }}</td>
@@ -232,12 +255,14 @@
 
 
 <!-- Modal para agregar una factura -->
-<div x-data='dataHandler(@json($Facturas),@json($tblpaciente), @json($tblproducto), @json($Canjes), @json($tblfarmacia))'>
+<div x-data='dataHandler(@json($Facturas),@json($tblpaciente), @json($tblproducto), @json($Canjes), @json($tblfarmacia),@json($canjeDirecto))'>
   <script>
-    function dataHandler(facturas, pacientes, productos, canjes, farmacias) {
+    function dataHandler(facturas, pacientes, productos, canjes, farmacias, canjeDirecto) {
+      console.log(261, canjeDirecto)
       console.log(facturas, pacientes, productos, canjes, farmacias);
       return {
-        mensajeCanje: ''
+        numero: ''
+        , mensajeCanje: ''
         , productoSeleccionado: ''
         , nombrePaciente: ''
         , idPaciente: ''
@@ -274,6 +299,7 @@
         , comentarios: ''
         , verificarCanje: function(pacienteId, productoId, farmaciaId, cantidad) {
           if (pacienteId && productoId) {
+            console.log(pacientes, productos)
             const pacienteSeleccionado = pacientes.find(p => p.id_paciente == pacienteId);
             const productoSeleccionado = productos.find(p => p.id_producto == productoId);
             const {
@@ -317,7 +343,7 @@
             if (productosRestantes < escala) {
               this.canjeHabilitado = false;
               this.canjeMensaje = 'El paciente no puede canjear, le faltan ' + (escala - productosRestantes) + ' unidades';
-              return
+              return;
             }
             if (productosRestantes >= escala) {
               this.canjeHabilitado = true;
@@ -342,6 +368,17 @@
           this.idProducto = idProducto
           this.nombreProducto = nombreProducto
         }
+        , formatInput() {
+          let formatted = '';
+          let digits = this.numero.replace(/\D/g, '');
+          if (digits.length > 16) digits = digits.slice(0, 16);
+          if (digits.length > 0) formatted += digits.substring(0, Math.min(3, digits.length));
+          if (digits.length > 3) formatted += '-' + digits.substring(3, Math.min(6, digits.length));
+          if (digits.length > 6) formatted += '-' + digits.substring(6, Math.min(8, digits.length));
+          if (digits.length > 8) formatted += '-' + digits.substring(8);
+
+          this.numero = formatted;
+        }
       }
     }
 
@@ -364,6 +401,12 @@
                 <div class="form-group">
                   <label for="image">Subir imagen:</label>
                   <input type="file" id="factura" name="factura" accept="image/*">
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="numero">Numero de factura: </label>
+                  <input class="form-control" x-model="numero" x-on:input="formatInput" maxlength="19" type="text" id="numero" name="numero" placeholder="000-000-00-00000000">
                 </div>
               </div>
               <div class="col-12">

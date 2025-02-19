@@ -11,8 +11,8 @@ class TipoContactoController extends Controller
 {
     public function index()
     {
-        $response = Http::get('http://localhost:3000/get_tipo_contacto');
-        $tabla_estado = Http::get('http://localhost:3000/estados');
+        $response = Http::get('http://localhost:3002/get_tipo_contacto');
+        $tabla_estado = Http::get('http://localhost:3002/estados');
 
           // Manejo de sesión y permisos
           $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -49,7 +49,7 @@ class TipoContactoController extends Controller
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3000/insert_tipo_contacto', [
+        $response = Http::post('http://localhost:3002/insert_tipo_contacto', [
             'tipo_contacto' => $request->get('tipo'),
              'id_estado' => $request->get('estdo')
 
@@ -62,7 +62,7 @@ class TipoContactoController extends Controller
      
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3000/update_tipo_contacto', [
+        $response = Http::put('http://localhost:3002/update_tipo_contacto', [
             'id_tipo_contacto' => $request->get('cod'),
             'tipo_contacto' => $request->get('tipo'),
             'id_estado' => $request->get('estdo'),

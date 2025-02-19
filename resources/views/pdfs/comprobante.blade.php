@@ -116,6 +116,7 @@
       <h2>Datos Farmacia</h2>
       <p><strong>Farmacia:</strong> {{ $nombre_farmacia }}</p>
       <p><strong>RTN:</strong> {{ $rtn_farmacia }}</p>
+      <p><strong>Atendio:</strong> {{ $usuario_logueado }}</p>
     </div>
 
     <!-- Datos Personales -->

@@ -12,8 +12,8 @@ class ParametroController extends Controller
    
     public function index()
     {
-        $response = Http::get('http://localhost:3000/get_parametros');
-        $tabla_usuario = Http::get('http://localhost:3000/get_usuarios');
+        $response = Http::get('http://localhost:3002/get_parametros');
+        $tabla_usuario = Http::get('http://localhost:3002/get_usuarios');
   // Manejo de sesión y permisos
   $usuario = session('usuario'); // Obtener usuario desde la sesión
 
@@ -53,7 +53,7 @@ class ParametroController extends Controller
     public function store(Request $request)
     {
         
-        $response = Http::post('http://localhost:3000/insert_parametro', [
+        $response = Http::post('http://localhost:3002/insert_parametro', [
             'parametro' => $request->get('par'),
             'valor' => $request->get('val'),
             'id_usuario' => $request->get('usuario')
@@ -66,7 +66,7 @@ class ParametroController extends Controller
     public function update(Request $request)
     {
        
-        $response = Http::put('http://localhost:3000/update_parametro', [
+        $response = Http::put('http://localhost:3002/update_parametro', [
             'id_parametro' => $request->get('cod'),
             'parametro' => $request->get('par'),
             'valor' => $request->get('val'),
@@ -80,7 +80,7 @@ class ParametroController extends Controller
     public function destroy($id_parametro)
     {
         // Lógica para eliminar el objeto de la base de datos
-        $response = Http::delete('http://localhost:3000/delete_parametro', [
+        $response = Http::delete('http://localhost:3002/delete_parametro', [
             'id_parametro' => $id_parametro
         ]);
     

@@ -34,7 +34,7 @@
           <div class="card-header">
             <h1 class="card-title">LISTA DE CANJES</h1>
             <div class="card-tools">
-            @if ($permiso_insercion == 1)
+              @if ($permiso_insercion == 1)
               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo +</button>
               @endif
 
@@ -115,37 +115,40 @@
     </div>
   </div>
 </section>
-<div x-data='dataHandler(@json($Facturas),@json($tblpaciente), @json($tblproducto), @json($Canjes), @json($tblfarmacia))'>
+<div x-data='dataHandler(@json($storedCanjeData),@json($Facturas),@json($tblpaciente), @json($tblproducto), @json($Canjes), @json($tblfarmacia))'>
   <script>
-    function dataHandler(facturas, pacientes, productos, canjes, farmacias) {
+    function dataHandler(_canjeGuardado, facturas, pacientes, productos, canjes, farmacias) {
+      console.log(_canjeGuardado)
+      const canjeGuardado = _canjeGuardado || {}
       return {
-        canjeHabilitado: false
+        canjeHabilitado: !!_canjeGuardado
         , registroSeleccionado: false
-        , farmaciaSeleccionada: false
+        , farmaciaSeleccionada: !!canjeGuardado.savedIdFarmacia
         , obs: 'NINGUNO'
-        , pacienteSeleccionado: false
+        , pacienteSeleccionado: !!canjeGuardado.savedIdPaciente
         , estadoCanjeSeleccionado: false
-        , comentariosSeleccionado: false
-        , cantidadCanjes: 0
+        , comentariosSeleccionado: canjeGuardado.comentarios
+        , cantidadCanjes: canjeGuardado.savedCantidad || 0
         , canjeMensaje: ''
-        , farmaciaId: ''
-        , pacienteId: ''
-        , productoId: ''
-        , productoNombre: ''
-        , pacienteNombre: ''
-        , emailPaciente: ''
-        , nombre_farmacia: ''
-        , rtn_farmacia: ''
-        , nombre_paciente: ''
-        , apellido_paciente: ''
-        , dni_paciente: ''
-        , telefono_paciente: ''
-        , correo_paciente: ''
-        , nombre_producto: ''
-        , cantidad: ''
-        , forma_farmaceutica: ''
-        , fecha_registro: ''
-        , comentarios: ''
+        , farmaciaId: canjeGuardado.savedIdFarmacia || ''
+        , pacienteId: canjeGuardado.savedIdPaciente || ''
+        , productoId: canjeGuardado.savedIdProducto || ''
+        , productoNombre: canjeGuardado.productoNombre || ''
+        , pacienteNombre: canjeGuardado.pacienteNombre || ''
+        , emailPaciente: canjeGuardado.email || ''
+        , nombre_farmacia: canjeGuardado.nombre_farmacia
+        , rtn_farmacia: canjeGuardado.rtn_farmacia
+        , nombre_paciente: canjeGuardado.nombre_paciente || ''
+        , apellido_paciente: canjeGuardado.apellido_paciente || ''
+        , dni_paciente: canjeGuardado.dni_paciente || ''
+        , telefono_paciente: canjeGuardado.telefono_paciente || ''
+        , correo_paciente: canjeGuardado.correo_paciente || ''
+        , nombre_producto: canjeGuardado.nombre_producto || ''
+        , cantidad: canjeGuardado.savedCantidad || ''
+        , forma_farmaceutica: canjeGuardado.forma_farmaceutica || ''
+        , fecha_registro: canjeGuardado.fecha_registro || ''
+        , comentarios: canjeGuardado.comentarios || ''
+        , canjesDisponibles: ''
         , verificarCanje: function() {
           const pacienteSeleccionado = pacientes.find(p => p.id_paciente == this.pacienteId);
           const productoSeleccionado = productos.find(p => p.id_producto == this.productoId);
@@ -161,6 +164,7 @@
           }, 0)
           if (!productosComprados) {
             this.canjeHabilitado = false;
+            this.canjesDisponibles = 'Canjes disponibles: ' + canjes_max_anual
             this.canjeMensaje = 'El paciente no ha comprado el producto, no puede canjear';
             return
           }
@@ -178,6 +182,7 @@
           this.forma_farmaceutica = productoSeleccionado.forma_farmaceutica
           this.fecha_registro = (new Date).toISOString().split('T')[0].split('-').reverse().join('/')
           this.comentarios = this.obs
+          this.canjesDisponibles = 'Canjes disponibles: ' + (canjes_max_anual - canjesPaciente)
           if (canjesPaciente >= canjes_max_anual) {
             this.canjeMensaje = 'El paciente ya alcanzo el maximo de canjes';
             return;
@@ -209,7 +214,17 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-
+        @if (isset($storedCanjeData))
+        <div class="row justify-content-center">
+          <div>
+            Tiene un canje pendiente, si desea agregar otro, finalice el canje actual o elimine los datos guardados
+          </div>
+          <form action="finalizar_canje" method="post">
+            @csrf
+            <Button type="submit" class="btn btn-primary">Finalizar canje</Button>
+          </form>
+        </div>
+        @endif
         <form action="agregar_registrocanje" method="post">
           @csrf
           <div class="modal-body">
@@ -232,7 +247,7 @@
                   <select x-model="farmaciaId" id="farmacia" name="farmacia" class="form-control" @change='farmaciaSeleccionada = true' required>
                     <option>SELECCIONA</option>
                     @foreach ($tblfarmacia as $tbl)
-                    <option value="{{ $tbl['id_farmacia']}}">{{$tbl["rtn_farmacia"]}}</option>
+                    <option value="{{ $tbl['id_farmacia']}}">{{$tbl["nombre_farmacia"]}}</option>
                     @endforeach
                   </select>
                 </div>
@@ -244,7 +259,7 @@
                   <select id="paciente" name="paciente" x-model="pacienteId" class="form-control" @change='pacienteSeleccionado = true; productoId && verificarCanje();' required>
                     <option>SELECCIONA</option>
                     @foreach ($tblpaciente as $tbl)
-                    <option value="{{ $tbl['id_paciente']}}">{{$tbl["dni_paciente"]}}</option>
+                    <option value="{{ $tbl['id_paciente']}}">{{$tbl["dni_paciente"]}} - {{explode(" ",$tbl["nombre_paciente"])[0]}} {{$tbl["apellido_paciente"]}}</option>
                     @endforeach
                   </select>
                 </div>
@@ -263,12 +278,15 @@
                 </div>
               </div>
               <div class="col-12">
+                <div class="alert alert-info w-full" role="alert" x-text="canjesDisponibles" :hidden="!canjesDisponibles"></div>
+              </div>
+              <div class="col-12">
                 <div :class="{'alert alert-warning w-full': !canjeHabilitado, 'alert alert-success w-full': canjeHabilitado}" role="alert" x-text="canjeMensaje" :hidden="!canjeMensaje"></div>
               </div>
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Cantidad</label>
-                  <input type="text" id="cantidad" name="cantidad" class="form-control" x-model="cantidadCanjes" required>
+                  <input type="text" id="cantidad" name="cantidad" class="form-control" x-model="cantidadCanjes" required readonly>
                 </div>
               </div>
 
@@ -314,7 +332,7 @@
           </div>
           <div class="modal-footer justify-content-between">
             <button type="button" class="btn btn-default" data-dismiss="modal">CANCELAR</button>
-            <button type="submit" class="btn btn-primary" :disabled="!canjeHabilitado || !registroSeleccionado || !farmaciaSeleccionada || !estadocanjeSeleccionado">AGREGAR</button>
+            <button type="submit" class="btn btn-primary" :disabled="!canjeHabilitado || !registroSeleccionado || !farmaciaSeleccionada">AGREGAR</button>
           </div>
         </form>
 

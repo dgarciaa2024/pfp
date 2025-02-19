@@ -13,8 +13,8 @@ class PaisController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3000/get_paises');
-        $tbl_Estado = Http::get('http://localhost:3000/estados');
+        $response = Http::get('http://localhost:3002/get_paises');
+        $tbl_Estado = Http::get('http://localhost:3002/estados');
    // Validar permisos para inserción y edición
    $usuario = session('usuario'); // Obtener usuario desde la sesión
    $permiso_insercion = 2;     // Valor predeterminado para inserción
@@ -50,7 +50,7 @@ class PaisController extends Controller
     public function store(Request $request)
 {
     // Enviar la solicitud POST a la API para insertar el nuevo estado
-    $response = Http::post('http://localhost:3000/insert_pais', [
+    $response = Http::post('http://localhost:3002/insert_pais', [
         'nombre_pais' => $request->get('pais'),
         'id_estado' => $request->get('estdo'),
     ]);
@@ -60,7 +60,7 @@ class PaisController extends Controller
 
 public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3000/update_pais', [
+        $response = Http::put('http://localhost:3002/update_pais', [
             'id_pais' => $request->get('cod'),
             'nombre_pais' => $request->get('pais'),
             'id_estado' => $request->get('estdo'),

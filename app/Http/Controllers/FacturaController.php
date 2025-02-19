@@ -5,19 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FacturaController extends Controller
 {
     public function index()
     {
-        $response = Http::get('http://localhost:3000/get_facturas');
-        $tabla_producto = Http::get('http://localhost:3000/get_producto');
-        $tabla_paciente = Http::get('http://localhost:3000/get_pacientes');
-        $canjes = Http::get('http://localhost:3000/get_registro');
-        $tabla_estadocanje = Http::get('http://localhost:3000/get_estado_canje');
-        $tabla_farmacia = Http::get('http://localhost:3000/get_farmacias');
-        $tabla_registro = Http::get('http://localhost:3000/get_tipo_registro');
-        $facturas = Http::get('http://localhost:3000/get_facturas');
+        $response = Http::get('http://localhost:3002/get_facturas');
+        $tabla_producto = Http::get('http://localhost:3002/get_producto');
+        $tabla_paciente = Http::get('http://localhost:3002/get_pacientes');
+        $canjes = Http::get('http://localhost:3002/get_registro');
+        $tabla_estadocanje = Http::get('http://localhost:3002/get_estado_canje');
+        $tabla_farmacia = Http::get('http://localhost:3002/get_farmacias');
+        $tabla_registro = Http::get('http://localhost:3002/get_tipo_registro');
+        $facturas = Http::get('http://localhost:3002/get_facturas');
 
 
         // Manejo de sesión y permisos
@@ -46,17 +47,17 @@ class FacturaController extends Controller
         }
 
 
-        $activos = array_filter($tabla_producto->json(), function ($item) {
+        $activos = array_values(array_filter($tabla_producto->json(), function ($item) {
             return isset($item['estado']) && $item['estado'] === 'ACTIVO';
-        });
+        }));
 
-        $act = array_filter($tabla_paciente->json(), function ($item) {
+        $act = array_values(array_filter($tabla_paciente->json(), function ($item) {
             return isset($item['estado']) && $item['estado'] === 'ACTIVO';
-        });
+        }));
 
 
 
-        
+
         // Manejo de sesión y permisos
         $usuario = session('usuario'); // Obtener usuario desde la sesión
 
@@ -82,6 +83,7 @@ class FacturaController extends Controller
 
 
         return view('modulo_canjes.Facturas')->with([
+            'canjeDirecto' => false,
             'tblestadocanje' => json_decode($tabla_estadocanje, true),
             'tblproducto' => $activos,
             'tblpaciente' => $act,
@@ -118,9 +120,11 @@ class FacturaController extends Controller
         $fecha_registro = $request->input('fecha_registro');
         $comentarios = $request->input('comentarios');
         $imagen = $request->file('factura');
+        $numero = $request->input('numero');
         $imagenBase64 = base64_encode(file_get_contents($imagen->getRealPath()));
-        $response = Http::post('http://localhost:3000/insert_factura', [
-            'factura' => "data:image/{$imagen->getClientOriginalExtension()};base64,{$imagenBase64}",
+        $response = Http::attach('factura', file_get_contents($imagen->getPathname()), $imagen->getClientOriginalName())->post('http://localhost:3002/insert_factura', [
+            //'factura' => "data:image/{$imagen->getClientOriginalExtension()};base64,{$imagenBase64}",
+            'numero' => $numero,
             'id_paciente' => $paciente,
             'id_producto' => $producto,
             'cantidad_producto' => $request->input('cantidad'),
@@ -129,14 +133,38 @@ class FacturaController extends Controller
         // Verificar si el backend devuelve un mensaje de éxito o notificación
         if ($response->successful()) {
             if ($canje_habilitado === "true") {
+                $data = [
+                    'savedIdPaciente' => $paciente,
+                    'savedIdProducto' => $producto,
+                    'savedIdFarmacia' => $farmacia,
+                    'savedCantidad' => $cantidad,
+                    'email' => $email,
+                    'numero' => $numero,
+                    'productoNombre' => $productoNombre,
+                    'pacienteNombre' => $pacienteNombre,
+                    'nombre_farmacia' => $nombre_farmacia,
+                    'rtn_farmacia' => $rtn_farmacia,
+                    'nombre_paciente' => $nombre_paciente,
+                    'apellido_paciente' => $apellido_paciente,
+                    'dni_paciente' => $dni_paciente,
+                    'telefono_paciente' => $telefono_paciente,
+                    'correo_paciente' => $correo_paciente,
+                    'nombre_producto' => $nombre_producto,
+                    'forma_farmaceutica' => $forma_farmaceutica,
+                    'fecha_registro' => $fecha_registro,
+                    'comentarios' => $comentarios
+                ];
+                Storage::put('data.json', json_encode($data));
                 $mensaje = "Factura ingresada exitosamente, usted esta habilitado para el canje del producto seleccionado";
                 return redirect()->back()
+                    ->with('canjeDirecto', true)
                     ->with('mensaje_canje_habilitado', $mensaje)
                     ->with('oldIdPaciente', $paciente)
                     ->with('oldIdProducto', $producto)
                     ->with('oldIdFarmacia', $farmacia)
                     ->with('oldCantidad', $cantidad)
                     ->with('email', $email)
+                    ->with('numero', $numero)
                     ->with('productoNombre', $productoNombre)
                     ->with('pacienteNombre', $pacienteNombre)
                     ->with('nombre_farmacia', $nombre_farmacia)
@@ -155,7 +183,7 @@ class FacturaController extends Controller
                 return redirect()->back()->with('status_message', $mensaje);
             }
         } else {
-            return redirect()->back()->with('status_message', 'Hubo un error al procesar la factura.');
+            return redirect()->back()->with('status_message', $response->body());
         }
     }
 

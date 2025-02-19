@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 //incluimos Http
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Mpdf\Mpdf;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -23,39 +24,43 @@ class CanjeController extends Controller
     /******  aecce278-3983-4453-8e1b-9f35ce65d2bc  *******/
     public function index()
     {
-        $response = Http::get('http://localhost:3000/get_registro');
-        $tabla_estadocanje = Http::get('http://localhost:3000/get_estado_canje');
-        $tabla_producto = Http::get('http://localhost:3000/get_producto');
-        $tabla_paciente = Http::get('http://localhost:3000/get_pacientes');
-        $tabla_farmacia = Http::get('http://localhost:3000/get_farmacias');
-        $tabla_registro = Http::get('http://localhost:3000/get_tipo_registro');
-        $facturas = Http::get('http://localhost:3000/get_facturas');
- // Manejo de sesión y permisos
- $usuario = session('usuario'); // Obtener usuario desde la sesión
+        $response = Http::get('http://localhost:3002/get_registro');
+        $tabla_estadocanje = Http::get('http://localhost:3002/get_estado_canje');
+        $tabla_producto = Http::get('http://localhost:3002/get_producto');
+        $tabla_paciente = Http::get('http://localhost:3002/get_pacientes');
+        $tabla_farmacia = Http::get('http://localhost:3002/get_farmacias');
+        $tabla_registro = Http::get('http://localhost:3002/get_tipo_registro');
+        $facturas = Http::get('http://localhost:3002/get_facturas');
+        // Manejo de sesión y permisos
+        $usuario = session('usuario'); // Obtener usuario desde la sesión
 
- // Permisos predeterminados
- $permiso_insercion = 2;
- $permiso_actualizacion = 2;
- $permiso_eliminacion = 2;
+        // Permisos predeterminados
+        $permiso_insercion = 2;
+        $permiso_actualizacion = 2;
+        $permiso_eliminacion = 2;
 
- if ($usuario) {
-     $idRolUsuario = $usuario['id_rol']; // Obtener el rol del usuario desde la sesión
+        if ($usuario) {
+            $idRolUsuario = $usuario['id_rol']; // Obtener el rol del usuario desde la sesión
 
-     // Consultar permisos en la base de datos para el rol y objeto  (canjes)
-     $permisos = DB::table('pfp_schema.tbl_permiso')
-         ->where('id_rol', $idRolUsuario)
-         ->where('id_objeto', 10) // ID del objeto que corresponde a "canjes"
-         ->first();
+            // Consultar permisos en la base de datos para el rol y objeto  (canjes)
+            $permisos = DB::table('pfp_schema.tbl_permiso')
+                ->where('id_rol', $idRolUsuario)
+                ->where('id_objeto', 10) // ID del objeto que corresponde a "canjes"
+                ->first();
 
-     // Si se encuentran permisos para este rol y objeto, asignarlos
-     if ($permisos) {
-         $permiso_insercion = $permisos->permiso_creacion;
-         $permiso_actualizacion = $permisos->permiso_actualizacion;
-         $permiso_eliminacion = $permisos->permiso_eliminacion;
-     }
- }
+            // Si se encuentran permisos para este rol y objeto, asignarlos
+            if ($permisos) {
+                $permiso_insercion = $permisos->permiso_creacion;
+                $permiso_actualizacion = $permisos->permiso_actualizacion;
+                $permiso_eliminacion = $permisos->permiso_eliminacion;
+            }
+        }
 
-
+        $storedData = null;
+        $canjeGuardado = Storage::exists('data.json');
+        if ($canjeGuardado === true) {
+            $storedData = json_decode(Storage::get('data.json'), true);
+        }
         return view('modulo_canjes.Canjes')->with([
             'tblestadocanje' => json_decode($tabla_estadocanje, true),
             'tblproducto' => json_decode($tabla_producto, true),
@@ -67,6 +72,8 @@ class CanjeController extends Controller
             'permiso_insercion' => $permiso_insercion,
             'permiso_actualizacion' => $permiso_actualizacion,
             'permiso_eliminacion' => $permiso_eliminacion,
+            'CanjeGuardado' => $canjeGuardado,
+            'storedCanjeData' => $storedData
         ]);
     }
 
@@ -89,7 +96,7 @@ class CanjeController extends Controller
         $comentarios = $request->get("comentarios");
 
 
-        $response = Http::post('http://localhost:3000/insert_registro', [
+        $response = Http::post('http://localhost:3002/insert_registro', [
             'id_tipo_registro' => $request->input('registro'),
             'id_farmacia' => $request->input('farmacia'),
             'id_paciente' => $request->input('paciente'),
@@ -100,11 +107,12 @@ class CanjeController extends Controller
 
         ]);
 
-
+        $usuario_logueado = $response->body();
         $mpdf = new Mpdf();
         $html = view('pdfs.comprobante', compact(
             'nombre_farmacia',
             'rtn_farmacia',
+            'usuario_logueado',
             'nombre_paciente',
             'apellido_paciente',
             'dni_paciente',
@@ -206,6 +214,9 @@ class CanjeController extends Controller
             echo "No se pudo enviar el correo. Error: {$mail->ErrorInfo}";
         }
         if ($response->successful()) {
+            if (Storage::exists('data.json')) {
+                Storage::delete('data.json');
+            }
             return redirect('Canjes')->with('status_message', 'Canje realizado con exito');
         } else {
             return redirect('Canjes')->with('status_message', 'Error al realizar el canje:' . $response->body());
@@ -214,4 +225,11 @@ class CanjeController extends Controller
 
     }
 
+    public function finalizar_canje()
+    {
+        if (Storage::exists('data.json')) {
+            Storage::delete('data.json');
+        }
+        return redirect('Canjes');
+    }
 }

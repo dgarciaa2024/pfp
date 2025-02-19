@@ -11,11 +11,11 @@ class PacientesController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3000/get_pacientes');
-        $facturas = Http::get('http://localhost:3000/get_facturas');
-        $productos = Http::get('http://localhost:3000/get_producto');
-        $tabla_estado = Http::get('http://localhost:3000/estados');
-        $tabla_rol = Http::get('http://localhost:3000/get_usuarios');
+        $response = Http::get('http://localhost:3002/get_pacientes');
+        $facturas = Http::get('http://localhost:3002/get_facturas');
+        $productos = Http::get('http://localhost:3002/get_producto');
+        $tabla_estado = Http::get('http://localhost:3002/estados');
+        $tabla_rol = Http::get('http://localhost:3002/get_usuarios');
 
 
          // Manejo de sesión y permisos
@@ -95,7 +95,7 @@ class PacientesController extends Controller
         ]);
 
 
-        $response = Http::post('http://localhost:3000/insert_paciente', [
+        $response = Http::post('http://localhost:3002/insert_paciente', [
             'dni_paciente' => $request->get('dni'),
             'nombre_paciente' => $request->get('nombre'),
             'apellido_paciente' => $request->get('apellido'),
@@ -128,7 +128,7 @@ class PacientesController extends Controller
 
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3000/update_paciente', [
+        $response = Http::put('http://localhost:3002/update_paciente', [
             'id_paciente' => $request->get('cod'),
             'dni_paciente' => $request->get('dni'),
             'nombre_paciente' => $request->get('nombre'),
