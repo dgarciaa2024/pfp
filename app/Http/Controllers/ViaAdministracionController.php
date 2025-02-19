@@ -12,9 +12,9 @@ class ViaAdministracionController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_via_administracion');
-        $tabla_estado = Http::get('http://localhost:3002/estados');
-        $tabla_rol = Http::get('http://localhost:3002/get_roles');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_via_administracion');
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
+        $tabla_rol = Http::get(env('API_URL', 'http://localhost:3002').'/get_roles');
 
        // Manejo de sesión y permisos
        $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -50,7 +50,7 @@ class ViaAdministracionController extends Controller
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3002/insert_via_administracion', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_via_administracion', [
             'id_estado' => $request->get('estdo'),
             'via_administracion' => $request->get('via')
              
@@ -65,7 +65,7 @@ class ViaAdministracionController extends Controller
     
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3002/update_via_administracion', [
+        $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_via_administracion', [
             'id_via_administracion' => $request->get('cod'),
             'via_administracion' => $request->get('via'),
             'id_estado' => $request->get('estdo'),

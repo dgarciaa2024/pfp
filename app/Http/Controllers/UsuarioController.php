@@ -16,9 +16,9 @@ class UsuarioController extends Controller
 {
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_usuarios');
-        $tabla_estado = Http::get('http://localhost:3002/estados');
-        $tabla_rol = Http::get('http://localhost:3002/get_roles');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_usuarios');
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
+        $tabla_rol = Http::get(env('API_URL', 'http://localhost:3002').'/get_roles');
 
         // Manejo de sesión y permisos
         $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -77,7 +77,7 @@ class UsuarioController extends Controller
             ->value('valor');
         $duracionContrasena = $duracionContrasena ? (int) $duracionContrasena : 0;
 
-        $response = Http::post('http://localhost:3002/insert_usuario', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_usuario', [
             'usuario' => $request->get('usu'),
             'nombre_usuario' => $request->get('nom_usu'),
             'contrasena' => Crypt::encryptString($newPassword),
@@ -96,7 +96,7 @@ class UsuarioController extends Controller
 
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3002/update_usuario', [
+        $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_usuario', [
             'id_usuario' => $request->get('cod'),
             'usuario' => $request->get('usu'),
             'nombre_usuario' => $request->get('nom_usu'),

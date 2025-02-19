@@ -13,9 +13,9 @@ class MunicipioController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_municipios');
-        $tabla_depto = Http::get('http://localhost:3002/get_departamentos'); 
-        $tabla_estado = Http::get('http://localhost:3002/estados');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_municipios');
+        $tabla_depto = Http::get(env('API_URL', 'http://localhost:3002').'/get_departamentos'); 
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
 
   // Validar permisos para inserción y edición
   $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -50,7 +50,7 @@ class MunicipioController extends Controller
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3002/insert_municipio', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_municipio', [
             'id_departamento' => $request->get('depto'),
              'municipio' => $request->get('municipio'),
              'id_estado' => $request->get('estdo')
@@ -65,7 +65,7 @@ class MunicipioController extends Controller
     
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3002/update_municipio', [
+        $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_municipio', [
        'id_departamento' => $request->get('depto'),
             'id_municipio' => $request->get('cod'),
              'municipio' => $request->get('municipio'),

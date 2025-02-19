@@ -13,12 +13,12 @@ class FarmaciasController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_farmacias');
-        $tabla_sucursal = Http::get('http://localhost:3002/get_sucursales');
-        $tabla_usuario= Http::get('http://localhost:3002/get_usuarios');
-        $tabla_entidad = Http::get('http://localhost:3002/get_tipo_entidad');
-        $tabla_estado = Http::get('http://localhost:3002/estados');
-        $tabla_contacto = Http::get('http://localhost:3002/get_contactos');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_farmacias');
+        $tabla_sucursal = Http::get(env('API_URL', 'http://localhost:3002').'/get_sucursales');
+        $tabla_usuario= Http::get(env('API_URL', 'http://localhost:3002').'/get_usuarios');
+        $tabla_entidad = Http::get(env('API_URL', 'http://localhost:3002').'/get_tipo_entidad');
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
+        $tabla_contacto = Http::get(env('API_URL', 'http://localhost:3002').'/get_contactos');
        
         
         // Manejo de sesión y permisos
@@ -66,7 +66,7 @@ class FarmaciasController extends Controller
     
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3002/insert_farmacia', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_farmacia', [
             'rtn_farmacia' => $request->get('rtn'),
             'nombre_farmacia' => $request->get('nombre'),
             'id_sucursal' => $request->get('sucursal'),
@@ -85,7 +85,7 @@ class FarmaciasController extends Controller
 
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3002/update_farmacia', [
+        $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_farmacia', [
             'id_farmacia' => $request->get('cod'),
             'rtn_farmacia' => $request->get('rtn'),
             'nombre_farmacia' => $request->get('nombre'),

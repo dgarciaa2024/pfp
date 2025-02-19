@@ -11,9 +11,9 @@ class SucursalesController extends Controller
 {
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_sucursales');
-        $tabla_estado = Http::get('http://localhost:3002/estados');
-        $tabla_municipio = Http::get('http://localhost:3002/get_municipios');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_sucursales');
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
+        $tabla_municipio = Http::get(env('API_URL', 'http://localhost:3002').'/get_municipios');
 
 
 // Manejo de sesión y permisos
@@ -54,7 +54,7 @@ if ($usuario) {
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3002/insert_sucursal', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_sucursal', [
             'id_municipio' => $request->get('muni'),
             'nombre_sucursal' => $request->get('nomb'),
             'id_estado' => $request->get('estdo')
@@ -68,7 +68,7 @@ if ($usuario) {
 
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3002/update_sucursal', [
+        $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_sucursal', [
             'id_sucursal' => $request->get('cod'),
             'id_municipio' => $request->get('muni'),
             'nombre_sucursal' => $request->get('nomb'),

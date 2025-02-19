@@ -13,8 +13,8 @@ class ObjetoController extends Controller
    
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_objetos');
-        $tabla_estado = Http::get('http://localhost:3002/estados');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_objetos');
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
 
 
          // Manejo de sesión y permisos
@@ -58,7 +58,7 @@ class ObjetoController extends Controller
     {
 
          
-        $response = Http::post('http://localhost:3002/insert_objeto', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_objeto', [
             'nombre' => $request->get('nom'),
             'descripcion' => $request->get('des'),
             'id_estado' => $request->get('estdo')
@@ -70,7 +70,7 @@ class ObjetoController extends Controller
     public function update(Request $request)
     {
          
-        $response = Http::put('http://localhost:3002/update_objeto', [
+        $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_objeto', [
             'id_objeto' => $request->get('cod'),
             'nombre' => $request->get('nom'),
             'descripcion' => $request->get('des'),
@@ -83,7 +83,7 @@ class ObjetoController extends Controller
     public function destroy($id_objeto)
     {
         // Lógica para eliminar el objeto de la base de datos
-        $response = Http::delete('http://localhost:3002/delete_objeto', [
+        $response = Http::delete(env('API_URL', 'http://localhost:3002').'/delete_objeto', [
             'id_objeto' => $id_objeto
         ]);
     

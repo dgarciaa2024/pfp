@@ -13,9 +13,9 @@ class DepartamentoController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_departamentos');
-        $tabla_zona = Http::get('http://localhost:3002/get_Zonas');
-        $tabla_estado = Http::get('http://localhost:3002/estados');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_departamentos');
+        $tabla_zona = Http::get(env('API_URL', 'http://localhost:3002').'/get_Zonas');
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
 
 
  // Manejo de sesión y permisos
@@ -55,7 +55,7 @@ class DepartamentoController extends Controller
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3002/insert_departamento', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_departamento', [
             'id_zona' => $request->get('zona'),
              'nombre_departamento' => $request->get('depto'),
              'id_estado' => $request->get('estdo')
@@ -70,7 +70,7 @@ class DepartamentoController extends Controller
     
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3002/update_departamento', [
+        $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_departamento', [
             'id_zona' => $request->get('zona'),
             'id_departamento' => $request->get('cod'),
              'nombre_departamento' => $request->get('depto'),

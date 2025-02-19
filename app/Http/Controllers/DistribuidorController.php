@@ -18,12 +18,12 @@ class DistribuidorController extends Controller
        
     
      // Consultar datos desde la API
-     $response = Http::get('http://localhost:3002/get_distribuidores');
-     $tabla_pais = Http::get('http://localhost:3002/get_paises');
-     $tabla_usuario= Http::get('http://localhost:3002/get_usuarios');
-     $tabla_entidad = Http::get('http://localhost:3002/get_tipo_entidad');
-     $tabla_estado = Http::get('http://localhost:3002/estados');
-     $tabla_contacto = Http::get('http://localhost:3002/get_contactos');
+     $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_distribuidores');
+     $tabla_pais = Http::get(env('API_URL', 'http://localhost:3002').'/get_paises');
+     $tabla_usuario= Http::get(env('API_URL', 'http://localhost:3002').'/get_usuarios');
+     $tabla_entidad = Http::get(env('API_URL', 'http://localhost:3002').'/get_tipo_entidad');
+     $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
+     $tabla_contacto = Http::get(env('API_URL', 'http://localhost:3002').'/get_contactos');
 
      // Manejo de sesión y permisos
      $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -68,7 +68,7 @@ class DistribuidorController extends Controller
     
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3002/insert_distribuidor', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_distribuidor', [
             'rtn_distribuidor' => $request->get('rtn'),
             'nombre_distribuidor' => $request->get('nombre'),
             'id_pais' => $request->get('pais'),
@@ -88,7 +88,7 @@ class DistribuidorController extends Controller
     {
 
        
-            $response = Http::put('http://localhost:3002/update_distribuidor', [
+            $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_distribuidor', [
                 'id_distribuidor' => $request->get('cod'),
                 'rtn_distribuidor' => $request->get('rtn'),
                 'nombre_distribuidor' => $request->get('nombre'),

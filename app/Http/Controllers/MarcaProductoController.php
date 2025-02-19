@@ -9,8 +9,8 @@ class MarcaProductoController extends Controller
 {
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_marca_producto');
-        $tabla_estado = Http::get('http://localhost:3002/estados');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_marca_producto');
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
 
         // Manejo de sesión y permisos
         $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -50,7 +50,7 @@ class MarcaProductoController extends Controller
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3002/insert_marca_producto', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_marca_producto', [
             'marca_producto' => $request->get('marca'),
             'id_estado' => $request->get('estdo')
         ]);
@@ -59,7 +59,7 @@ class MarcaProductoController extends Controller
 
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3002/update_marca_producto', [
+        $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_marca_producto', [
             'id_marca_producto' => $request->get('cod'),
             'marca_producto' => $request->get('marca'),
             'id_estado' => $request->get('estdo'),

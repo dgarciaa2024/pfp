@@ -13,14 +13,14 @@ class ProductosController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_producto');
-        $tabla_estado = Http::get('http://localhost:3002/estados');
-        $tabla_farmaceutica = Http::get('http://localhost:3002/get_forma_farmaceutica');
-        $tabla_especialidad = Http::get('http://localhost:3002/get_especialidad');
-        $tabla_marca = Http::get('http://localhost:3002/get_marca_producto');
-        $tabla_unidad = Http::get('http://localhost:3002/get_unidad_medida');
-        $tabla_administracion = Http::get('http://localhost:3002/get_via_administracion');
-        $tabla_laboratorio = Http::get('http://localhost:3002/get_laboratorios');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_producto');
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
+        $tabla_farmaceutica = Http::get(env('API_URL', 'http://localhost:3002').'/get_forma_farmaceutica');
+        $tabla_especialidad = Http::get(env('API_URL', 'http://localhost:3002').'/get_especialidad');
+        $tabla_marca = Http::get(env('API_URL', 'http://localhost:3002').'/get_marca_producto');
+        $tabla_unidad = Http::get(env('API_URL', 'http://localhost:3002').'/get_unidad_medida');
+        $tabla_administracion = Http::get(env('API_URL', 'http://localhost:3002').'/get_via_administracion');
+        $tabla_laboratorio = Http::get(env('API_URL', 'http://localhost:3002').'/get_laboratorios');
        
          // Manejo de sesión y permisos
          $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -66,7 +66,7 @@ class ProductosController extends Controller
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3002/insert_producto', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_producto', [
             'codigo_barra' => $request->get('barra'),
             'nombre_producto' => $request->get('nombre'),
            'id_forma_farmaceutica' => $request->get('farma'),
@@ -91,7 +91,7 @@ class ProductosController extends Controller
 
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3002/update_producto', [
+        $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_producto', [
             'id_producto' => $request->get('cod'),
           'codigo_barra' => $request->get('barra'),
             'nombre_producto' => $request->get('nombre'),

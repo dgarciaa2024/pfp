@@ -24,13 +24,13 @@ class CanjeController extends Controller
     /******  aecce278-3983-4453-8e1b-9f35ce65d2bc  *******/
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_registro');
-        $tabla_estadocanje = Http::get('http://localhost:3002/get_estado_canje');
-        $tabla_producto = Http::get('http://localhost:3002/get_producto');
-        $tabla_paciente = Http::get('http://localhost:3002/get_pacientes');
-        $tabla_farmacia = Http::get('http://localhost:3002/get_farmacias');
-        $tabla_registro = Http::get('http://localhost:3002/get_tipo_registro');
-        $facturas = Http::get('http://localhost:3002/get_facturas');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_registro');
+        $tabla_estadocanje = Http::get(env('API_URL', 'http://localhost:3002').'/get_estado_canje');
+        $tabla_producto = Http::get(env('API_URL', 'http://localhost:3002').'/get_producto');
+        $tabla_paciente = Http::get(env('API_URL', 'http://localhost:3002').'/get_pacientes');
+        $tabla_farmacia = Http::get(env('API_URL', 'http://localhost:3002').'/get_farmacias');
+        $tabla_registro = Http::get(env('API_URL', 'http://localhost:3002').'/get_tipo_registro');
+        $facturas = Http::get(env('API_URL', 'http://localhost:3002').'/get_facturas');
         // Manejo de sesión y permisos
         $usuario = session('usuario'); // Obtener usuario desde la sesión
 
@@ -96,7 +96,7 @@ class CanjeController extends Controller
         $comentarios = $request->get("comentarios");
 
 
-        $response = Http::post('http://localhost:3002/insert_registro', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_registro', [
             'id_tipo_registro' => $request->input('registro'),
             'id_farmacia' => $request->input('farmacia'),
             'id_paciente' => $request->input('paciente'),

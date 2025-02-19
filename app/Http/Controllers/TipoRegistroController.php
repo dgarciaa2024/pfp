@@ -13,14 +13,14 @@ class TipoRegistroController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_tipo_registro');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_tipo_registro');
 
         $TpRegistro= json_decode( $response,true);
     
       
-        $tabla_estado = Http::get('http://localhost:3002/estados');
-        $tabla_rol = Http::get('http://localhost:3002/get_roles');
-        $tabla_tipo_registro = Http::get('http://localhost:3002/get_tipo_registro');
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
+        $tabla_rol = Http::get(env('API_URL', 'http://localhost:3002').'/get_roles');
+        $tabla_tipo_registro = Http::get(env('API_URL', 'http://localhost:3002').'/get_tipo_registro');
         
 
         // Manejo de sesión y permisos
@@ -61,7 +61,7 @@ class TipoRegistroController extends Controller
     }
     public function store(Request $request)
     {
-            $response = Http::post('http://localhost:3002/insert_tipo_registro', [
+            $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_tipo_registro', [
                 'tipo_registro' => $request->get('tipo')
             ]);
 
@@ -73,7 +73,7 @@ class TipoRegistroController extends Controller
 
     public function update(Request $request)
     {
-            $response = Http::put('http://localhost:3002/update_tipo_registro', [
+            $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_tipo_registro', [
                 'id_tipo_registro' => $request->get('cod'),
                 'tipo_registro' => $request->get('tipo')
             ]);

@@ -24,7 +24,7 @@ class LoginController extends Controller
     {
         // Buscar al usuario por nombre de usuario
         $usuario = User::where('nombre_usuario', $request->nombre_usuario)->first();
-        $response = Http::post('http://localhost:3002/save_credential', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/save_credential', [
             'usuario' => [
                 'id' => $usuario->id_usuario,
                 'nombreUsuario' => $usuario->nombre_usuario,
@@ -149,7 +149,7 @@ class LoginController extends Controller
     public function verificar_Login(Request $request)
     {
         // Obtener los usuarios desde el endpoint
-        $response = Http::get('http://localhost:3002/get_usuarios');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_usuarios');
         $usuarios = json_decode($response->body(), true);
 
         // Recibir los datos del formulario

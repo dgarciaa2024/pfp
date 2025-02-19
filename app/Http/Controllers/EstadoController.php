@@ -12,7 +12,7 @@ class EstadoController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3002/estados');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
 
   // Manejo de sesión y permisos
   $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -55,11 +55,11 @@ class EstadoController extends Controller
     public function store(Request $request)
 {
     // Enviar la solicitud POST a la API para insertar el nuevo estado
-    $response = Http::post('http://localhost:3002/insert_estado', [
+    $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_estado', [
         'estado' => $request->get('estado')
     ]);
         // Recuperar la lista de estados actualizada con una solicitud GET
-        $resGetEstado = Http::get('http://localhost:3002/estados');
+        $resGetEstado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
         // Pasar la lista de estados a la vista
         return view('modulo_mantenimiento.Estado')->with('Estados', json_decode($resGetEstado, true));
 }
@@ -67,13 +67,13 @@ class EstadoController extends Controller
 
 public function update(Request $request)
 {
-    $response = Http::put('http://localhost:3002/update_estado', [
+    $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_estado', [
         'id_estado' => $request->get('cod'),
         'estado' => $request->get('estado'),
 
     ]);
 
-    $http_Estado = Http::get('http://localhost:3002/estados');
+    $http_Estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
     $TBL_Estado = json_decode($http_Estado,true);             
 
   

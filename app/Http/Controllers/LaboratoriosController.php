@@ -10,12 +10,12 @@ class LaboratoriosController extends Controller
 {
         public function index()
         {
-            $response = Http::get('http://localhost:3002/get_laboratorios');
-            $tabla_pais = Http::get('http://localhost:3002/get_paises');
-            $tabla_contacto = Http::get('http://localhost:3002/get_contactos');
-            $tabla_entidad = Http::get('http://localhost:3002/get_tipo_entidad');
-            $tabla_usuario = Http::get('http://localhost:3002/get_usuarios');
-            $tabla_estado = Http::get('http://localhost:3002/estados');
+            $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_laboratorios');
+            $tabla_pais = Http::get(env('API_URL', 'http://localhost:3002').'/get_paises');
+            $tabla_contacto = Http::get(env('API_URL', 'http://localhost:3002').'/get_contactos');
+            $tabla_entidad = Http::get(env('API_URL', 'http://localhost:3002').'/get_tipo_entidad');
+            $tabla_usuario = Http::get(env('API_URL', 'http://localhost:3002').'/get_usuarios');
+            $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
 
 
             
@@ -62,7 +62,7 @@ class LaboratoriosController extends Controller
 
         public function store(Request $request)
         {
-            $response = Http::post('http://localhost:3002/insert_laboratorio', [
+            $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_laboratorio', [
                 'rtn_laboratorio' => $request->get('rtn'),
                 'nombre_laboratorio' => $request->get('laboratorio'),
                 'id_pais' => $request->get('pais'),
@@ -77,7 +77,7 @@ class LaboratoriosController extends Controller
 
         public function update(Request $request)
         {
-            $response = Http::put('http://localhost:3002/update_laboratorio', [
+            $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_laboratorio', [
                 'id_laboratorio' => $request->get('cod'),
               'rtn_laboratorio' => $request->get('rtn'),
                 'nombre_laboratorio' => $request->get('laboratorio'),

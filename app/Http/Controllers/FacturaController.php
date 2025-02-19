@@ -11,14 +11,14 @@ class FacturaController extends Controller
 {
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_facturas');
-        $tabla_producto = Http::get('http://localhost:3002/get_producto');
-        $tabla_paciente = Http::get('http://localhost:3002/get_pacientes');
-        $canjes = Http::get('http://localhost:3002/get_registro');
-        $tabla_estadocanje = Http::get('http://localhost:3002/get_estado_canje');
-        $tabla_farmacia = Http::get('http://localhost:3002/get_farmacias');
-        $tabla_registro = Http::get('http://localhost:3002/get_tipo_registro');
-        $facturas = Http::get('http://localhost:3002/get_facturas');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_facturas');
+        $tabla_producto = Http::get(env('API_URL', 'http://localhost:3002').'/get_producto');
+        $tabla_paciente = Http::get(env('API_URL', 'http://localhost:3002').'/get_pacientes');
+        $canjes = Http::get(env('API_URL', 'http://localhost:3002').'/get_registro');
+        $tabla_estadocanje = Http::get(env('API_URL', 'http://localhost:3002').'/get_estado_canje');
+        $tabla_farmacia = Http::get(env('API_URL', 'http://localhost:3002').'/get_farmacias');
+        $tabla_registro = Http::get(env('API_URL', 'http://localhost:3002').'/get_tipo_registro');
+        $facturas = Http::get(env('API_URL', 'http://localhost:3002').'/get_facturas');
 
 
         // Manejo de sesión y permisos
@@ -122,7 +122,7 @@ class FacturaController extends Controller
         $imagen = $request->file('factura');
         $numero = $request->input('numero');
         $imagenBase64 = base64_encode(file_get_contents($imagen->getRealPath()));
-        $response = Http::attach('factura', file_get_contents($imagen->getPathname()), $imagen->getClientOriginalName())->post('http://localhost:3002/insert_factura', [
+        $response = Http::attach('factura', file_get_contents($imagen->getPathname()), $imagen->getClientOriginalName())->post(env('API_URL', 'http://localhost:3002').'/insert_factura', [
             //'factura' => "data:image/{$imagen->getClientOriginalExtension()};base64,{$imagenBase64}",
             'numero' => $numero,
             'id_paciente' => $paciente,

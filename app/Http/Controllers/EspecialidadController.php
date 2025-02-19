@@ -12,8 +12,8 @@ class EspecialidadController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_especialidad');
-        $tabla_estado = Http::get('http://localhost:3002/estados');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_especialidad');
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
 
 // Manejo de sesión y permisos
 $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -52,7 +52,7 @@ if ($usuario) {
     
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3002/insert_especialidad', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_especialidad', [
              'nombre_especialidad' => $request->get('especialidad'),
              'id_estado' => $request->get('estdo')
 
@@ -66,7 +66,7 @@ if ($usuario) {
     
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3002/update_especialidad', [
+        $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_especialidad', [
             'id_especialidad' => $request->get('cod'),
             'nombre_especialidad' => $request->get('especialidad'),
             'id_estado' => $request->get('estdo'),

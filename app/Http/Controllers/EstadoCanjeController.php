@@ -14,7 +14,7 @@ class EstadoCanjeController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_estado_canje');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_estado_canje');
 
  // Manejo de sesión y permisos
  $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -51,7 +51,7 @@ class EstadoCanjeController extends Controller
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3002/insert_estado_canje', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_estado_canje', [
             'estado_canje' => $request->get('canje')
 
         ]);
@@ -64,7 +64,7 @@ class EstadoCanjeController extends Controller
 
 public function update(Request $request)
 {
-    $response = Http::put('http://localhost:3002/update_estado_canje', [
+    $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_estado_canje', [
         'id_estado_canje' => $request->get('cod'),
         'estado_canje' => $request->get('canje'),
         

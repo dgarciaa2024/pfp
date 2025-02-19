@@ -14,9 +14,9 @@ class ZonaController extends Controller
 
     public function index()
     {
-        $response = Http::get('http://localhost:3002/get_zonas');
-        $tabla_estado = Http::get('http://localhost:3002/estados');
-        $tabla_paises = Http::get('http://localhost:3002/get_paises');
+        $response = Http::get(env('API_URL', 'http://localhost:3002').'/get_zonas');
+        $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
+        $tabla_paises = Http::get(env('API_URL', 'http://localhost:3002').'/get_paises');
        
          // Manejo de sesión y permisos
          $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -58,7 +58,7 @@ class ZonaController extends Controller
 
     public function store(Request $request)
     {
-        $response = Http::post('http://localhost:3002/insert_zona', [
+        $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_zona', [
             'id_pais' => $request->get('pais'),
              'zona' => $request->get('zona'),
              'id_estado' => $request->get('estdo')
@@ -73,7 +73,7 @@ class ZonaController extends Controller
     
     public function update(Request $request)
     {
-        $response = Http::put('http://localhost:3002/update_zona', [
+        $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_zona', [
             'id_zona' => $request->get('cod'),
             'zona' => $request->get('zona'),
             'id_estado' => $request->get('estdo'),
