@@ -18,6 +18,6 @@ class BitacoraController extends Controller
             ->paginate(10); // Paginación: 10 registros por página
 
         // Retornar la vista de la bitácora con los registros
-        return view('modulo_usuarios.bitacora', compact('logs'));
+        return view('modulo_usuarios.Bitacora', compact('logs'));
     }
 }

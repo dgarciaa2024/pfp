@@ -20,7 +20,7 @@ class ResetPasswordNewMail extends Mailable
     public function build()
     {
         return $this->subject('Cambio de contraseña')
-                    ->view('emails.resetPasswordNew')
+                    ->view('emails.ResetPasswordNew')
                     ->with(['newPassword' => $this->newPassword]);
     }
 }
