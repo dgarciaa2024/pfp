@@ -60,7 +60,7 @@ class ResetPasswordMail extends Mailable
         }
 
         return $this->subject('Restablecimiento de contraseña')
-                    ->view('emails.resetPassword')
+                    ->view('emails.ResetPassword')
                     ->with(['newPassword' => $this->newPassword]);
     }
 }
