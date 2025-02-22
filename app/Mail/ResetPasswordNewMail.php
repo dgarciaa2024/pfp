@@ -19,7 +19,7 @@ class ResetPasswordNewMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Cambio de contraseña')
+        return $this->subject('Bienvenido al Portal de Fidelización de Pacientes     - Contraseña Temporal')
                     ->view('emails.ResetPasswordNew')
                     ->with(['newPassword' => $this->newPassword]);
     }

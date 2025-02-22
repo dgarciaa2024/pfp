@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt; // Agrega esta línea para usar Crypt
+use Illuminate\Contracts\Encryption\DecryptException; // Para manejar excepciones de desencriptación
 
 class CambiarContrasenaController extends Controller
 {
@@ -38,8 +40,22 @@ class CambiarContrasenaController extends Controller
                     ->where('usuario', $usuario)
                     ->first();
 
-        // Verificar que el usuario exista y que la contraseña actual coincida
-        if (!$user || $contrasenaActual !== $user->contrasena) {
+        // Verificar que el usuario exista y que la contraseña actual coincida (desencriptando)
+        if (!$user) {
+            return redirect()->back()->withErrors(['contrasena_actual' => 'El usuario no existe.']);
+        }
+
+        // Desencriptar la contraseña almacenada
+        $contrasenaAlmacenada = "";
+        try {
+            $contrasenaAlmacenada = Crypt::decryptString($user->contrasena);
+        } catch (DecryptException $e) {
+            // Si no se puede desencriptar, asumir que no está encriptada
+            $contrasenaAlmacenada = $user->contrasena;
+        }
+
+        // Comparar la contraseña actual ingresada con la desencriptada
+        if ($contrasenaActual !== $contrasenaAlmacenada) {
             return redirect()->back()->withErrors(['contrasena_actual' => 'La contraseña actual es incorrecta.']);
         }
 
@@ -55,11 +71,14 @@ class CambiarContrasenaController extends Controller
             return redirect()->back()->withErrors(['confirmar_contrasena' => 'La confirmación de la contraseña no coincide.']);
         }
 
+        // Encriptar la nueva contraseña
+        $contrasenaEncriptada = Crypt::encryptString($nuevaContrasena);
+
         // Actualizar la nueva contraseña en la base de datos y cambiar el estado a 'Activo'
         DB::table('pfp_schema.tbl_usuario')
             ->where('id_usuario', $user->id_usuario)
             ->update([
-                'contrasena' => $nuevaContrasena, 
+                'contrasena' => $contrasenaEncriptada, // Aquí se usa la contraseña encriptada
                 'fecha_modificacion' => now(),   // Cambiar fecha de modificación
                 'id_estado' => 1 // Assuming '1' is 'Activo'
             ]);

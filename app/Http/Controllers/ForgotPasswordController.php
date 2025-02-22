@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt; // Para usar Crypt
 use App\Mail\ResetPasswordMail; // Asegúrate de que este archivo exista
 use Carbon\Carbon;
 
@@ -37,11 +38,17 @@ class ForgotPasswordController extends Controller
         // Opcional: Establecer la fecha de expiración de la contraseña
         $expiresAt = Carbon::now()->addHours(config('app.reset_password_expiry', 24));
 
-        // Actualizar la contraseña en la base de datos sin encriptar
-        DB::table('pfp_schema.tbl_usuario')->where('id_usuario', $user->id_usuario)->update([
-            'contrasena' => $newPassword,
-            // 'expira_contrasena' => $expiresAt, // Descomenta si deseas usar este campo
-        ]);
+        // Encriptar la nueva contraseña
+        $contrasenaEncriptada = Crypt::encryptString($newPassword);
+
+        // Actualizar la contraseña en la base de datos con la contraseña encriptada y cambiar el estado a 4 (Pendiente)
+        DB::table('pfp_schema.tbl_usuario')
+            ->where('id_usuario', $user->id_usuario)
+            ->update([
+                'contrasena' => $contrasenaEncriptada, // Aquí se usa la contraseña encriptada
+                'id_estado' => 4, // Cambiar el estado a 4 (Pendiente)
+                // 'expira_contrasena' => $expiresAt, // Descomenta si deseas usar este campo
+            ]);
 
         // Enviar un correo con la nueva contraseña
         Mail::to($user->email)->send(new ResetPasswordMail($newPassword));

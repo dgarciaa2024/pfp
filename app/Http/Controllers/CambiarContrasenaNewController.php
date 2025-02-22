@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt; // Agrega esta línea para usar Crypt
 
 class CambiarContrasenaNewController extends Controller
 {
@@ -53,11 +54,18 @@ class CambiarContrasenaNewController extends Controller
             return redirect()->back()->withErrors(['nueva_contrasena' => 'No puede utilizar una contraseña utilizada anteriormente.'])->withInput();
         }
 
+<<<<<<< Updated upstream
         // Actualizar la nueva contraseña en la base de datos y cambiar el estado a 'ACTIVO'
+=======
+        // Encriptar la nueva contraseña
+        $contrasenaEncriptada = Crypt::encryptString($nuevaContrasena);
+
+        // Actualizar la nueva contraseña en la base de datos y cambiar el estado a 'PENDIENTE'
+>>>>>>> Stashed changes
         DB::table('pfp_schema.tbl_usuario')
             ->where('id_usuario', $user->id_usuario)
             ->update([
-                'contrasena' => $nuevaContrasena, 
+                'contrasena' => $contrasenaEncriptada, // Aquí se usa la contraseña encriptada
                 'fecha_modificacion' => now(),   // Cambiar fecha de modificación
                 'id_estado' => 1 // Assuming '1' is 'ACTIVO'
             ]);
