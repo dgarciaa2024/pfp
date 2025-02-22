@@ -117,7 +117,7 @@ class PacientesController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'unique:pfp_schema.tbl_paciente,dni_paciente,dmail,celular' // Verifica unicidad en la tabla y columna específicas
+                'unique:pfp_schema.tbl_paciente,dni_paciente,email,celular' // Verifica unicidad en la tabla y columna específicas
             ],
             // Agrega aquí otras validaciones necesarias
         ]);
