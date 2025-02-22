@@ -38,26 +38,25 @@
                 <tbody>
                   @foreach ($permisos as $permiso)
                   <tr>
-    <td>{{ $permiso['id_permiso'] }}</td>
-    <td>{{ $permiso['rol'] }}</td>
-    <td>{{ $permiso['objeto'] }}</td>
-    <td>{{ $permiso['permiso_creacion'] ? '1' : '0' }}</td>
-    <td>{{ $permiso['permiso_actualizacion'] ? '1' : '0' }}</td>
-    <td>{{ $permiso['permiso_eliminacion'] ? '1' : '0' }}</td>
-    <td>{{ $permiso['permiso_consultar'] ? '1' : '0' }}</td>
-    <td>{{ $permiso['estado'] }}</td>
-    <td>{{ $permiso['fecha_creacion'] }}</td>
-    <td>{{ $permiso['creado_por'] }}</td>
+                    <td>{{ $permiso['id_permiso'] }}</td>
+                    <td>{{ $permiso['rol'] }}</td>
+                    <td>{{ $permiso['objeto'] }}</td>
+                    <td>{{ $permiso['permiso_creacion'] ? '1' : '0' }}</td>
+                    <td>{{ $permiso['permiso_actualizacion'] ? '1' : '0' }}</td>
+                    <td>{{ $permiso['permiso_eliminacion'] ? '1' : '0' }}</td>
+                    <td>{{ $permiso['permiso_consultar'] ? '1' : '0' }}</td>
+                    <td>{{ $permiso['estado'] }}</td>
+                    <td>{{ $permiso['fecha_creacion'] }}</td>
+                    <td>{{ $permiso['creado_por'] }}</td>
 
-    <td> 
+                    <td> 
                       <div class="btn-group" role="group" aria-label="Basic example">
                         <a type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-editor-{{$permiso['id_permiso']}}">Actualizar <i class="bi bi-pencil-fill"></i> </a>
                         <!-- Botón de eliminar -->
                         <a type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-delete-{{$permiso['id_permiso']}}">Eliminar <i class="bi bi-trash-fill"></i> </a>
                       </div>
-                      </td>
-                      </tr>
-               
+                    </td>
+                  </tr>
                   @endforeach
                 </tbody>
               </table>
@@ -71,11 +70,7 @@
   </section>
 
 
-  <!-- MODAL EDITAR LABORATORIO -->
-
-
-
-  <!--MODAL EDITAR-->
+  <!-- MODAL EDITAR -->
   @foreach ($permisos as $permiso)
   <div class="modal fade" id="modal-editor-{{$permiso['id_permiso']}}">
     <div class="modal-dialog">
@@ -96,59 +91,72 @@
               <input type="hidden" id="cod" name="cod" class="form-control" value="{{$permiso['id_permiso']}}" required>
 
               <div class="col-12">
-              <div class="form-group">
-                <label for="">Rol</label>
-                <select id="rol" name="rol" class="form-control" requied>
-                  @foreach ($tblrol as $tbl)
-                  <option value="{{ $tbl['id_rol']}}"   selected>  {{$tbl["rol"]}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-
-
-            <div class="col-12">
-              <div class="form-group">
-                <label for="">Objeto</label>
-                <select id="objeto" name="objeto" class="form-control" requied>
-                  @foreach ($tblobjeto as $tbl)
-                  <option value="{{ $tbl['id_objeto']}}"   selected>  {{$tbl["nombre_objeto"]}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-
-
-
-              <div class="col-12">
                 <div class="form-group">
-                  <label for="">Permiso Creacion</label>
-                  <input type="text" id="permiso_creacion" name="permiso_creacion" class="form-control" value="{{$permiso['permiso_creacion']}}" >
+                  <label for="">Rol</label>
+                  <select id="rol" name="rol" class="form-control" requied>
+                    @foreach ($tblrol as $tbl)
+                    <option value="{{ $tbl['id_rol']}}" selected> {{$tbl["rol"]}}</option>
+                    @endforeach
+                  </select>
                 </div>
               </div>
 
               <div class="col-12">
                 <div class="form-group">
-                  <label for="">Permiso Actualizacion</label>
-                  <input type="text" id="permiso_actualizacion" name="permiso_actualizacion" class="form-control" value="{{$permiso['permiso_actualizacion']}}" >
-                </div>
-              </div>
-              
-              <div class="col-12">
-                <div class="form-group">
-                  <label for="">Permiso Eliminacion</label>
-                  <input type="text" id="permiso_eliminacion" name="permiso_eliminacion" class="form-control" value="{{$permiso['permiso_eliminacion']}}" >
+                  <label for="">Objeto</label>
+                  <select id="objeto" name="objeto" class="form-control" requied>
+                    @foreach ($tblobjeto as $tbl)
+                    <option value="{{ $tbl['id_objeto']}}" selected> {{$tbl["nombre_objeto"]}}</option>
+                    @endforeach
+                  </select>
                 </div>
               </div>
 
+              <!-- Permiso Creación -->
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="">Permiso Creación</label>
+                  <select id="permiso_creacion" name="permiso_creacion" class="form-control" required>
+                    <option value="1" {{ $permiso['permiso_creacion'] == 1 ? 'selected' : '' }}>Sí</option>
+                    <option value="0" {{ $permiso['permiso_creacion'] == 0 ? 'selected' : '' }}>No</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Permiso Actualización -->
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="">Permiso Actualización</label>
+                  <select id="permiso_actualizacion" name="permiso_actualizacion" class="form-control" required>
+                    <option value="1" {{ $permiso['permiso_actualizacion'] == 1 ? 'selected' : '' }}>Sí</option>
+                    <option value="0" {{ $permiso['permiso_actualizacion'] == 0 ? 'selected' : '' }}>No</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Permiso Eliminación -->
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="">Permiso Eliminación</label>
+                  <select id="permiso_eliminacion" name="permiso_eliminacion" class="form-control" required>
+                    <option value="1" {{ $permiso['permiso_eliminacion'] == 1 ? 'selected' : '' }}>Sí</option>
+                    <option value="0" {{ $permiso['permiso_eliminacion'] == 0 ? 'selected' : '' }}>No</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Permiso Consultar -->
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Permiso Consultar</label>
-                  <input type="text" id="permiso_consultar" name="permiso_consultar" class="form-control" value="{{$permiso['permiso_consultar']}}" >
+                  <select id="permiso_consultar" name="permiso_consultar" class="form-control" required>
+                    <option value="1" {{ $permiso['permiso_consultar'] == 1 ? 'selected' : '' }}>Sí</option>
+                    <option value="0" {{ $permiso['permiso_consultar'] == 0 ? 'selected' : '' }}>No</option>
+                  </select>
                 </div>
               </div>
 
-             
+              <!-- Estado -->
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Estado</label>
@@ -159,8 +167,6 @@
                   </select>
                 </div>
               </div>
-            
-             
             </div>
           </div>
           <div class="modal-footer justify-content-between">
@@ -176,8 +182,6 @@
   </div>
   <!-- /.modal -->
   @endforeach
-
-  
 
   <!-- Modal para Eliminar Objeto -->
   @foreach ($permisos as $permiso)
@@ -219,84 +223,92 @@
           </button>
         </div>
 
-
-      
-
         <!-- Formulario para Agregar permiso-->
         <form action="agregar_permiso" method="post">
           @csrf
           <div class="modal-body">
             <div class="row">
 
-            <div class="col-12">
-              <div class="form-group">
-                <label for="">Rol</label>
-                <select id="rol" name="rol" class="form-control" requied>
-                <option>SELECCIONA</option>
-                  @foreach ($tblrol as $tbl)
-                  <option value="{{ $tbl['id_rol']}}" selected> {{$tbl["rol"]}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-
-
-            <div class="col-12">
-              <div class="form-group">
-                <label for="">Objeto</label>
-                <select id="objeto" name="objeto" class="form-control" requied>
-                <option>SELECCIONA</option>
-                  @foreach ($tblobjeto as $tbl)
-                  <option value="{{ $tbl['id_objeto']}}" selected> {{$tbl["nombre_objeto"]}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-
-
-
               <div class="col-12">
                 <div class="form-group">
-                  <label for="">Permiso Creacion</label>
-                  <input type="text" id="permiso_creacion" name="permiso_creacion" class="form-control">
+                  <label for="">Rol</label>
+                  <select id="rol" name="rol" class="form-control" requied>
+                    <option>SELECCIONA</option>
+                    @foreach ($tblrol as $tbl)
+                    <option value="{{ $tbl['id_rol']}}" selected> {{$tbl["rol"]}}</option>
+                    @endforeach
+                  </select>
                 </div>
               </div>
 
               <div class="col-12">
                 <div class="form-group">
-                  <label for="">Permiso Actualizacion</label>
-                  <input type="text" id="permiso_actualizacion" name="permiso_actualizacion" class="form-control" >
-                </div>
-              </div>
-              
-              <div class="col-12">
-                <div class="form-group">
-                  <label for="">Permiso Eliminacion</label>
-                  <input type="text" id="permiso_eliminacion" name="permiso_eliminacion" class="form-control" >
+                  <label for="">Objeto</label>
+                  <select id="objeto" name="objeto" class="form-control" requied>
+                    <option>SELECCIONA</option>
+                    @foreach ($tblobjeto as $tbl)
+                    <option value="{{ $tbl['id_objeto']}}" selected> {{$tbl["nombre_objeto"]}}</option>
+                    @endforeach
+                  </select>
                 </div>
               </div>
 
+              <!-- Permiso Creación -->
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="">Permiso Creación</label>
+                  <select id="permiso_creacion" name="permiso_creacion" class="form-control" required>
+                    <option value="1">Sí</option>
+                    <option value="0">No</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Permiso Actualización -->
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="">Permiso Actualización</label>
+                  <select id="permiso_actualizacion" name="permiso_actualizacion" class="form-control" required>
+                    <option value="1">Sí</option>
+                    <option value="0">No</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Permiso Eliminación -->
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="">Permiso Eliminación</label>
+                  <select id="permiso_eliminacion" name="permiso_eliminacion" class="form-control" required>
+                    <option value="1">Sí</option>
+                    <option value="0">No</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Permiso Consultar -->
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Permiso Consultar</label>
-                  <input type="text" id="permiso_consultar" name="permiso_consultar" class="form-control" >
+                  <select id="permiso_consultar" name="permiso_consultar" class="form-control" required>
+                    <option value="1">Sí</option>
+                    <option value="0">No</option>
+                  </select>
                 </div>
               </div>
 
-             
+              <!-- Estado -->
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Estado</label>
                   <select id="estdo" name="estdo" class="form-control" requied>
-                  <option>SELECCIONA</option>
+                    <option>SELECCIONA</option>
                     @foreach ($tblestado as $tbl)
                     <option value="{{ $tbl['id_estado']}}" selected>{{$tbl["estado"]}}</option>
                     @endforeach
                   </select>
                 </div>
               </div>
-
-                
             </div>
           </div>
           <div class="modal-footer justify-content-between">
