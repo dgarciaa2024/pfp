@@ -53,13 +53,13 @@ class CambiarContrasenaNewController extends Controller
             return redirect()->back()->withErrors(['nueva_contrasena' => 'No puede utilizar una contraseña utilizada anteriormente.'])->withInput();
         }
 
-        // Actualizar la nueva contraseña en la base de datos y cambiar el estado a 'PENDIENTE'
+        // Actualizar la nueva contraseña en la base de datos y cambiar el estado a 'ACTIVO'
         DB::table('pfp_schema.tbl_usuario')
             ->where('id_usuario', $user->id_usuario)
             ->update([
                 'contrasena' => $nuevaContrasena, 
                 'fecha_modificacion' => now(),   // Cambiar fecha de modificación
-                'id_estado' => 4 // Assuming '4' is 'PENDIENTE'
+                'id_estado' => 1 // Assuming '1' is 'ACTIVO'
             ]);
 
         // Redirigir a la vista de AdministrarPerfil con un mensaje de éxito y la evaluación de la contraseña
