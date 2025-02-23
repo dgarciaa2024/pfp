@@ -73,7 +73,7 @@
         10 => 'Canjes',
         18 => 'Devoluciones',
         17 => 'Facturas',
-        16 => 'EstadoCanje',
+        16 => 'Estado_Canje',
         24 => 'TipoRegistro',
         29 => 'Departamento',
         23 => 'Especialidad',
