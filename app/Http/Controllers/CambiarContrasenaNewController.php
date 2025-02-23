@@ -54,14 +54,14 @@ class CambiarContrasenaNewController extends Controller
             return redirect()->back()->withErrors(['nueva_contrasena' => 'No puede utilizar una contraseña utilizada anteriormente.'])->withInput();
         }
 
-<<<<<<< Updated upstream
+
         // Actualizar la nueva contraseña en la base de datos y cambiar el estado a 'ACTIVO'
-=======
+
         // Encriptar la nueva contraseña
         $contrasenaEncriptada = Crypt::encryptString($nuevaContrasena);
 
         // Actualizar la nueva contraseña en la base de datos y cambiar el estado a 'PENDIENTE'
->>>>>>> Stashed changes
+
         DB::table('pfp_schema.tbl_usuario')
             ->where('id_usuario', $user->id_usuario)
             ->update([
