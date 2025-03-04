@@ -30,7 +30,7 @@
                   <tr>
 
                     <th>Codigo</th>
-                    <th>Dni</th>
+                    <th>DNI</th>
                     <th>Nombres</th>
                     <th>Apellidos</th>
                     <th>Fecha Nacimiento</th>
@@ -95,11 +95,11 @@
         <div class="modal-header">
           <h4 class="modal-title">Actualizar PACIENTE</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">×</span>
           </button>
         </div>
 
-        <form action="editar_paciente" method="post">
+        <form action="editar_paciente" method="post" x-data="{ dni: '{{$Paciente['dni_paciente']}}', email: '{{$Paciente['email']}}', genero: '{{$Paciente['genero']}}', celular: '{{$Paciente['celular']}}', dniLength: {{$dniLength}}, emailPattern: /^[\w\.-]+@[\w\.-]+\.\w{2,4}$/, generoPattern: /^[MFX]$/, celularLength: {{$celularLength}} }">
           @csrf
           @method('PUT')
           <div class="modal-body">
@@ -109,7 +109,11 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Dni</label>
-                  <input type="text" id="dni" name="dni" class="form-control" value="{{$Paciente['dni_paciente']}}" required>
+                  <input type="text" id="dni" name="dni" class="form-control" value="{{$Paciente['dni_paciente']}}" required maxlength="{{ $dniLength }}" pattern="[0-9]{1,{{ $dniLength }}}" title="Ingrese el DNI sin espacios ni guiones, solo números (máximo {{ $dniLength }} caracteres)" placeholder="Ingrese el DNI sin espacios ni guiones" x-model="dni">
+                  <div x-show="dni.length < dniLength" class="text-primary">El DNI debe tener exactamente {{ $dniLength }} caracteres.</div>
+                  @error('dni')
+                    <div class="text-danger">{{ $message }}</div>
+                  @enderror
                 </div>
               </div>
 
@@ -137,7 +141,11 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Email</label>
-                  <input type="text" id="email" name="email" class="form-control" value="{{$Paciente['email']}}" required>
+                  <input type="text" id="email" name="email" class="form-control" value="{{$Paciente['email']}}" required x-model="email">
+                  <div x-show="email && !emailPattern.test(email)" class="text-primary">El formato del correo electrónico es incorrecto. Debe seguir el patrón: ejemplo@dominio.com</div>
+                  @error('email')
+                    <div class="text-danger">{{ $message }}</div>
+                  @enderror
                 </div>
               </div>
 
@@ -151,7 +159,11 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Celular</label>
-                  <input type="text" id="celular" name="celular" class="form-control" value="{{$Paciente['celular']}}" required>
+                  <input type="text" id="celular" name="celular" class="form-control" value="{{$Paciente['celular']}}" required maxlength="{{ $celularLength }}" pattern="[0-9]{1,{{ $celularLength }}}" title="Ingrese el número de celular sin espacios ni guiones, solo números (exactamente {{ $celularLength }} caracteres)" placeholder="Ingrese el número de celular sin espacios ni guiones" x-model="celular">
+                  <div x-show="celular.length !== celularLength" class="text-primary">El número de celular debe tener exactamente {{ $celularLength }} caracteres.</div>
+                  @error('celular')
+                    <div class="text-danger">{{ $message }}</div>
+                  @enderror
                 </div>
               </div>
 
@@ -188,7 +200,11 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Genero</label>
-                  <input type="text" id="genero" name="genero" class="form-control" value="{{$Paciente['genero']}}" required>
+                  <input type="text" id="genero" name="genero" class="form-control" value="{{$Paciente['genero']}}" required maxlength="1" pattern="[MFX]" title="Solo se permite 'M', 'F' o 'X'" placeholder="Ingrese la letra M (Masculino), F (Femenino) o X (Prefiero no decirlo)" x-model="genero">
+                  <div x-show="genero && !generoPattern.test(genero)" class="text-primary">El género debe ser 'M' (Masculino), 'F' (Femenino) o 'X' (Prefiere no especificar).</div>
+                  @error('genero')
+                    <div class="text-danger">{{ $message }}</div>
+                  @enderror
                 </div>
               </div>
 
@@ -196,8 +212,7 @@
           </div>
           <div class="modal-footer justify-content-between">
             <button type="button" class="btn btn-default" data-dismiss="modal">CANCELAR</button>
-            <button type="submit" class="btn btn-primary">Actualizar</button>
-
+            <button type="submit" class="btn btn-primary" :disabled="dni.length < dniLength || !emailPattern.test(email) || !generoPattern.test(genero) || celular.length !== celularLength">Actualizar</button>
           </div>
         </form>
 
@@ -215,7 +230,7 @@
         <div class="modal-header">
           <h4 class="modal-title">HISTORIAL DE COMPRAS</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">×</span>
           </button>
         </div>
         @csrf
@@ -268,11 +283,11 @@
         <div class="modal-header">
           <h4 class="modal-title">AGREGAR UN NUEVO PACIENTE</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">×</span>
           </button>
         </div>
 
-        <form action="agregar_paciente" method="post">
+        <form action="agregar_paciente" method="post" x-data="{ dni: '', email: '', genero: '', celular: '', dniLength: {{$dniLength}}, emailPattern: /^[\w\.-]+@[\w\.-]+\.\w{2,4}$/, generoPattern: /^[MFX]$/, celularLength: {{$celularLength}} }">
           @csrf
           <div class="modal-body">
             <div class="row">
@@ -280,7 +295,11 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Dni</label>
-                  <input type="text" id="dni" name="dni" class="form-control" required>
+                  <input type="text" id="dni" name="dni" class="form-control" required maxlength="{{ $dniLength }}" pattern="[0-9]{1,{{ $dniLength }}}" title="Ingrese el DNI sin espacios ni guiones, solo números (máximo {{ $dniLength }} caracteres)" placeholder="Ingrese el DNI sin espacios ni guiones" x-model="dni">
+                  <div x-show="dni.length > 0 && dni.length < dniLength" class="text-primary">El DNI debe tener exactamente {{ $dniLength }} caracteres.</div>
+                  @error('dni')
+                    <div class="text-danger">{{ $message }}</div>
+                  @enderror
                 </div>
               </div>
 
@@ -309,7 +328,11 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Email</label>
-                  <input type="text" id="email" name="email" class="form-control" required>
+                  <input type="text" id="email" name="email" class="form-control" required x-model="email">
+                  <div x-show="email && !emailPattern.test(email)" class="text-primary">El formato del correo electrónico es incorrecto. Debe seguir el patrón: ejemplo@dominio.com</div>
+                  @error('email')
+                    <div class="text-danger">{{ $message }}</div>
+                  @enderror
                 </div>
               </div>
 
@@ -323,7 +346,11 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Celular</label>
-                  <input type="text" id="celular" name="celular" class="form-control" required>
+                  <input type="text" id="celular" name="celular" class="form-control" required maxlength="{{ $celularLength }}" pattern="[0-9]{1,{{ $celularLength }}}" title="Ingrese el número de celular sin espacios ni guiones, solo números (exactamente {{ $celularLength }} caracteres)" placeholder="Ingrese el numero de celular sin espacios ni guiones" x-model="celular">
+                  <div x-show="celular.length > 0 && celular.length !== celularLength" class="text-primary">El número de celular debe tener exactamente {{ $celularLength }} caracteres.</div>
+                  @error('celular')
+                    <div class="text-danger">{{ $message }}</div>
+                  @enderror
                 </div>
               </div>
 
@@ -361,7 +388,11 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Genero</label>
-                  <input type="text" id="genero" name="genero" class="form-control" required>
+                  <input type="text" id="genero" name="genero" class="form-control" required maxlength="1" pattern="[MFX]" title="Solo se permite 'M', 'F' o 'X'" placeholder="Ingrese la letra M (Masculino), F (Femenino) o X (Prefiero no decirlo)" x-model="genero">
+                  <div x-show="genero && !generoPattern.test(genero)" class="text-primary">El género debe ser 'M' (Masculino), 'F' (Femenino) o 'X' (Prefiere no especificar).</div>
+                  @error('genero')
+                    <div class="text-danger">{{ $message }}</div>
+                  @enderror
                 </div>
               </div>
 
@@ -369,7 +400,7 @@
           </div>
           <div class="modal-footer justify-content-between">
             <button type="button" class="btn btn-default" data-dismiss="modal">CANCELAR</button>
-            <button type="submit" class="btn btn-primary">AGREGAR</button>
+            <button type="submit" class="btn btn-primary" :disabled="dni.length < dniLength || !emailPattern.test(email) || !generoPattern.test(genero) || celular.length !== celularLength">AGREGAR</button>
           </div>
         </form>
 
@@ -380,7 +411,7 @@
   <script>
     function dataHandler(facturas, productos) {
       const formatFacturas = Object.values(facturas.reduce((acumulador, item) => {
-        const clave = `${item.nombre_paciente}-${item.apellido_paciente}-${item.nombre_producto}`;
+        const clave = ${item.nombre_paciente}-${item.apellido_paciente}-${item.nombre_producto};
         if (!acumulador[clave]) {
           acumulador[clave] = {
             ...item

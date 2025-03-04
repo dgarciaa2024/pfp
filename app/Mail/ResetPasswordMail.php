@@ -13,21 +13,26 @@ class ResetPasswordMail extends Mailable
     use Queueable, SerializesModels;
 
     public $newPassword;
-    public $userId; // New property to pass user ID
-    public $userEmail; // New property to store user's email
+    public $userId;
+    public $userEmail;
+    public $expirationTime; // Nueva propiedad para almacenar el tiempo de expiración
 
     public function __construct($newPassword, $userId = null, $userEmail = null)
     {
         $this->newPassword = $newPassword;
-        $this->userId = $userId; // Store the user ID for use in build method
-        $this->userEmail = $userEmail; // Store the user's email
+        $this->userId = $userId;
+        $this->userEmail = $userEmail;
+        
+        // Obtener el valor del parámetro desde la tabla
+        $this->expirationTime = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 2)
+            ->value('valor') ?? '24'; // Si no encuentra el parámetro, usa 24 como default
     }
 
     public function build()
     {
         if ($this->userEmail !== null) {
             try {
-                // Use a transaction to ensure the update happens immediately
                 DB::transaction(function () {
                     $user = DB::table('pfp_schema.tbl_usuario')
                         ->where('correo', $this->userEmail)
@@ -38,10 +43,9 @@ class ResetPasswordMail extends Mailable
                             ->where('id_usuario', $user->id_usuario)
                             ->update([
                                 'contrasena' => $this->newPassword, 
-                                'id_estado' => 4 // Assuming '4' is 'PENDIENTE'
+                                'id_estado' => 4
                             ]);
 
-                        // Log if update was successful or not
                         if ($affectedRows > 0) {
                             Log::info("User state updated successfully for email: {$this->userEmail}");
                         } else {
@@ -52,7 +56,6 @@ class ResetPasswordMail extends Mailable
                     }
                 });
             } catch (\Exception $e) {
-                // Log any exceptions that occur during the database operation
                 Log::error("Exception occurred while updating user state for email {$this->userEmail}: " . $e->getMessage());
             }
         } else {
@@ -61,6 +64,9 @@ class ResetPasswordMail extends Mailable
 
         return $this->subject('Restablecimiento de contraseña')
                     ->view('emails.ResetPassword')
-                    ->with(['newPassword' => $this->newPassword]);
+                    ->with([
+                        'newPassword' => $this->newPassword,
+                        'expirationTime' => $this->expirationTime // Pasamos el valor a la vista
+                    ]);
     }
 }

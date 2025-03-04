@@ -17,6 +17,15 @@ class PacientesController extends Controller
         $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
         $tabla_rol = Http::get(env('API_URL', 'http://localhost:3002').'/get_usuarios');
 
+        // Obtener longitud máxima del DNI desde tbl_parametro
+        $dniLength = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 5)
+            ->value('valor');
+
+        // Obtener longitud máxima del celular desde tbl_parametro
+        $celularLength = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 8)
+            ->value('valor');
 
          // Manejo de sesión y permisos
          $usuario = session('usuario'); // Obtener usuario desde la sesión
@@ -52,6 +61,8 @@ class PacientesController extends Controller
             'permiso_insercion' => $permiso_insercion,
             'permiso_actualizacion' => $permiso_actualizacion,
             'permiso_eliminacion' => $permiso_eliminacion,
+            'dniLength' => $dniLength, // Pasar la longitud del DNI a la vista
+            'celularLength' => $celularLength, // Pasar la longitud del celular a la vista
         ]);
     }
 
@@ -59,14 +70,32 @@ class PacientesController extends Controller
 
     public function store(Request $request)
     {
+        // Obtener longitud máxima del DNI desde tbl_parametro
+        $dniLength = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 5)
+            ->value('valor');
 
-        //validar duplicados
+        // Obtener el patrón de email desde tbl_parametro
+        $emailPattern = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 7)
+            ->value('valor');
+
+        // Obtener longitud máxima del celular desde tbl_parametro
+        $celularLength = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 8)
+            ->value('valor');
+
+        //validar duplicados y agregar regla para DNI numérico y longitud específica
         $validatedData = $request->validate([
             'dni' => [
                 'required',
                 'string',
                 'max:255',
-                function ($attribute, $value, $fail) {
+                "regex:/^[0-9]{1,{$dniLength}}$/", // Solo números, longitud máxima según tbl_parametro
+                function ($attribute, $value, $fail) use ($dniLength) {
+                    if (strlen($value) < $dniLength) {
+                        $fail("El DNI debe tener exactamente {$dniLength} caracteres.");
+                    }
                     if (DB::table('pfp_schema.tbl_paciente')->where('dni_paciente', $value)->exists()) {
                         $fail('El DNI ya está registrado en el sistema.');
                     }
@@ -76,7 +105,11 @@ class PacientesController extends Controller
                 'required',
                 'email',
                 'max:255',
-                function ($attribute, $value, $fail) {
+                "regex:/{$emailPattern}/", // Usar el patrón de tbl_parametro
+                function ($attribute, $value, $fail) use ($emailPattern) {
+                    if (!preg_match("/{$emailPattern}/", $value)) {
+                        $fail('El formato del correo electrónico es incorrecto. Debe seguir el patrón: ejemplo@dominio.com');
+                    }
                     if (DB::table('pfp_schema.tbl_paciente')->where('email', $value)->exists()) {
                         $fail('El correo electrónico ya está registrado en el sistema.');
                     }
@@ -85,10 +118,24 @@ class PacientesController extends Controller
             'celular' => [
                 'required',
                 'string',
-                'max:20',
-                function ($attribute, $value, $fail) {
+                "regex:/^[0-9]{1,{$celularLength}}$/", // Solo números, longitud exacta según tbl_parametro
+                function ($attribute, $value, $fail) use ($celularLength) {
+                    if (strlen($value) != $celularLength) {
+                        $fail("El número de celular debe tener exactamente {$celularLength} caracteres.");
+                    }
                     if (DB::table('pfp_schema.tbl_paciente')->where('celular', $value)->exists()) {
                         $fail('El número de celular ya está registrado en el sistema.');
+                    }
+                },
+            ],
+            'genero' => [
+                'required',
+                'string',
+                'max:1',
+                'regex:/^[MFX]$/', // Solo permite M, F o X
+                function ($attribute, $value, $fail) {
+                    if (!in_array($value, ['M', 'F', 'X'])) {
+                        $fail('El género debe ser "M" (Masculino), "F" (Femenino) o "X" (Prefiere no especificar).');
                     }
                 },
             ],
@@ -128,6 +175,68 @@ class PacientesController extends Controller
 
     public function update(Request $request)
     {
+        // Obtener longitud máxima del DNI desde tbl_parametro
+        $dniLength = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 5)
+            ->value('valor');
+
+        // Obtener el patrón de email desde tbl_parametro
+        $emailPattern = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 7)
+            ->value('valor');
+
+        // Obtener longitud máxima del celular desde tbl_parametro
+        $celularLength = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 8)
+            ->value('valor');
+
+        // Validar el DNI y email en la actualización
+        $validatedData = $request->validate([
+            'dni' => [
+                'required',
+                'string',
+                'max:255',
+                "regex:/^[0-9]{1,{$dniLength}}$/", // Solo números, longitud máxima según tbl_parametro
+                function ($attribute, $value, $fail) use ($dniLength) {
+                    if (strlen($value) < $dniLength) {
+                        $fail("El DNI debe tener exactamente {$dniLength} caracteres.");
+                    }
+                },
+            ],
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                "regex:/{$emailPattern}/", // Usar el patrón de tbl_parametro
+                function ($attribute, $value, $fail) use ($emailPattern) {
+                    if (!preg_match("/{$emailPattern}/", $value)) {
+                        $fail('El formato del correo electrónico es incorrecto. Debe seguir el patrón: ejemplo@dominio.com');
+                    }
+                },
+            ],
+            'celular' => [
+                'required',
+                'string',
+                "regex:/^[0-9]{1,{$celularLength}}$/", // Solo números, longitud exacta según tbl_parametro
+                function ($attribute, $value, $fail) use ($celularLength) {
+                    if (strlen($value) != $celularLength) {
+                        $fail("El número de celular debe tener exactamente {$celularLength} caracteres.");
+                    }
+                },
+            ],
+            'genero' => [
+                'required',
+                'string',
+                'max:1',
+                'regex:/^[MFX]$/', // Solo permite M, F o X
+                function ($attribute, $value, $fail) {
+                    if (!in_array($value, ['M', 'F', 'X'])) {
+                        $fail('El género debe ser "M" (Masculino), "F" (Femenino) o "X" (Prefiere no especificar).');
+                    }
+                },
+            ],
+        ]);
+
         $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_paciente', [
             'id_paciente' => $request->get('cod'),
             'dni_paciente' => $request->get('dni'),
@@ -148,8 +257,5 @@ class PacientesController extends Controller
         return redirect('Pacientes');
 
     }
-
-
-
 
 }

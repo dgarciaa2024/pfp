@@ -71,11 +71,34 @@ class UsuarioController extends Controller
     public function store(Request $request)
     {
         $newPassword = Str::random(10); // Generate a random password
-        $estadoPendiente = 2; // Assuming '2' is the ID for 'Pendiente'
+        $estadoPendiente = 4; // Assuming '4' is the ID for 'Pendiente'
         $duracionContrasena = DB::table('pfp_schema.tbl_parametro')
             ->where('id_parametro', 2)
             ->value('valor');
         $duracionContrasena = $duracionContrasena ? (int) $duracionContrasena : 0;
+
+        // Obtener el patrón de email desde tbl_parametro
+        $emailPattern = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 7)
+            ->value('valor');
+
+        // Validar el email
+        $validatedData = $request->validate([
+            'correo' => [
+                'required',
+                'email',
+                'max:255',
+                "regex:/{$emailPattern}/", // Usar el patrón de tbl_parametro
+                function ($attribute, $value, $fail) use ($emailPattern) {
+                    if (!preg_match("/{$emailPattern}/", $value)) {
+                        $fail('El formato del correo electrónico es incorrecto. Debe seguir el patrón: ejemplo@dominio.com');
+                    }
+                    if (DB::table('pfp_schema.tbl_usuario')->where('email', $value)->exists()) {
+                        $fail('El correo electrónico ya está registrado en el sistema.');
+                    }
+                },
+            ],
+        ]);
 
         $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_usuario', [
             'usuario' => $request->get('usu'),
@@ -83,7 +106,7 @@ class UsuarioController extends Controller
             'contrasena' => Crypt::encryptString($newPassword),
             'id_rol' => $request->get('rol'),
             'email' => $request->get('correo'),
-            'primer_ingreso' => 1,
+            'primer_ingreso' => 1, // Se establece como 1 por defecto
             'id_estado' => 4,
             'fecha_vencimiento' => now()->addMinutes($duracionContrasena)
         ]);
@@ -96,6 +119,26 @@ class UsuarioController extends Controller
 
     public function update(Request $request)
     {
+        // Obtener el patrón de email desde tbl_parametro
+        $emailPattern = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 7)
+            ->value('valor');
+
+        // Validar el email en la actualización
+        $validatedData = $request->validate([
+            'correo' => [
+                'required',
+                'email',
+                'max:255',
+                "regex:/{$emailPattern}/", // Usar el patrón de tbl_parametro
+                function ($attribute, $value, $fail) use ($emailPattern) {
+                    if (!preg_match("/{$emailPattern}/", $value)) {
+                        $fail('El formato del correo electrónico es incorrecto. Debe seguir el patrón: ejemplo@dominio.com');
+                    }
+                },
+            ],
+        ]);
+
         $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_usuario', [
             'id_usuario' => $request->get('cod'),
             'usuario' => $request->get('usu'),
@@ -103,7 +146,7 @@ class UsuarioController extends Controller
             'contrasena' => Crypt::encryptString($request->get('contra')),
             'id_rol' => $request->get('rol'),
             'email' => $request->get('correo'),
-            'primer_ingreso' => $request->get('ingreso'),
+            'primer_ingreso' => 1, // Mantenemos primer_ingreso como 1 aunque no esté en la vista
             'id_estado' => $request->get('estdo')
         ]);
 
