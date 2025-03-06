@@ -1,6 +1,11 @@
 @extends('layouts.principal')
 
 @section('content')
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
     <br>
     <section class="content">
         <div class="container-fluid">
