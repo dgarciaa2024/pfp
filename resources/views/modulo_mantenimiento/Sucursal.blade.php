@@ -23,7 +23,7 @@
 
           <div class="card-body">
             <!--Tabla-->
-            <table id="example1" class="table table-bordered table-striped table-responsive">
+            <table id="example2" class="table table-bordered table-striped table-responsive">
               <thead class="text-center bg-danger text-white">
                 <tr>
                    

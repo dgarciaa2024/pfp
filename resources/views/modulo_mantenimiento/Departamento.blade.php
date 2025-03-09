@@ -26,7 +26,7 @@
           <div class="card-body">
             <!--Tarjeta_BODY-->
             <!--Tabla-->
-            <table id="example1" class="table table-bordered table-striped  ">
+            <table id="example2" class="table table-bordered table-striped  ">
               <!--Tabla_CABEZA-->
               <thead class=" text-center bg-danger blue text-white ">
                 <tr>

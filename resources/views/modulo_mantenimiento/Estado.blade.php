@@ -25,7 +25,7 @@
                 <!-- cuerpo -->
                 <div class="card-body">
                     <!-- tabla -->
-                    <table id="example1" class="table table-bordered table-striped table-sm">                   
+                    <table id="example2" class="table table-bordered table-striped table-sm">                   
                     <thead class=" text-center bg-danger blue text-white">
 
 
