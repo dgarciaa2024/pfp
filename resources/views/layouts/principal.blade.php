@@ -1,5 +1,5 @@
-@php use Illuminate\Support\Facades\Auth; @endphp
-
+@php
+ use Illuminate\Support\Facades\Auth; @endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,12 +52,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-
   <!--input type="text" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();"-->
-
-
-
-
 
   <style>
     /* Estilo personalizado para aplicar el color rojo vino (#DC3545)  .main-header.navbar {
@@ -70,14 +65,24 @@
 
     .main-sidebar {
       background-color: #800020;
+      position: fixed; /* Fija el sidebar */
+      height: 100vh; /* Ocupa toda la altura de la ventana */
+      overflow-y: auto; /* Permite el desplazamiento vertical si es necesario */
     }
 
+    .content-wrapper {
+      margin-left: 250px; /* Ajusta el margen izquierdo para el sidebar */
+      min-height: 100vh; /* Asegura que el contenido ocupe toda la altura */
+      padding-bottom: 60px; /* Espacio para el footer */
+    }
+
+    .main-footer {
+      margin-left: 250px; /* Ajusta el margen izquierdo para el sidebar */
+    }
   </style>
 </head>
 
 <body class="hold-transition sidebar-mini">
-
-
   <!-- Preloader -->
   <div class="preloader flex-column justify-content-center align-items-center">
     <img class="animation__shake" src="dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
@@ -93,34 +98,31 @@
       </li>
     </ul>
 
-
     <!-- Despliega un formulario de búsqueda -->
     <!-- Right navbar links-->
     <ul class="navbar-nav ml-auto">
-      <!-- Navbar Search -->
-      <li class="nav-item">
-        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-          <i class="fas fa-search"></i>
+      <!-- Ícono de ayuda (MOVIDO AQUÍ) -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button">
+          <i class="fas fa-question-circle"> Ayuda</i>
         </a>
-        <div class="navbar-search-block">
-          <form class="form-inline">
-            <div class="input-group input-group-sm">
-              <input class="form-control form-control-navbar" type="search" placeholder="Buscar" aria-label="Buscar">
-              <div class="input-group-append">
-                <button class="btn btn-navbar" type="submit">
-                  <i class="fas fa-search"></i>
-                </button>
-                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-            </div>
-          </form>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a href="{{ url('/manual_usuario') }}" class="dropdown-item">Ver Manual de Usuario</a>
+          
+          @php
+            $user = Auth::user();
+            $mostrarTodos = $user && $user->id_rol == 1;
+          @endphp
+          
+          @if($mostrarTodos)
+            <div class="dropdown-divider"></div>
+            <a href="{{ url('/manual_tecnico') }}" class="dropdown-item">Ver Manual Técnico</a>
+            <a href="{{ url('/manual_instalacion') }}" class="dropdown-item">Ver Manual de Instalación</a>
+          @endif
         </div>
       </li>
 
       <!--Menú desplegable de mensajes en la barra de navegación -->
-
       <li class="nav-item dropdown user-menu">
         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
           <img src="../../dist/img/Foto_perfil.png" class="user-image img-circle elevation-2" alt="User Image">
@@ -151,7 +153,6 @@
               @csrf
               <button type="submit" class="btn btn-default btn-flat">CERRAR SESIÓN</button>
             </form>
-
           </li>
         </ul>
       </li>
@@ -159,11 +160,6 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
           <i class="fas fa-expand-arrows-alt"></i>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#" role="button">
-          <i class="fas fa-th-large"></i>
         </a>
       </li>
     </ul>
@@ -180,9 +176,9 @@
     <!-- NO TE OLVIDES QUE AQUI VA EL COLOR-->
     <!-- Brand Logo -->
     <a href="{{ url('/inicio') }}" class="brand-link"> <!-- Redirige a la página de inicio -->
-    <img src="dist/img/Foto_perfil.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-    <span class="brand-text font-weight-light">CONEXSA</span>
-</a>
+      <img src="dist/img/Foto_perfil.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">CONEXSA</span>
+    </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -192,9 +188,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-
           @include('layouts.modulos')
-
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -218,13 +212,10 @@
   </div>-->
   </div>
 
-
-
-
   <!--ESTE ES EL FINAL -->
   <!-- /.content-wrapper -->
   <footer class="main-footer">
-    <strong>Derechos Reservados &copy; 2024 <a href="https://www.unah.edu.hn/">UNAH</a></strong>
+    <strong>Derechos Reservados © 2024 <a href="https://www.unah.edu.hn/">UNAH</a></strong>
     <div class="float-right d-none d-sm-inline-block">
       <b>Version</b> 0.1
     </div>
@@ -237,8 +228,6 @@
   <!-- /.control-sidebar -->
 
   <!-- ./wrapper -->
-
-
   <!-- jQuery -->
   <script src="plugins/jquery/jquery.min.js"></script>
   <!-- jQuery UI 1.11.4 -->
@@ -246,7 +235,6 @@
   <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
   <script>
     $.widget.bridge('uibutton', $.ui.button)
-
   </script>
   <!-- Bootstrap 4 -->
   <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -275,9 +263,6 @@
   <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
   <script src="dist/js/pages/dashboard.js"></script>
 
-
-
-
   <!-- DataTables  & Plugins -->
   <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
   <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -292,96 +277,66 @@
   <script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
   <script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 
-
   <!-- Select2 JS -->
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-
 
   <!-- Page specific script -->
   <script>
     $(function() {
-      $("#example1").DataTable({
-        "responsive": true
-        , "lengthChange": false
-        , "autoWidth": false
-        , "info": true
-        , "buttons": false
-        , "language": {
-          "decimal": ","
-          , "thousands": "."
-          , "lengthMenu": "Mostrar MENU registros por página"
-          , "zeroRecords": "No se encontraron resultados"
-          , "info": "Mostrando START a END de TOTAL registros"
-          , "infoEmpty": "No hay registros disponibles"
-          , "infoFiltered": "(filtrado de MAX registros totales)"
-          , "search": "Buscar:"
-          , "paginate": {
-            "first": "Primero"
-            , "last": "Último"
-            , "next": "Siguiente"
-            , "previous": "Anterior"
-          }
-        }
-      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
       $('#example2').DataTable({
-        "paging": true
-        , "lengthChange": true
-        , "searching": true
-        , "ordering": true
-        , "info": true
-        , "autoWidth": true
-        , "responsive": true
-        , "language": {
-          "decimal": ","
-          , "thousands": "."
-          , "lengthMenu": "Mostrar MENU registros por página"
-          , "zeroRecords": "No se encontraron resultados"
-          , "info": "Mostrando inicio a fin de TOTAL registros"
-          , "infoEmpty": "No hay registros disponibles"
-          , "infoFiltered": "(filtrado de MAX registros totales)"
-          , "search": "Buscar:"
-          , "paginate": {
-            "first": "Primero"
-            , "last": "Último"
-            , "next": "Siguiente"
-            , "previous": "Anterior"
+        "responsive": true,
+        "lengthChange": true, // Permite cambiar el número de registros por página
+        "autoWidth": true, // Ajusta el ancho de la tabla automáticamente
+        "info": true, // Muestra la información de paginación
+        "buttons": false, // Desactiva los botones (si no los usas)
+        "language": {
+          "decimal": ",",
+          "thousands": ".",
+          "lengthMenu": "Mostrar _MENU_ registros por página", // Placeholder dinámico
+          "zeroRecords": "No se encontraron resultados",
+          "info": "Mostrando _START_ a _END_ de _TOTAL_ registros", // Placeholders dinámicos
+          "infoEmpty": "No hay registros disponibles",
+          "infoFiltered": "(filtrado de _MAX_ registros totales)", // Placeholder dinámico
+          "search": "Buscar:",
+          "paginate": {
+            "first": "Primero",
+            "last": "Último",
+            "next": "Siguiente",
+            "previous": "Anterior"
           }
         }
       });
 
       $("#TablaCanje").DataTable({
-        "responsive": true
-        , "lengthChange": false
-        , "autoWidth": false
-        , "buttons": [{
-          extend: "excel"
-          , text: '<i class="fa fa-file-excel-o"></i>   Excel'
-          , className: 'btn btn-success'
-          , exportOptions: {
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false,
+        "buttons": [{
+          extend: "excel",
+          text: '<i class="fa fa-file-excel-o"></i>   Excel',
+          className: 'btn btn-success',
+          exportOptions: {
             columns: ':not(:last-child)' // Excluye la última columna (Acciones)
           }
-        }]
-        , "language": {
-          "decimal": ","
-          , "thousands": "."
-          , "lengthMenu": "Mostrar _MENU_ registros por página"
-          , "zeroRecords": "No se encontraron resultados"
-          , "info": "Mostrando _START_ a _END_ de _TOTAL_ registros"
-          , "infoEmpty": "No hay registros disponibles"
-          , "infoFiltered": "(filtrado de _MAX_ registros totales)"
-          , "search": "Buscar:"
-          , "paginate": {
-            "first": "Primero"
-            , "last": "Último"
-            , "next": "Siguiente"
-            , "previous": "Anterior"
+        }],
+        "language": {
+          "decimal": ",",
+          "thousands": ".",
+          "lengthMenu": "Mostrar _MENU_ registros por página",
+          "zeroRecords": "No se encontraron resultados",
+          "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+          "infoEmpty": "No hay registros disponibles",
+          "infoFiltered": "(filtrado de _MAX_ registros totales)",
+          "search": "Buscar:",
+          "paginate": {
+            "first": "Primero",
+            "last": "Último",
+            "next": "Siguiente",
+            "previous": "Anterior"
           }
         }
       }).buttons().container().appendTo('#TablaCanje_wrapper .col-md-6:eq(0)');
-
-
     });
-
   </script>
+</body>
+</html>
