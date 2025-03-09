@@ -5,6 +5,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdministrarPerfilController;
 use App\Http\Controllers\Backup_RestoreController;
 use App\Http\Controllers\BitacoraController;
+use App\Http\Controllers\ManualController;
 
 //RUTAS DEL SISTEMA 
 
@@ -107,6 +108,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('editar_usuario', [App\Http\Controllers\UsuarioController::class, 'update']);
     // 
     Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
+    Route::get('Usuarios', [App\Http\Controllers\UsuarioController::class, 'index'])->name('Usuarios');
 
     //-------------------------------------TBLA PACIENTES
 
@@ -128,6 +130,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('TipoContacto', [App\Http\Controllers\TipoContactoController::class, 'index']);
     Route::post('agregar_tipo_contacto', [App\Http\Controllers\TipoContactoController::class, 'store']);
     Route::put('editar_tipo_contacto', [App\Http\Controllers\TipoContactoController::class, 'update']);
+    
 
     //----------------------WILI--------------------UNIDAD LABORATORIOs
     Route::get('Laboratorios', [App\Http\Controllers\LaboratoriosController::class, 'index']);
@@ -144,11 +147,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('Contacto', [App\Http\Controllers\ContactosController::class, 'index']);
     Route::post('agregar_contacto', [App\Http\Controllers\ContactosController::class, 'store']);
     Route::put('editar_contacto', [App\Http\Controllers\ContactosController::class, 'update']);
+    Route::get('Contacto', [App\Http\Controllers\ContactosController::class, 'index'])->name('Contacto');
 
     //------------------------------------------- SUCURSAL
     Route::get('Sucursal', [App\Http\Controllers\SucursalesController::class, 'index']);
     Route::post('agregar_sucursal', [App\Http\Controllers\SucursalesController::class, 'store']);
     Route::put('editar_sucursal', [App\Http\Controllers\SucursalesController::class, 'update']);
+    Route::get('Sucursal', [App\Http\Controllers\SucursalController::class, 'index'])->name('Sucursal');
 
     //------------------------------------------- FACTURAS
     Route::get('Facturas', [App\Http\Controllers\FacturaController::class, 'index']);
@@ -297,6 +302,14 @@ Route::put('/perfil/update', [PerfilController::class, 'update'])->name('adminis
 
 Route::get('/administrar-perfil', [AdministrarPerfilController::class, 'index'])->name('AdministrarPerfil');
 Route::get('/AdministrarPerfil', [AdministrarPerfilController::class, 'index'])->name('administrarPerfil');
+
+//manuales
+Route::get('/manual_tecnico', [ManualController::class, 'tecnico'])->name('manual.tecnico');
+Route::get('/manual_usuario', [ManualController::class, 'usuario'])->name('manual.usuario');
+Route::get('/manual_instalacion', [ManualController::class, 'instalacion'])->name('manual.instalacion');
+
+
+
 
 //fin rutas admin perfil
 
