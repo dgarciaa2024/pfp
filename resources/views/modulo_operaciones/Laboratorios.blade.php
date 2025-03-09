@@ -21,7 +21,7 @@
 
             <!-- /.INICIO DE LA TABLA -->
             <div class="card-body table-responsive">
-              <table id="example1" class="table table-bordered table-striped table-hover table-sm text-center">
+              <table id="example2" class="table table-bordered table-striped table-hover table-sm text-center">
                 <thead class="bg-danger text-white">
                   <tr>
                     <th>Id Laboratorio</th>

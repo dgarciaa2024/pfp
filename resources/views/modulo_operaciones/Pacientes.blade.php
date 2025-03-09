@@ -25,7 +25,7 @@
 
 
             <div class="card-body">
-              <table id="example1" class="table table-bordered table-striped  ">
+              <table id="example2" class="table table-bordered table-striped  ">
                 <thead class=" text-center bg-danger blue text-white ">
                   <tr>
 
@@ -182,6 +182,7 @@
                     <option value="{{ $tbl['id_usuario']}}">{{$tbl["nombre_usuario"]}}</option>
                     @endforeach
                   </select>
+                  <a href="{{ route('Usuarios') }}" class="mb-2 d-block">Agregar nuevo usuario</a>
                 </div>
               </div>
 
@@ -235,7 +236,7 @@
         </div>
         @csrf
         <div class="modal-body">
-          <table id="example1" class="table table-bordered table-responsive">
+          <table id="example2" class="table table-bordered table-responsive">
             <thead class="text-center bg-danger text-white">
               <tr>
                 <th>Nombre Paciente</th>
@@ -370,6 +371,7 @@
                     <option value="{{ $tbl['id_usuario']}}">{{$tbl["nombre_usuario"]}}</option>
                     @endforeach
                   </select>
+                  <a href="{{ route('Usuarios') }}" class="mb-2 d-block">Agregar nuevo usuario</a>
                 </div>
               </div>
 
