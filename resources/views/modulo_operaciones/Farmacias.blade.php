@@ -22,7 +22,7 @@
 
             <!-- /.INICIO DE LA TABLA -->
             <div class="card-body table-responsive">
-              <table id="example1" class="table table-bordered table-striped table-hover table-sm text-center">
+              <table id="example2" class="table table-bordered table-striped table-hover table-sm text-center">
                 <thead class="bg-danger text-white">
                   <tr>
                     <th>Id</th>
@@ -118,6 +118,7 @@
                   <option value="{{ $tbl['id_sucursal']}}">{{$tbl["nombre_sucursal"]}}</option>
                   @endforeach
                 </select>
+                <a href="{{ route('Sucursal') }}" class="mb-2 d-block">Agregar nueva sucursal</a>
               </div>
             </div>
 
@@ -193,7 +194,7 @@
 
 
       <div class="modal-header">
-        <h4 class="modal-title">AGREGAR UN NUEVO FARMACIA</h4>
+        <h4 class="modal-title">AGREGAR UNA NUEVA FARMACIA</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -228,6 +229,7 @@
                   <option value="{{ $tbl['id_sucursal']}}">{{$tbl["nombre_sucursal"]}}</option>
                   @endforeach
                 </select>
+                <a href="{{ route('Sucursal') }}" class="mb-2 d-block">Agregar nueva sucursal</a>
               </div>
             </div>
 
