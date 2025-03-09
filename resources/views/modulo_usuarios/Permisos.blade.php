@@ -19,7 +19,7 @@
 
             <!-- /.INICIO DE LA TABLA -->
             <div class="card-body table-responsive">
-              <table id="example1" class="table table-bordered table-striped table-hover table-sm text-center">
+              <table id="example2" class="table table-bordered table-striped table-hover table-sm text-center">
                 <thead class="bg-danger text-white">
                   <tr>
                     <th>Codigo</th>
@@ -41,10 +41,10 @@
                     <td>{{ $permiso['id_permiso'] }}</td>
                     <td>{{ $permiso['rol'] }}</td>
                     <td>{{ $permiso['objeto'] }}</td>
-                    <td>{{ $permiso['permiso_creacion'] ? '1' : '0' }}</td>
-                    <td>{{ $permiso['permiso_actualizacion'] ? '1' : '0' }}</td>
-                    <td>{{ $permiso['permiso_eliminacion'] ? '1' : '0' }}</td>
-                    <td>{{ $permiso['permiso_consultar'] ? '1' : '0' }}</td>
+                    <td>{{ $permiso['permiso_creacion'] == 1 ? 'Sí' : 'No' }}</td>
+                    <td>{{ $permiso['permiso_actualizacion'] == 1 ? 'Sí' : 'No' }}</td>
+                    <td>{{ $permiso['permiso_eliminacion'] == 1 ? 'Sí' : 'No' }}</td>
+                    <td>{{ $permiso['permiso_consultar'] == 1 ? 'Sí' : 'No' }}</td>
                     <td>{{ $permiso['estado'] }}</td>
                     <td>{{ $permiso['fecha_creacion'] }}</td>
                     <td>{{ $permiso['creado_por'] }}</td>
