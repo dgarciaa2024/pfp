@@ -194,7 +194,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/Backup_Restore/create', [Backup_RestoreController::class, 'backup'])->name('backup.restore.create');
     Route::post('/backup/download', [Backup_RestoreController::class, 'generateAndDownloadBackup'])->name('backup.download');
     // Ruta para restaurar un backup
-    Route::post('/Backup_Restore/restore', [Backup_RestoreController::class, 'restore'])->name('backup.restore.restore');
+    Route::post('/Backup_Restore/restore', [Backup_RestoreController::class, 'restoreDatabase'])->name('backup.restore.restore');
 
 
     Route::get('/backup-restore', [Backup_RestoreController::class, 'index'])->name('backup.index');

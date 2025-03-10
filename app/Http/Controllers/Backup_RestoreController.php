@@ -113,6 +113,24 @@ class Backup_RestoreController extends Controller
         return back()->with('success', 'La base de datos se ha restaurado correctamente desde el archivo: ' . $uploadedFile->getClientOriginalName());
     }
 
+    public function restoreDatabase(Request $request)
+    {
+        // Validar el archivo
+        $request->validate([
+            'backup_file' => 'required|file|mimes:sql|max:10240',  // Asegúrate de ajustar el tamaño si es necesario
+        ]);
+
+        // Subir el archivo
+        $file = $request->file('backup_file');
+        $fileName = 'backup_' . time() . '.sql';
+        $file->storeAs('backups', $fileName);
+
+        // Llamar al comando de Artisan para restaurar la base de datos
+        Artisan::call('database:restore', ['file' => $fileName]);
+
+        return redirect()->back()->with('success', 'Base de datos restaurada exitosamente.');
+    }
+
     public function generateAndDownloadBackup()
     {
         // Ejecutar el comando Artisan para generar el backup
