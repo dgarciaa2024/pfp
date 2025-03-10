@@ -11,14 +11,16 @@ use App\Http\Controllers\ManualController;
 
 // Ruta pública
 Route::get('/', function () {
-    return view('layouts.Login'); });
+    return view('layouts.Login');
+});
 
 // Ruta de verificación de login
 Route::post('/login_verificar', [LoginController::class, 'verificar_Login']);
 // middleware auth
 Route::middleware(['auth'])->group(function () {
     Route::get('/inicio', function () {
-        return view('inicio'); });
+        return view('inicio');
+    });
 
 
 
@@ -130,7 +132,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('TipoContacto', [App\Http\Controllers\TipoContactoController::class, 'index']);
     Route::post('agregar_tipo_contacto', [App\Http\Controllers\TipoContactoController::class, 'store']);
     Route::put('editar_tipo_contacto', [App\Http\Controllers\TipoContactoController::class, 'update']);
-    
+
 
     //----------------------WILI--------------------UNIDAD LABORATORIOs
     Route::get('Laboratorios', [App\Http\Controllers\LaboratoriosController::class, 'index']);
@@ -190,7 +192,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Ruta para crear un backup
     Route::post('/Backup_Restore/create', [Backup_RestoreController::class, 'backup'])->name('backup.restore.create');
-
+    Route::post('/backup/download', [Backup_RestoreController::class, 'generateAndDownloadBackup'])->name('backup.download');
     // Ruta para restaurar un backup
     Route::post('/Backup_Restore/restore', [Backup_RestoreController::class, 'restore'])->name('backup.restore.restore');
 

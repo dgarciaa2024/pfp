@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+
 
 class Backup_RestoreController extends Controller
 {
@@ -12,7 +17,7 @@ class Backup_RestoreController extends Controller
     {
         // Generar un nombre de archivo único
         $filename = 'backup_' . now()->format('Y_m_d_H_i_s') . '.sql';
-        
+
         // Usar una carpeta temporal específica en el servidor
         $tempDir = 'C:\\Temp'; // Ajusta esta ruta a una carpeta existente y escribible en tu servidor
         if (!is_dir($tempDir)) {
@@ -33,10 +38,10 @@ class Backup_RestoreController extends Controller
 
         // Construir el comando pg_dump
         $command = "\"$pgDumpPath\" --host=" . env('DB_HOST') .
-                   " --port=" . env('DB_PORT') .
-                   " --username=" . env('DB_USERNAME') .
-                   " --dbname=" . env('DB_DATABASE') .
-                   " --no-password --inserts --encoding=UTF8 > \"$backupPath\" 2>&1";
+            " --port=" . env('DB_PORT') .
+            " --username=" . env('DB_USERNAME') .
+            " --dbname=" . env('DB_DATABASE') .
+            " --no-password --inserts --encoding=UTF8 > \"$backupPath\" 2>&1";
 
         // Ejecutar el comando y capturar salida
         putenv('PGPASSWORD=' . env('DB_PASSWORD')); // Establecer la contraseña temporalmente
@@ -88,10 +93,10 @@ class Backup_RestoreController extends Controller
 
         // Construir el comando psql
         $command = "\"$psqlPath\" --host=" . env('DB_HOST') .
-                   " --port=" . env('DB_PORT') .
-                   " --username=" . env('DB_USERNAME') .
-                   " --dbname=" . env('DB_DATABASE') .
-                   " --no-password -f \"$filePath\" 2>&1";
+            " --port=" . env('DB_PORT') .
+            " --username=" . env('DB_USERNAME') .
+            " --dbname=" . env('DB_DATABASE') .
+            " --no-password -f \"$filePath\" 2>&1";
 
         // Ejecutar el comando
         putenv('PGPASSWORD=' . env('DB_PASSWORD')); // Establecer la contraseña temporalmente
@@ -106,5 +111,33 @@ class Backup_RestoreController extends Controller
         }
 
         return back()->with('success', 'La base de datos se ha restaurado correctamente desde el archivo: ' . $uploadedFile->getClientOriginalName());
+    }
+
+    public function generateAndDownloadBackup()
+    {
+        // Ejecutar el comando Artisan para generar el backup
+        Artisan::call('database:backup');
+
+        // Esperar un momento para asegurarse de que el archivo se haya generado
+        sleep(2);
+
+        // Buscar el archivo más reciente en la carpeta backups/
+        $backupPath = storage_path("app/backups/");
+        $files = File::files($backupPath);
+
+        if (empty($files)) {
+            return response()->json(['error' => 'No se encontró ningún archivo de backup'], 500);
+        }
+
+        // Ordenar por fecha de modificación y tomar el más reciente
+        usort($files, function ($a, $b) {
+            return $b->getMTime() - $a->getMTime();
+        });
+
+        $latestBackup = $files[0]->getRealPath(); // Ruta completa del último backup
+        $fileName = basename($latestBackup); // Nombre del archivo
+
+        // Retornar la descarga del archivo directamente
+        return response()->download($latestBackup, $fileName)->deleteFileAfterSend(true);
     }
 }

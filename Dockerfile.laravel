@@ -10,7 +10,8 @@ RUN apk update && \
     libzip-dev \
     git \
     unzip \
-    curl
+    curl \
+    postgresql-client
 
 # Instalar Composer (si no lo has copiado desde otra imagen)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
