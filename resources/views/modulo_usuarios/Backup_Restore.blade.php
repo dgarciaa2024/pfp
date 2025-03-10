@@ -69,20 +69,13 @@
               <h3 class="text-success">
                 <i class="fas fa-upload mr-2"></i>Restaurar Backup
               </h3>
-              <form action="{{ route('backup.restore.restore') }}" method="POST" enctype="multipart/form-data">
+              <form action="{{ route('backup.restore') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="form-group">
-                  <label for="backup_file" class="font-weight-bold">
-                    <i class="fas fa-file-archive mr-2"></i>Seleccionar Archivo
-                  </label>
-                  <div class="custom-file">
-                    <input type="file" name="backup_file" id="backup_file" class="custom-file-input" required>
-                    <label class="custom-file-label" for="backup_file">
-                      Elegir archivo de backup...
-                    </label>
-                  </div>
+                <div class="mb-3">
+                  <label for="backup_file" class="form-label">Selecciona el archivo de backup</label>
+                  <input class="form-control" type="file" id="backup_file" name="backup_file" accept=".sql" required>
                 </div>
-                <button type="submit" class="btn btn-success btn-lg">
+                <button type=" submit" class="btn btn-success btn-lg">
                   <i class="fas fa-sync-alt mr-2"></i>Restaurar Backup
                 </button>
               </form>

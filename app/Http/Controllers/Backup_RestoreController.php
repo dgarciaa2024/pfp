@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
@@ -115,47 +116,85 @@ class Backup_RestoreController extends Controller
 
     public function restoreDatabase(Request $request)
     {
-        // Validar el archivo
-        $request->validate([
-            'backup_file' => 'required|file|mimes:sql|max:10240',  // Asegúrate de ajustar el tamaño si es necesario
-        ]);
+        try {
+            // Validar el archivo
+            $request->validate([
+                'backup_file' => 'required|file|max:10240',  // Máximo 10MB
+            ]);
 
-        // Subir el archivo
-        $file = $request->file('backup_file');
-        $fileName = 'backup_' . time() . '.sql';
-        $file->storeAs('backups', $fileName);
+            // Subir el archivo
+            $file = $request->file('backup_file');
+            $fileName = 'backup_' . time() . '.sql';
+            $filePath = "backups/{$fileName}";
 
-        // Llamar al comando de Artisan para restaurar la base de datos
-        Artisan::call('database:restore', ['file' => $fileName]);
+            if (!$file->storeAs('backups', $fileName)) {
+                return redirect()->back()->with('error', 'Error al subir el archivo.');
+            }
 
-        return redirect()->back()->with('success', 'Base de datos restaurada exitosamente.');
+            // Verificar que el archivo realmente se haya subido
+            if (!Storage::exists($filePath)) {
+                return redirect()->back()->with('error', 'El archivo no se guardó correctamente.');
+            }
+
+            // Ejecutar el comando de Artisan para restaurar la base de datos
+            $exitCode = Artisan::call('database:restore', ['file' => $fileName]);
+
+            if ($exitCode !== 0) {
+                return redirect()->back()->with('error', 'Error al restaurar la base de datos.');
+            }
+
+            return redirect()->back()->with('success', 'Base de datos restaurada exitosamente.');
+
+        } catch (\Exception $e) {
+            Log::error('Error al restaurar la base de datos: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Ocurrió un error inesperado al restaurar la base de datos(' . $e->getFile() . ', ' . $e->getLine() . '): ' . $e->getMessage());
+        }
     }
 
     public function generateAndDownloadBackup()
     {
-        // Ejecutar el comando Artisan para generar el backup
-        Artisan::call('database:backup');
+        try {
+            // Ejecutar el comando Artisan para generar el backup
+            Artisan::call('database:backup');
 
-        // Esperar un momento para asegurarse de que el archivo se haya generado
-        sleep(2);
+            // Esperar un momento para asegurarse de que el archivo se haya generado
+            sleep(2);
 
-        // Buscar el archivo más reciente en la carpeta backups/
-        $backupPath = storage_path("app/backups/");
-        $files = File::files($backupPath);
+            // Definir la carpeta donde se almacenan los backups
+            $backupPath = storage_path("app/backups/");
 
-        if (empty($files)) {
-            return response()->json(['error' => 'No se encontró ningún archivo de backup'], 500);
+            // Verificar si el directorio existe
+            if (!File::exists($backupPath)) {
+                return response()->json(['error' => 'La carpeta de backups no existe.'], 500);
+            }
+
+            // Obtener la lista de archivos en el directorio
+            $files = File::files($backupPath);
+
+            // Verificar si hay archivos
+            if (empty($files)) {
+                return response()->json(['error' => 'No se encontró ningún archivo de backup.'], 500);
+            }
+
+            // Ordenar los archivos por fecha de modificación y tomar el más reciente
+            usort($files, function ($a, $b) {
+                return $b->getMTime() - $a->getMTime();
+            });
+
+            $latestBackup = $files[0]->getRealPath(); // Ruta completa del último backup
+            $fileName = basename($latestBackup); // Nombre del archivo
+
+            // Verificar si el archivo existe antes de descargarlo
+            if (!File::exists($latestBackup)) {
+                return response()->json(['error' => 'El archivo de backup no se encuentra.'], 500);
+            }
+
+            // Retornar la descarga del archivo directamente
+            return response()->download($latestBackup, $fileName)->deleteFileAfterSend(true);
+
+        } catch (\Exception $e) {
+            Log::error('Error al generar o descargar el backup: ' . $e->getMessage());
+            return response()->json(['error' => 'Ocurrió un error inesperado al generar el backup.'], 500);
         }
-
-        // Ordenar por fecha de modificación y tomar el más reciente
-        usort($files, function ($a, $b) {
-            return $b->getMTime() - $a->getMTime();
-        });
-
-        $latestBackup = $files[0]->getRealPath(); // Ruta completa del último backup
-        $fileName = basename($latestBackup); // Nombre del archivo
-
-        // Retornar la descarga del archivo directamente
-        return response()->download($latestBackup, $fileName)->deleteFileAfterSend(true);
     }
 }
