@@ -130,7 +130,7 @@
         @csrf
 
         <div class="input-group mb-3">
-          <input type="text" name="nombre_usuario" class="form-control" value="{{ old('nombre_usuario') }}" placeholder="Nombre de usuario" required autofocus>
+          <input type="text" name="nombre_usuario" class="form-control" value="{{ old('nombre_usuario') }}" placeholder="Nombre de usuario" required autofocus oninput="this.value = this.value.toUpperCase()">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>

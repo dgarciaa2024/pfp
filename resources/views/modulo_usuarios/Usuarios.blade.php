@@ -13,8 +13,10 @@
             <div class="card-header">
               <h1 class="card-title">LISTA DE USUARIOS</h1>
               <div class="card-tools">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo +</button>
-                <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
+              @if ($permiso_insercion == 1)
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo +</button>
+              @endif
+               <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
               </div>
             </div>
 
@@ -58,8 +60,10 @@
                     <td>{{ $Usuario["creado_por"]}}</td>
                     <th>
                       <div class="btn-group" role="group" aria-label="Basic example">
-                        <a type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-editor-{{$Usuario['id_usuario']}}">Actualizar <i class="bi bi-pencil-fill"></i> </a>
-                      </div>
+                      @if ($permiso_actualizacion == 1)
+                      <a type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-editor-{{$Usuario['id_usuario']}}">Actualizar <i class="bi bi-pencil-fill"></i> </a>
+                      @endif
+                    </div>
                     </th>
                   </tr>
                   @endforeach
@@ -97,14 +101,16 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Usuario</label>
-                  <input type="text" id="usu" name="usu" class="form-control" value="{{$Usuario['usuario']}}" required>
+                  <input type="text" id="usu" name="usu" class="form-control" value="{{$Usuario['usuario']}}" required
+                  @input="event.target.value = event.target.value.toUpperCase()">
                 </div>
               </div>
 
               <div class="col-12">
                 <div class="form-group">
                   <label>Nombre Usuario</label>
-                  <input type="text" id="nom_usu" name="nom_usu" class="form-control" value="{{$Usuario['nombre_usuario']}}" required>
+                  <input type="text" id="nom_usu" name="nom_usu" class="form-control" value="{{$Usuario['nombre_usuario']}}" required 
+                  @input="event.target.value = event.target.value.toUpperCase()">
                 </div>
               </div>
 
@@ -195,14 +201,16 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Usuario</label>
-                  <input type="text" id="usu" name="usu" class="form-control" required>
+                  <input type="text" id="usu" name="usu" class="form-control" required
+                  @input="event.target.value = event.target.value.toUpperCase()">
                 </div>
               </div>
 
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Nombres</label>
-                  <input type="text" id="nom_usu" name="nom_usu" class="form-control" required>
+                  <input type="text" id="nom_usu" name="nom_usu" class="form-control" required
+                  @input="event.target.value = event.target.value.toUpperCase()">
                 </div>
               </div>
 
