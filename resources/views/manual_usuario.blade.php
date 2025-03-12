@@ -24,11 +24,11 @@
                         <div class="card-body">
                             <div class="embed-responsive embed-responsive-16by9">
                                 <iframe class="embed-responsive-item" 
-                                        src="https://drive.google.com/file/d/1fsKsBDBloj_oBYqN1F1gBvEjks2eY3Gg/preview" 
+                                        src="https://drive.google.com/file/d/1-yRhn4WIMl2_Faasu8DyMr-BWbG6RPHs/preview" 
                                         style="border: none;" 
                                         allowfullscreen>
                                     Este navegador no soporta PDFs. Por favor, descarga el archivo: 
-                                    <a href="https://drive.google.com/file/d/1fsKsBDBloj_oBYqN1F1gBvEjks2eY3Gg/view" class="text-primary">Descargar PDF</a>
+                                    <a href="https://drive.google.com/file/d/1-yRhn4WIMl2_Faasu8DyMr-BWbG6RPHs/view" class="text-primary">Descargar PDF</a>
                                 </iframe>
                             </div>
                         </div>
