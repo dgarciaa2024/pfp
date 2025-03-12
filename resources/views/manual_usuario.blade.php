@@ -33,7 +33,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Fin de la Tarjeta -->
+                    <!-- Fin de la Tarjetaa -->
                 </div>
             </div>
         </div>
