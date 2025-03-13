@@ -24,14 +24,15 @@
                         <div class="card-body">
                             <div class="embed-responsive embed-responsive-16by9">
                                 <iframe class="embed-responsive-item" 
-                                        src="https://drive.google.com/file/d/1iGktsOu0ucKDvDJYR7sBB7OxZDwEZsOL/preview" 
+                                        src="https://drive.google.com/file/d/1rWcuMaTlk61Xov6-ntd-16bLPcRU717p/preview" 
                                         style="border: none;" 
                                         allowfullscreen>
                                     Este navegador no soporta PDFs. Por favor, descarga el archivo: 
-                                    <a href="https://drive.google.com/file/d/1iGktsOu0ucKDvDJYR7sBB7OxZDwEZsOL/view" class="text-primary">Descargar PDF</a>
+                                    <a href="https://drive.google.com/file/d/1rWcuMaTlk61Xov6-ntd-16bLPcRU717p/view" class="text-primary">Descargar PDF</a>
                                 </iframe>
                             </div>
                         </div>
+                
                     </div>
                     <!-- Fin de la Tarjeta -->
                 </div>
