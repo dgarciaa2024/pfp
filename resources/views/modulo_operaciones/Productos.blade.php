@@ -138,7 +138,7 @@
 
             <div class="col-12">
               <div class="form-group">
-                <label>Forma Farmaseutica</label>
+                <label>Forma Farmaceutica</label>
                 <select id="farma" name="farma" class="form-control" requied>
                   @foreach ($tblfarmaseutica as $tbl)
                   <option value="{{ $tbl['id_forma_farmaceutica']}}" selected>{{$tbl["forma_farmaceutica"]}}</option>
@@ -316,7 +316,7 @@
 
             <div class="col-12">
               <div class="form-group">
-                <label>Forma Farmaseutica</label>
+                <label>Forma Farmaceutica</label>
                 <select id="farma" name="farma" class="form-control" requied>
                   <option>SELECCIONA</option>
                   @foreach ($tblfarmaseutica as $tbl)
@@ -457,4 +457,11 @@
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+@if(session('success'))
+<script>
+    $(document).ready(function() {
+        $('#modal-success').modal('show');
+    });
+</script>
+@endif
 @endsection()

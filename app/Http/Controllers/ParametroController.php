@@ -59,8 +59,11 @@ class ParametroController extends Controller
             'id_usuario' => $request->get('usuario')
 
         ]);
-        return redirect('Parametros');
-
+        if ($response->successful()) {
+            return redirect('Parametros')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }
     }
 
     public function update(Request $request)
@@ -73,8 +76,11 @@ class ParametroController extends Controller
             'id_usuario' => $request->get('usuario')
             
         ]);
-        return redirect('Parametros');
-
+        if ($response->successful()) {
+            return redirect('Parametros')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }
     }
 
     public function destroy($id_parametro)

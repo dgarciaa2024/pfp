@@ -57,7 +57,11 @@ class RolController extends Controller
             'id_estado' => $request->get('estdo'),
         ]);
 
-        return redirect('Roles');
+        if ($response->successful()) {
+            return redirect('Roles')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }
     }
 
     public function update(Request $request)
@@ -68,7 +72,10 @@ class RolController extends Controller
             'descripcion' => $request->get('descripcion'),
             'id_estado' => $request->get('estdo'),
         ]);
-
-        return redirect('Roles');
+        if ($response->successful()) {
+            return redirect('Roles')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }
     }
 }

@@ -25,6 +25,7 @@ class ZonaController extends Controller
          $permiso_insercion = 2;
          $permiso_actualizacion = 2;
          $permiso_eliminacion = 2;
+         $permiso_consultar = 0; // Permiso de consulta predeterminado en 0
  
          if ($usuario) {
              $idRolUsuario = $usuario['id_rol']; // Obtener el rol del usuario desde la sesión
@@ -36,13 +37,22 @@ class ZonaController extends Controller
 
                 ->first();
 
-           // Si se encuentran permisos para este rol y objeto, asignarlos
-           if ($permisos) {
-            $permiso_insercion = $permisos->permiso_creacion;
-            $permiso_actualizacion = $permisos->permiso_actualizacion;
-            $permiso_eliminacion = $permisos->permiso_eliminacion;
+            // Si se encuentran permisos para este rol y objeto, asignarlos
+            if ($permisos) {
+                $permiso_insercion = $permisos->permiso_creacion;
+                $permiso_actualizacion = $permisos->permiso_actualizacion;
+                $permiso_eliminacion = $permisos->permiso_eliminacion;
+                $permiso_consultar = $permisos->permiso_consultar ?? 0; // Asignar 0 si es nulo
+            }
+
+            // Verificar si el usuario tiene permiso de consulta
+            if ($permiso_consultar != 1) {
+                return view('errors.403');
+            }
+        } else {
+            // Si no hay usuario en sesión, redirigir a la vista de sin permiso
+            return view('errors.403');
         }
-    }
 
 
         return view('modulo_mantenimiento.Zona')->with([
@@ -65,9 +75,16 @@ class ZonaController extends Controller
 
         ]);
   
- return redirect('Zona');
+ 
+ if ($response->successful()) {
+    return redirect('Zona')->with('success', true);
+} else {
+    return redirect()->back()->with('error', 'Error al realizar la operación.');
+}
+
+}
        
-    }
+
 
 
     
@@ -82,9 +99,14 @@ class ZonaController extends Controller
             
         ]);
 
-        return redirect('Zona');
-
-    }
+        if ($response->successful()) {
+            return redirect('Zona')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }
+        
+        }
+               
 
 
 

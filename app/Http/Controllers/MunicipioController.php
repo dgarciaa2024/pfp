@@ -17,10 +17,14 @@ class MunicipioController extends Controller
         $tabla_depto = Http::get(env('API_URL', 'http://localhost:3002').'/get_departamentos'); 
         $tabla_estado = Http::get(env('API_URL', 'http://localhost:3002').'/estados');
 
-  // Validar permisos para inserción y edición
-  $usuario = session('usuario'); // Obtener usuario desde la sesión
-  $permiso_insercion = 2;     // Valor predeterminado para inserción
-  $permiso_edicion = 2;       // Valor predeterminado para edición
+   // Manejo de sesión y permisos
+   $usuario = session('usuario'); // Obtener usuario desde la sesión
+
+   // Permisos predeterminados
+   $permiso_insercion = 2;
+   $permiso_actualizacion = 2;
+   $permiso_eliminacion = 2;
+   $permiso_consultar = 0; // Permiso de consulta predeterminado en 0
 
   if ($usuario) {
       $idRolUsuario = $usuario['id_rol']; // Obtener el rol del usuario desde la sesión
@@ -34,8 +38,22 @@ class MunicipioController extends Controller
       if ($permisos) {
           $permiso_insercion = $permisos->permiso_creacion ?? 2;
           $permiso_edicion = $permisos->permiso_edicion ?? 2;
-      }
-  }
+      // Si se encuentran permisos para este rol y objeto, asignarlos
+            if ($permisos) {
+                $permiso_insercion = $permisos->permiso_creacion;
+                $permiso_actualizacion = $permisos->permiso_actualizacion;
+                $permiso_eliminacion = $permisos->permiso_eliminacion;
+                $permiso_consultar = $permisos->permiso_consultar ?? 0; // Asignar 0 si es nulo
+            }
+
+            // Verificar si el usuario tiene permiso de consulta
+            if ($permiso_consultar != 1) {
+                return view('errors.403');
+            }
+        } else {
+            // Si no hay usuario en sesión, redirigir a la vista de sin permiso
+            return view('errors.403');
+        }
 
 
         return view('modulo_mantenimiento.Municipio')->with([
@@ -43,11 +61,11 @@ class MunicipioController extends Controller
         'tbldepto'=> json_decode($tabla_depto,true),
         'Municipios'=> json_decode($response,true),
         'permiso_insercion' => $permiso_insercion,
-        'permiso_edicion' => $permiso_edicion,
+        'permiso_actualizacion' => $permiso_actualizacion,
     ]);
     }
 
-
+}
     public function store(Request $request)
     {
         $response = Http::post(env('API_URL', 'http://localhost:3002').'/insert_municipio', [
@@ -57,9 +75,15 @@ class MunicipioController extends Controller
 
         ]);
   
- return redirect('Municipio');
-       
+ 
+ if ($response->successful()) {
+    return redirect('Municipio')->with('success', true);
+} else {
+    return redirect()->back()->with('error', 'Error al realizar la operación.');
+}   
     }
+       
+    
 
 
     
@@ -73,9 +97,13 @@ class MunicipioController extends Controller
             
         ]);
 
-        return redirect('Municipio');
-
-    }
+        if ($response->successful()) {
+            return redirect('Municipio')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }   
+            }
+    
 
 
 

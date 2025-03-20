@@ -23,6 +23,11 @@ class LoginController extends Controller
     public function login(LoginRequest $request)
     {
         $usuario = User::where('nombre_usuario', $request->nombre_usuario)->first();
+        if (!$usuario) {
+            return back()->withErrors([
+                'login' => 'Usuario o contraseña incorrectos. Favor intente nuevamente.',
+            ]);
+        }
         $response = Http::post(env('API_URL', 'http://localhost:3002') . '/save_credential', [
             'usuario' => [
                 'id' => $usuario->id_usuario,

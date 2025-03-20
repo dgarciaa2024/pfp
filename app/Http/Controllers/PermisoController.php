@@ -69,7 +69,11 @@ class PermisoController extends Controller
             'id_estado' => $request->get('estdo')
 
         ]);
-        return redirect('Permisos');
+        if ($response->successful()) {
+            return redirect('Permisos')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }
     }
 
     public function update(Request $request)
@@ -85,8 +89,11 @@ class PermisoController extends Controller
             'id_estado' => $request->get('estdo')
 
         ]);
-        return redirect('Permisos');
-
+        if ($response->successful()) {
+            return redirect('Permisos')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }
     }
 
     public function destroy($id_permiso)

@@ -27,6 +27,7 @@ class UsuarioController extends Controller
         $permiso_insercion = 2;
         $permiso_actualizacion = 2;
         $permiso_eliminacion = 2;
+        $permiso_consultar = 0; // Permiso de consulta predeterminado en 0
 
         if ($usuario) {
             $idRolUsuario = $usuario['id_rol']; // Obtener el rol del usuario desde la sesión
@@ -42,8 +43,16 @@ class UsuarioController extends Controller
                 $permiso_insercion = $permisos->permiso_creacion;
                 $permiso_actualizacion = $permisos->permiso_actualizacion;
                 $permiso_eliminacion = $permisos->permiso_eliminacion;
+                $permiso_consultar = $permisos->permiso_consultar ?? 0; // Asignar 0 si es nulo
             }
+            if ($permiso_consultar != 1) {
+                return view('errors.403');
+            }
+        } else {
+            // Si no hay usuario en sesión, redirigir a la vista de sin permiso
+            return view('errors.403');
         }
+
 
         // Para depuración: Verificar valores antes de retornar la vista
         // Descomenta esto si quieres depurar.
@@ -114,7 +123,13 @@ class UsuarioController extends Controller
         // Send email with temporary password
         Mail::to($request->get('correo'))->send(new ResetPasswordNewMail($newPassword));
 
-        return redirect('Usuarios');
+        if ($response->successful()) {
+            return redirect('Usuarios')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }
+    
+        
     }
 
     public function update(Request $request)
@@ -149,8 +164,12 @@ class UsuarioController extends Controller
             'primer_ingreso' => 1, // Mantenemos primer_ingreso como 1 aunque no esté en la vista
             'id_estado' => $request->get('estdo')
         ]);
-
-        return redirect('Usuarios');
+        if ($response->successful()) {
+            return redirect('Usuarios')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }
+    
     }
 
     // Nuevo método para verificar si la contraseña ha expirado

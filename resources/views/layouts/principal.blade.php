@@ -104,10 +104,10 @@
       <!-- Ícono de ayuda (MOVIDO AQUÍ) -->
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#" role="button">
-          <i class="fas fa-question-circle"> Ayuda</i>
+          <i class="fas fa-question-circle"> Centro de Ayuda</i>
         </a>
         <div class="dropdown-menu dropdown-menu-right">
-          <a href="{{ url('/manual_usuario') }}" class="dropdown-item">Ver Manual de Usuario</a>
+          <a href="{{ url('/manual-usuario') }}" class="dropdown-item">Ver Manual de Usuario</a>
           
           @php
             $user = Auth::user();
@@ -116,8 +116,8 @@
           
           @if($mostrarTodos)
             <div class="dropdown-divider"></div>
-            <a href="{{ url('/manual_tecnico') }}" class="dropdown-item">Ver Manual Técnico</a>
-            <a href="{{ url('/manual_instalacion') }}" class="dropdown-item">Ver Manual de Instalación</a>
+            <a href="{{ url('/manual-tecnico') }}" class="dropdown-item">Ver Manual Técnico</a>
+            <a href="{{ url('/manual-instalacion') }}" class="dropdown-item">Ver Manual de Instalación</a>
           @endif
         </div>
       </li>
@@ -226,6 +226,29 @@
     <!-- Control sidebar content goes here -->
   </aside>
   <!-- /.control-sidebar -->
+
+  <!-- Modal de éxito agregado aquí, justo antes de los scripts -->
+  <div class="modal fade" id="modal-success">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-success">
+          <h4 class="modal-title">¡Éxito!</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>La operación se realizó exitosamente.</p>
+        </div>
+        <div class="modal-footer justify-content-end">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
 
   <!-- ./wrapper -->
   <!-- jQuery -->

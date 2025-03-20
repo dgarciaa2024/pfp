@@ -69,7 +69,7 @@
                       <div>
                         <div class="btn-group" role="group" aria-label="Basic example">
                           @if ($permiso_actualizacion == 1)
-                          <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-editor-{{ isset($Medida) ? $Medida['id_unidad_medida']: '0' }}">
+                          <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-editor-{{ isset($Paciente) ? $Paciente['id_paciente']: '0' }}">
                             <i class="bi bi-pencil-fill"></i> ACTUALIZAR
                           </a>
                           @endif
@@ -412,31 +412,37 @@
 
   <script>
     function dataHandler(facturas, productos) {
-      const formatFacturas = Object.values(facturas.reduce((acumulador, item) => {
-        const clave = ${item.nombre_paciente}-${item.apellido_paciente}-${item.nombre_producto};
+    const formatFacturas = Object.values(facturas.reduce((acumulador, item) => {
+        const clave = `${item.nombre_paciente}-${item.apellido_paciente}-${item.nombre_producto}`; // Corregido con comillas invertidas
         if (!acumulador[clave]) {
-          acumulador[clave] = {
-            ...item
-            , cantidad_producto: 0
-          };
+            acumulador[clave] = {
+                ...item,
+                cantidad_producto: 0
+            };
         }
         acumulador[clave].cantidad_producto += item.cantidad_producto;
-
         return acumulador;
-      }, {})).map(item => {
+    }, {})).map(item => {
         const producto = productos.find(producto => producto.nombre_producto === item.nombre_producto);
         return {
-          ...item
-          , canje: item.cantidad_producto > producto.escala
+            ...item,
+            canje: item.cantidad_producto > producto.escala
         }
-      })
-      console.log(formatFacturas)
-      return {
-        facturas: formatFacturas
-        , pacienteSeleccionado: ''
-      }
+    });
+    console.log(formatFacturas);
+    return {
+        facturas: formatFacturas,
+        pacienteSeleccionado: ''
     }
+}
 
   </script>
 </div>
+@if(session('success'))
+<script>
+    $(document).ready(function() {
+        $('#modal-success').modal('show');
+    });
+</script>
+@endif
 @endsection()

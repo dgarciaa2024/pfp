@@ -32,6 +32,7 @@ class DistribuidorController extends Controller
      $permiso_insercion = 2;
      $permiso_actualizacion = 2;
      $permiso_eliminacion = 2;
+     $permiso_consultar = 0; // Permiso de consulta predeterminado en 0
 
      if ($usuario) {
          $idRolUsuario = $usuario['id_rol']; // Obtener el rol del usuario desde la sesión
@@ -46,8 +47,16 @@ class DistribuidorController extends Controller
             $permiso_insercion = $permisos->permiso_creacion;
             $permiso_actualizacion = $permisos->permiso_actualizacion;
             $permiso_eliminacion = $permisos->permiso_eliminacion;
+            $permiso_consultar = $permisos->permiso_consultar ?? 0; // Asignar 0 si es nulo
          }
-     }
+         if ($permiso_consultar != 1) {
+            return view('errors.403');
+        }
+    } else {
+        // Si no hay usuario en sesión, redirigir a la vista de sin permiso
+        return view('errors.403');
+    }
+
 
      return view('modulo_operaciones.Distribuidor')->with([
         'tblcontacto'=> json_decode($tabla_contacto,true),
@@ -98,8 +107,14 @@ class DistribuidorController extends Controller
             'id_estado' => $request->get('estdo'),
         ]);
 
-        return redirect('Distribuidor');
+        if ($response->successful()) {
+            return redirect('Distribuidor')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }
+    
     }
+    
 
     public function update(Request $request)
     {
@@ -134,6 +149,12 @@ class DistribuidorController extends Controller
             'id_estado' => $request->get('estdo'),
         ]);
 
-        return redirect('Distribuidor');
+        if ($response->successful()) {
+            return redirect('Distribuidor')->with('success', true);
+        } else {
+            return redirect()->back()->with('error', 'Error al realizar la operación.');
+        }
+    
+    
     }
 }

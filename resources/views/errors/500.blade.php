@@ -3,49 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error 500 - Error del Servidor</title>
+    <title>500 - Error Interno del Servidor</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            color: #343a40;
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            text-align: center;
         }
-        .container {
-            max-width: 600px;
+        .error-container {
+            text-align: center;
             padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         h1 {
-            font-size: 3rem;
-            color: #dc3545;
-            margin-bottom: 20px;
+            font-size: 72px;
+            color: #e74c3c;
+            margin: 0;
         }
         p {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
         }
         a {
-            color: #007bff;
+            color: #3498db;
             text-decoration: none;
         }
         a:hover {
             text-decoration: underline;
         }
+        .error-details {
+            font-size: 14px;
+            color: #666;
+            margin-top: 20px;
+            display: none; /* Cambia a "block" si quieres mostrar detalles */
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="error-container">
         <h1>500</h1>
-        <p>¡Ups! Algo salió mal en el servidor.</p>
-        <p>Por favor, intenta nuevamente más tarde o <a href="/">vuelve al inicio</a>.</p>
+        <p>Error Interno del Servidor</p>
+        <p>Ocurrió un problema inesperado. Por favor, intenta de nuevo más tarde.</p>
+        <!-- <p><a href="{{ url('/') }}">Volver al inicio</a></p> -->
+        @if(isset($exception))
+            <div class="error-details">
+                <p>Error: {{ $exception->getMessage() }}</p>
+                <p>Archivo: {{ $exception->getFile() }} (Línea: {{ $exception->getLine() }})</p>
+            </div>
+        @endif
     </div>
 </body>
 </html>

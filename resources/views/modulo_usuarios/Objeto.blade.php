@@ -84,7 +84,7 @@
         <div class="modal-header">
           <h4 class="modal-title">Actualizar Objeto</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">×</span>
           </button>
         </div>
 
@@ -148,7 +148,7 @@
         <div class="modal-header">
           <h4 class="modal-title">Eliminar Objeto</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">×</span>
           </button>
         </div>
 
@@ -176,7 +176,7 @@
         <div class="modal-header">
           <h4 class="modal-title">AGREGAR UN NUEVO OBJETO</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">×</span>
           </button>
         </div>
 
@@ -224,4 +224,11 @@
     </div>
   </div>
 </div>
+@if(session('success'))
+<script>
+    $(document).ready(function() {
+        $('#modal-success').modal('show');
+    });
+</script>
+@endif
 @endsection

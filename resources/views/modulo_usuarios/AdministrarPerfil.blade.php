@@ -98,4 +98,37 @@
         </div>
     </div>
 </div>
+
+<!-- NUEVO MODAL DE ÉXITO -->
+<div class="modal fade" id="modal-success">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success">
+        <h4 class="modal-title">¡Éxito!</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>La información se ha actualizado exitosamente.</p>
+      </div>
+      <div class="modal-footer justify-content-end">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<!-- Script para mostrar el modal de éxito -->
+@if(session('success'))
+<script>
+    $(document).ready(function() {
+        $('#modal-success').modal('show');
+    });
+</script>
+@endif
+
 @endsection

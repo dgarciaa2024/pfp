@@ -67,9 +67,15 @@ class TipoRegistroController extends Controller
 
 
         
-            return redirect('TipoRegistro');
-
-        }
+            if ($response->successful()) {
+                return redirect('TipoRegistro')->with('success', true);
+            } else {
+                return redirect()->back()->with('error', 'Error al realizar la operación.');
+            }
+                   
+                }
+            
+        
 
     public function update(Request $request)
     {
@@ -78,7 +84,15 @@ class TipoRegistroController extends Controller
                 'tipo_registro' => $request->get('tipo')
             ]);
 
-            return redirect('TipoRegistro');
+            
+            if ($response->successful()) {
+                return redirect('TipoRegistro')->with('success', true);
+            } else {
+                return redirect()->back()->with('error', 'Error al realizar la operación.');
+            }
+                   
+                }
+            
         }
-    }
+
 

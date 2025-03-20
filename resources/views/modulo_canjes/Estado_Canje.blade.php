@@ -155,4 +155,12 @@
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+@if(session('success'))
+<script>
+    $(document).ready(function() {
+        $('#modal-success').modal('show');
+    });
+</script>
+@endif
+
 @endsection()

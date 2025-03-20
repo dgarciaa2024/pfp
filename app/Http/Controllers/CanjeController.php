@@ -38,6 +38,7 @@ class CanjeController extends Controller
         $permiso_insercion = 2;
         $permiso_actualizacion = 2;
         $permiso_eliminacion = 2;
+        $permiso_consultar = 0; // Permiso de consulta predeterminado en 0
 
         if ($usuario) {
             $idRolUsuario = $usuario['id_rol']; // Obtener el rol del usuario desde la sesión
@@ -53,8 +54,18 @@ class CanjeController extends Controller
                 $permiso_insercion = $permisos->permiso_creacion;
                 $permiso_actualizacion = $permisos->permiso_actualizacion;
                 $permiso_eliminacion = $permisos->permiso_eliminacion;
+                $permiso_consultar = $permisos->permiso_consultar ?? 0; // Asignar 0 si es nulo
             }
+
+            // Verificar si el usuario tiene permiso de consulta
+            if ($permiso_consultar != 1) {
+                return view('errors.403');
+            }
+        } else {
+            // Si no hay usuario en sesión, redirigir a la vista de sin permiso
+            return view('errors.403');
         }
+        
 
         $storedData = null;
         $canjeGuardado = Storage::exists('data.json');

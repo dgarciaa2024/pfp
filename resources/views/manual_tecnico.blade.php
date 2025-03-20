@@ -22,20 +22,22 @@
                         </div>
                         <!-- Cuerpo de la Tarjeta -->
                         <div class="card-body">
-                            <div class="embed-responsive embed-responsive-16by9">
-                                <iframe class="embed-responsive-item" 
-                                        src="https://drive.google.com/file/d/11wF_AchnRYYJa4van5AVBIo1Q-9V6StB/preview" 
-                                        style="border: none;" 
-                                        allowfullscreen>
-                                    Este navegador no soporta PDFs. Por favor, descarga el archivo: 
-                                    <a href="https://drive.google.com/file/d/11wF_AchnRYYJa4van5AVBIo1Q-9V6StB/view" class="text-primary">Descargar PDF</a>
-                                </iframe>
-                            </div>
+                            @if(isset($enlaceCompleto) && !empty($enlaceCompleto))
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" 
+                                            src="{{ $enlaceCompleto }}" 
+                                            style="border: none;" 
+                                            allowfullscreen>
+                                        Este navegador no soporta PDFs. Por favor, descarga el archivo: 
+                                        <a href="{{ $enlaceCompleto }}" class="text-primary">Descargar PDF</a>
+                                    </iframe>
+                                </div>
+                            @else
+                                <p class="text-danger">No se pudo cargar el manual técnico.</p>
+                            @endif
                         </div>
                     </div>
                     <!-- Fin de la Tarjeta -->
-
-                    
                 </div>
             </div>
         </div>

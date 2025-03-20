@@ -11,29 +11,33 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <!-- Tarjeta de Manual Técnico -->
+                    <!-- Tarjeta de Manual de Usuario -->
                     <div class="card shadow-sm border-0">
                         <!-- Cabecera de la Tarjeta -->
                         <div class="card-header bg-white border-bottom-0 d-flex justify-content-between align-items-center">
-                            <h1 class="card-title text-primary">Manual Usuario</h1>
+                            <h1 class="card-title text-primary">Manual de Usuario</h1>
                             <div class="card-tools">
                                 <a href="{{ url('inicio') }}" class="btn btn-secondary">Volver</a>
                             </div>
                         </div>
                         <!-- Cuerpo de la Tarjeta -->
                         <div class="card-body">
-                            <div class="embed-responsive embed-responsive-16by9">
-                                <iframe class="embed-responsive-item" 
-                                        src="https://drive.google.com/file/d/1-yRhn4WIMl2_Faasu8DyMr-BWbG6RPHs/preview" 
-                                        style="border: none;" 
-                                        allowfullscreen>
-                                    Este navegador no soporta PDFs. Por favor, descarga el archivo: 
-                                    <a href="https://drive.google.com/file/d/1-yRhn4WIMl2_Faasu8DyMr-BWbG6RPHs/view" class="text-primary">Descargar PDF</a>
-                                </iframe>
-                            </div>
+                            @if(isset($enlaceCompleto) && !empty($enlaceCompleto))
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" 
+                                            src="{{ $enlaceCompleto }}" 
+                                            style="border: none;" 
+                                            allowfullscreen>
+                                        Este navegador no soporta PDFs. Por favor, descarga el archivo: 
+                                        <a href="{{ $enlaceCompleto }}" class="text-primary">Descargar PDF</a>
+                                    </iframe>
+                                </div>
+                            @else
+                                <p class="text-danger">No se pudo cargar el manual de usuario.</p>
+                            @endif
                         </div>
                     </div>
-                    <!-- Fin de la Tarjetaa -->
+                    <!-- Fin de la Tarjeta -->
                 </div>
             </div>
         </div>

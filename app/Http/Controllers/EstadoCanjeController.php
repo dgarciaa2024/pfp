@@ -56,7 +56,12 @@ class EstadoCanjeController extends Controller
 
         ]);
   
- return redirect('Estado_Canje');
+ 
+ if ($response->successful()) {
+    return redirect('Estado_Canje')->with('success', true);
+} else {
+    return redirect()->back()->with('error', 'Error al realizar la operación.');
+}
        
     }
 
@@ -70,8 +75,11 @@ public function update(Request $request)
         
     ]);
 
-    return redirect('Estado_Canje');
-
-}
-
+    if ($response->successful()) {
+        return redirect('Estado_Canje')->with('success', true);
+    } else {
+        return redirect()->back()->with('error', 'Error al realizar la operación.');
+    }
+           
+        }
 }

@@ -6,7 +6,7 @@ use App\Http\Controllers\AdministrarPerfilController;
 use App\Http\Controllers\Backup_RestoreController;
 use App\Http\Controllers\BitacoraController;
 use App\Http\Controllers\ManualController;
-
+use App\Http\Controllers\ManualTecnicoController;
 //RUTAS DEL SISTEMA 
 
 // Ruta pública
@@ -155,7 +155,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('Sucursal', [App\Http\Controllers\SucursalesController::class, 'index']);
     Route::post('agregar_sucursal', [App\Http\Controllers\SucursalesController::class, 'store']);
     Route::put('editar_sucursal', [App\Http\Controllers\SucursalesController::class, 'update']);
-    Route::get('Sucursal', [App\Http\Controllers\SucursalController::class, 'index'])->name('Sucursal');
+//    Route::get('Sucursal', [App\Http\Controllers\SucursalController::class, 'index'])->name('Sucursal');
 
     //------------------------------------------- FACTURAS
     Route::get('Facturas', [App\Http\Controllers\FacturaController::class, 'index']);
@@ -217,6 +217,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('agregar_objeto', [App\Http\Controllers\ObjetoController::class, 'store']);
     Route::put('editar_objeto', [App\Http\Controllers\ObjetoController::class, 'update']);
     Route::delete('eliminar_objeto/{id_objeto}', [App\Http\Controllers\ObjetoController::class, 'destroy']);
+    
 
     //-------------------------------------------permiso
     Route::get('Permisos', [App\Http\Controllers\PermisoController::class, 'index']);
@@ -306,11 +307,15 @@ Route::get('/administrar-perfil', [AdministrarPerfilController::class, 'index'])
 Route::get('/AdministrarPerfil', [AdministrarPerfilController::class, 'index'])->name('administrarPerfil');
 
 //manuales
-Route::get('/manual_tecnico', [ManualController::class, 'tecnico'])->name('manual.tecnico');
-Route::get('/manual_usuario', [ManualController::class, 'usuario'])->name('manual.usuario');
-Route::get('/manual_instalacion', [ManualController::class, 'instalacion'])->name('manual.instalacion');
 
+// Ruta para el Manual Técnico
+Route::get('/manual-tecnico', [ManualController::class, 'tecnico'])->name('manual.tecnico');
 
+// Ruta para el Manual de Usuario
+Route::get('/manual-usuario', [ManualController::class, 'usuario'])->name('manual.usuario');
+
+// Ruta para el Manual de Instalación
+Route::get('/manual-instalacion', [ManualController::class, 'instalacion'])->name('manual.instalacion');
 
 
 //fin rutas admin perfil
@@ -352,4 +357,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 
+//errores
 
+Route::get('/403', function () { abort(403, 'Acceso prohibido'); });
+Route::get('/404', function () { abort(404, 'Página no encontrada'); });
+Route::get('/500', function () { throw new \Exception('Error interno'); });

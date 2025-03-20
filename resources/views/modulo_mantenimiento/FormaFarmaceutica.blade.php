@@ -12,7 +12,7 @@
         <div class="card">
           <!--Tarjeta_CABEZA-->
           <div class="card-header">
-            <h1 class="card-title">LISTA DE FORMAS FARMASEUTICAS</h1>
+            <h1 class="card-title">LISTA DE FORMAS FARMACEUTICAS</h1>
             <div class="card-tools">
               @if ($permiso_insercion == 1)
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+ NUEVO</button>
@@ -32,7 +32,7 @@
                 <tr>
                    
                   <th>Codigo</th>
-                  <th>Forma Farmaseutica</th>
+                  <th>Forma Farmaceutica</th>
                   <th>Estado</th>
                   <th>Fecha Creacion</th>
                   <th>Creado Por</th>
@@ -79,7 +79,7 @@
     <div class="modal-content">
 
       <div class="modal-header">
-        <h4 class="modal-title">Actualizar FORMA_FARMASEUTICA</h4>
+        <h4 class="modal-title">Actualizar FORMA_FARMACEUTICA</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -94,7 +94,7 @@
 
             <div class="col-12">
               <div class="form-group">
-                <label>Forma Farmaseutica</label>
+                <label>Forma Farmaceutica</label>
                 <input type="text" id="farma" name="farma" class="form-control" value="{{$Forma['forma_farmaceutica']}}" required>
               </div>
             </div>
@@ -139,7 +139,7 @@
 
 
       <div class="modal-header">
-        <h4 class="modal-title">AGREGAR FORMA_FARMASEUTICA</h4>
+        <h4 class="modal-title">AGREGAR FORMA_FARMACEUTICA</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -153,7 +153,7 @@
 
             <div class="col-12">
               <div class="form-group">
-                <label>Forma Farmaseutica</label>
+                <label>Forma Farmaceutica</label>
                 <input type="text" id="farma" name="farma" class="form-control" value="" required>
               </div>
             </div>
@@ -184,4 +184,11 @@
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+@if(session('success'))
+<script>
+    $(document).ready(function() {
+        $('#modal-success').modal('show');
+    });
+</script>
+@endif
 @endsection()
