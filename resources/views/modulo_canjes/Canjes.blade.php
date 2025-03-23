@@ -1,6 +1,5 @@
-@extends ('layouts.principal')
+@extends('layouts.principal')
 @section('content')
-
 
 <br>
 <div value="{{$con=0}}"></div>
@@ -11,7 +10,7 @@
       <div class="modal-header">
         <h5 class="modal-title" id="statusModalLabel">Notificación</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+          <span aria-hidden="true">×</span>
         </button>
       </div>
       <div class="modal-body">
@@ -32,24 +31,171 @@
         <div class="card">
           <!--Tarjeta_CABEZA-->
           <div class="card-header">
-            <h1 class="card-title">LISTA DE CANJES</h1>
-            <div class="card-tools">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h1 class="card-title mb-0">LISTA DE CANJES</h1>
               @if ($permiso_insercion == 1)
               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">Nuevo +</button>
               @endif
-
+            </div>
+            <!-- Fila inferior: Filtros y botones de exportación -->
+            <div class="row">
+              <div class="col d-flex align-items-center flex-wrap">
+                <form id="filterForm" method="GET" action="{{ url('Canjes') }}" style="display: inline; margin-right: 10px;">
+                  <label for="desde">Desde:</label>
+                  <input type="date" name="desde" id="desde" value="{{ $desde ?? '' }}" required>
+                  <label for="hasta">Hasta:</label>
+                  <input type="date" name="hasta" id="hasta" value="{{ $hasta ?? '' }}" required>
+                  <button type="submit" class="btn btn-info">Filtrar</button>
+                </form>
+                <button class="btn btn-success mr-2" onclick="exportToExcel()">Exportar a Excel</button>
+                <button class="btn btn-danger mr-2" onclick="exportToPdf()">Exportar a PDF</button>
+                <button class="btn btn-secondary mr-2" onclick="printTable()">Imprimir</button>
+                <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
+              </div>
             </div>
           </div>
 
-
           <div class="card-body">
             <!--Tarjeta_BODY-->
+            <!-- Scripts para exportación e impresión -->
+            <script>
+              function exportToExcel() {
+                const desde = document.getElementById('desde').value;
+                const hasta = document.getElementById('hasta').value;
+                if (!desde || !hasta) {
+                  alert('Por favor seleccione un rango de fechas.');
+                  return;
+                }
+                const canjes = @json($CanjesFiltrados);
+                console.log('Canjes para Excel:', canjes);
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route("Canjes.exportToExcel") }}';
+                form.innerHTML = `
+                  <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="canjes" value='${JSON.stringify(canjes)}'>
+                  <input type="hidden" name="desde" value="${desde}">
+                  <input type="hidden" name="hasta" value="${hasta}">
+                `;
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+              }
+
+              function exportToPdf() {
+                const desde = document.getElementById('desde').value;
+                const hasta = document.getElementById('hasta').value;
+                if (!desde || !hasta) {
+                  alert('Por favor seleccione un rango de fechas.');
+                  return;
+                }
+                const canjes = @json($CanjesFiltrados);
+                console.log('Canjes para PDF:', canjes);
+                console.log('Desde:', desde, 'Hasta:', hasta);
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route("Canjes.exportToPdf") }}';
+                form.innerHTML = `
+                  <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="canjes" value='${JSON.stringify(canjes)}'>
+                  <input type="hidden" name="desde" value="${desde}">
+                  <input type="hidden" name="hasta" value="${hasta}">
+                `;
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+              }
+
+              function printTable() {
+                const desde = document.getElementById('desde').value;
+                const hasta = document.getElementById('hasta').value;
+                if (!desde || !hasta) {
+                  alert('Por favor seleccione un rango de fechas.');
+                  return;
+                }
+                const canjes = @json($CanjesFiltrados);
+                let tableHTML = `
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Código</th>
+                        <th>Fecha Registro</th>
+                        <th>Tipo Registro</th>
+                        <th>RTN Farmacia</th>
+                        <th>Nombre Farmacia</th>
+                        <th>DNI Paciente</th>
+                        <th>Nombre Paciente</th>
+                        <th>Apellido Paciente</th>
+                        <th>Nombre Producto</th>
+                        <th>Cantidad</th>
+                        <th>Estado Canje</th>
+                        <th>Comentarios</th>
+                        <th>Fecha Creación</th>
+                        <th>Creado Por</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                `;
+                canjes.forEach(canje => {
+                  const fechaRegistro = canje.fecha_registro ? new Date(canje.fecha_registro).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '';
+                  tableHTML += `
+                    <tr>
+                      <td>${canje.id_registro || ''}</td>
+                      <td>${fechaRegistro}</td>
+                      <td>${canje.tipo_registro || ''}</td>
+                      <td>${canje.rtn_farmacia || ''}</td>
+                      <td>${canje.nombre_farmacia || ''}</td>
+                      <td>${canje.dni_paciente || ''}</td>
+                      <td>${canje.nombre_paciente || ''}</td>
+                      <td>${canje.apellido_paciente || ''}</td>
+                      <td>${canje.nombre_producto || ''}</td>
+                      <td>${canje.cantidad || ''}</td>
+                      <td>${canje.estado_canje || ''}</td>
+                      <td>${canje.comentarios || ''}</td>
+                      <td>${canje.fecha_creacion || ''}</td>
+                      <td>${canje.creado_por || ''}</td>
+                    </tr>
+                  `;
+                });
+                tableHTML += `
+                    </tbody>
+                  </table>
+                `;
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                  <html>
+                    <head>
+                      <title>Imprimir Canjes</title>
+                      <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { display: flex; align-items: center; margin-bottom: 20px; }
+                        .header img { width: 80px; height: 80px; margin-right: 20px; }
+                        .header h1 { font-size: 18px; margin: 0; }
+                        p { font-size: 14px; margin: 5px 0; }
+                        table { border-collapse: collapse; width: 100%; }
+                        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                      </style>
+                    </head>
+                    <body>
+                      <div class="header">
+                        <img src="{{ asset('dist/img/Foto_perfil.png') }}" alt="Logo">
+                        <h1>LISTA DE CANJES</h1>
+                      </div>
+                      <p>Fechas: Desde ${desde} hasta ${hasta}</p>
+                      ${tableHTML}
+                    </body>
+                  </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
+              }
+            </script>
             <!--Tabla-->
             <table id="TablaCanje" class="table table-bordered table-striped table-responsive">
               <!--Tabla_CABEZA-->
-              <thead class=" text-center bg-danger blue text-white ">
+              <thead class="text-center bg-danger blue text-white">
                 <tr>
-
                   <th>Codigo</th>
                   <th>Fecha Registro</th>
                   <th>Tipo Registro</th>
@@ -69,7 +215,7 @@
               </thead>
               <!--Tabla_BODY-->
               <tbody>
-                @foreach ($Canjes as $Canje)
+                @foreach ($CanjesFiltrados as $Canje)
                 <tr>
                   <td>{{ $Canje["id_registro"]}}</td>
                   <td>{{ \Carbon\Carbon::parse($Canje["fecha_registro"])->format('d/m/Y H:i:s');}}</td>
@@ -203,7 +349,6 @@
         }
       }
     }
-
   </script>
   <div class="modal fade" id="modal-default">
     <div class="modal-dialog">
@@ -211,7 +356,7 @@
         <div class="modal-header">
           <h4 class="modal-title">Agregar Un Nuevo Registro Canje</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">×</span>
           </button>
         </div>
         @if (isset($storedCanjeData))
@@ -265,7 +410,6 @@
                 </div>
               </div>
 
-
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Producto</label>
@@ -318,16 +462,12 @@
                 </div>
               </div>
 
-
-
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Comentarios</label>
                   <input type="text" id="comentarios" name="comentarios" x-model="obs" class="form-control" required>
                 </div>
               </div>
-
-
             </div>
           </div>
           <div class="modal-footer justify-content-between">
@@ -335,7 +475,6 @@
             <button type="submit" class="btn btn-primary" :disabled="!canjeHabilitado || !registroSeleccionado || !farmaciaSeleccionada">AGREGAR</button>
           </div>
         </form>
-
       </div>
       <!-- /.modal-content -->
     </div>
@@ -343,4 +482,13 @@
   </div>
 </div>
 <!-- /.modal -->
+
+<script>
+  $(document).ready(function() {
+    if ($('#statusModal').length) {
+      $('#statusModal').modal('show');
+    }
+  });
+</script>
+
 @endsection()

@@ -118,6 +118,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('agregar_paciente', [App\Http\Controllers\PacientesController::class, 'store']);
     Route::put('editar_paciente', [App\Http\Controllers\PacientesController::class, 'update']);
 
+    //exportar reportes de pacientes
+    
+    Route::post('/Pacientes/exportToExcel', [PacientesController::class, 'exportToExcel'])->name('Pacientes.exportToExcel');
+Route::post('/Pacientes/exportToPdf', [PacientesController::class, 'exportToPdf'])->name('Pacientes.exportToPdf');
+Route::post('/Pacientes/print', [PacientesController::class, 'print'])->name('Pacientes.print');
+
+
+
     //-------------------------------------TBLA Productos
     Route::get('Productos', [App\Http\Controllers\ProductosController::class, 'index']);
     Route::post('agregar_producto', [App\Http\Controllers\ProductosController::class, 'store']);
@@ -165,6 +173,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('Canjes', [App\Http\Controllers\CanjeController::class, 'index']);
     Route::post('agregar_registrocanje', [App\Http\Controllers\CanjeController::class, 'store']);
     Route::post('finalizar_canje', [App\Http\Controllers\CanjeController::class, 'finalizar_canje']);
+
+    //exportar canjes a excel y pdf
+    Route::post('/Canjes/exportToExcel', [CanjeController::class, 'exportToExcel'])->name('Canjes.exportToExcel');
+Route::post('/Canjes/exportToPdf', [CanjeController::class, 'exportToPdf'])->name('Canjes.exportToPdf');
+Route::post('/Canjes/print', [CanjeController::class, 'print'])->name('Canjes.print');
+
+
     //MODULO DE OTRAS PAGINAS
 
     Route::get('acerca', [App\Http\Controllers\acercaController::class, 'index']);
@@ -246,6 +261,16 @@ Route::get('/crear-pdf', function () {
 Route::get('/descargar-pdf', [PdfController::class, 'createPDF'])->name('pdf.download');
 Route::get('/descargar-pdf-factura', [PdfController::class, 'createPDF2'])->name('pdf.downloadfactura');
 
+//para reportes excel y pdf
+
+
+use App\Http\Controllers\FacturaController;
+
+
+Route::get('/facturas', [FacturaController::class, 'index'])->name('facturas.index');
+Route::post('/agregar_factura', [FacturaController::class, 'store'])->name('facturas.store');
+Route::post('/facturas/export-to-excel', [FacturaController::class, 'exportToExcel'])->name('facturas.exportToExcel');
+Route::post('/facturas/export-to-pdf', [FacturaController::class, 'exportToPdf'])->name('facturas.exportToPdf');
 
 // Ruta para cerrar sesión
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

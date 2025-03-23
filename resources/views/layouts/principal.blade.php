@@ -1,5 +1,6 @@
 @php
- use Illuminate\Support\Facades\Auth; @endphp
+use Illuminate\Support\Facades\Auth; // Importa la clase Auth
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -330,26 +331,21 @@
         }
       });
 
+      // Configuración idéntica para TablaCanje
       $("#TablaCanje").DataTable({
         "responsive": true,
-        "lengthChange": false,
-        "autoWidth": false,
-        "buttons": [{
-          extend: "excel",
-          text: '<i class="fa fa-file-excel-o"></i>   Excel',
-          className: 'btn btn-success',
-          exportOptions: {
-            columns: ':not(:last-child)' // Excluye la última columna (Acciones)
-          }
-        }],
+        "lengthChange": true, // Permite cambiar el número de registros por página
+        "autoWidth": true, // Ajusta el ancho de la tabla automáticamente
+        "info": true, // Muestra la información de paginación
+        "buttons": false, // Desactiva los botones (si no los usas)
         "language": {
           "decimal": ",",
           "thousands": ".",
-          "lengthMenu": "Mostrar _MENU_ registros por página",
+          "lengthMenu": "Mostrar _MENU_ registros por página", // Placeholder dinámico
           "zeroRecords": "No se encontraron resultados",
-          "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+          "info": "Mostrando _START_ a _END_ de _TOTAL_ registros", // Placeholders dinámicos
           "infoEmpty": "No hay registros disponibles",
-          "infoFiltered": "(filtrado de _MAX_ registros totales)",
+          "infoFiltered": "(filtrado de _MAX_ registros totales)", // Placeholder dinámico
           "search": "Buscar:",
           "paginate": {
             "first": "Primero",
@@ -358,7 +354,7 @@
             "previous": "Anterior"
           }
         }
-      }).buttons().container().appendTo('#TablaCanje_wrapper .col-md-6:eq(0)');
+      });
     });
   </script>
 </body>
