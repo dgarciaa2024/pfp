@@ -191,7 +191,7 @@
                 @foreach ($FacturasFiltradas as $Factura)
                 <tr>
                 <td>C{{ str_pad($Factura['id_factura'],5,'0',STR_PAD_LEFT) }}</td>
-                  <td>{{ $Factura['id_factura'] ?? '' }}</td>
+                  
                   <td>{{ $Factura['numero_factura'] ?? '' }}</td>
                   <td><img src="{{ $Factura['factura'] ?? '' }}" class="img-thumbnail mt-3" style="width: 200px; cursor: pointer;" data-toggle="modal" data-target="#imageModal" onclick="mostrarImagen(this)" /></td>
                   <td>{{ $Factura['dni_paciente'] ?? '' }}</td>
