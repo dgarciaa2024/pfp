@@ -46,7 +46,7 @@
             <table id="TablaCanje" class="table table-bordered table-striped table-responsive">
               <thead class="text-center bg-danger text-white">
                 <tr>
-                  <th>Id</th>
+                  <th>Correlativos</th>
                   <th>Numero</th>
                   <th>Factura</th>
                   <th>Dni Paciente</th>
@@ -62,7 +62,7 @@
               <tbody>
                 @foreach ($Facturas as $Factura)
                 <tr>
-                  <td>{{ $Factura['id_factura'] }}</td>
+                  <td>C{{ str_pad($Factura['id_factura'],5,'0',STR_PAD_LEFT) }}</td>
                   <td>{{ $Factura['numero_factura'] }}</td>
                   <td><img src="{{ $Factura['factura'] }}" class="img-thumbnail mt-3" style="width: 200px; cursor: pointer;" data-toggle="modal" data-target="#imageModal" onclick="mostrarImagen(this)" /></td>
                   <td>{{ $Factura['dni_paciente'] }}</td>

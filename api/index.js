@@ -2610,7 +2610,6 @@ app.post("/insert_permiso", (req, res) => {
         permiso_consultar,
         id_estado,
     } = req.body;
-
     if (
         !id_rol ||
         !id_objeto ||

@@ -1,7 +1,9 @@
 @extends ('layouts.principal')
 
 @section('content')
+
 <div class="container-fluid py-4">
+
   <section class="content">
     <div class="container-fluid">
       <div class="row">
@@ -25,10 +27,10 @@
                     <th>Codigo</th>
                     <th>Rol</th>
                     <th>objeto</th>
+                    <th>Permiso Consultar</th>
                     <th>Permiso Creacion</th>
                     <th>Permiso Actualizacion</th>
                     <th>Permiso Eliminacion</th>
-                    <th>Permiso Consultar</th>
                     <th>Estado</th>
                     <th>fecha creacion</th>
                     <th>Creado Por</th>
@@ -41,15 +43,15 @@
                     <td>{{ $permiso['id_permiso'] }}</td>
                     <td>{{ $permiso['rol'] }}</td>
                     <td>{{ $permiso['objeto'] }}</td>
+                    <td>{{ $permiso['permiso_consultar'] == 1 ? 'Sí' : 'No' }}</td>
                     <td>{{ $permiso['permiso_creacion'] == 1 ? 'Sí' : 'No' }}</td>
                     <td>{{ $permiso['permiso_actualizacion'] == 1 ? 'Sí' : 'No' }}</td>
                     <td>{{ $permiso['permiso_eliminacion'] == 1 ? 'Sí' : 'No' }}</td>
-                    <td>{{ $permiso['permiso_consultar'] == 1 ? 'Sí' : 'No' }}</td>
                     <td>{{ $permiso['estado'] }}</td>
-                    <td>{{ $permiso['fecha_creacion'] }}</td>
+                    <td>{{ new DateTime($permiso['fecha_creacion'])->format('d/m/Y') }}</td>
                     <td>{{ $permiso['creado_por'] }}</td>
 
-                    <td> 
+                    <td>
                       <div class="btn-group" role="group" aria-label="Basic example">
                         <a type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-editor-{{$permiso['id_permiso']}}">Actualizar <i class="bi bi-pencil-fill"></i> </a>
                         <!-- Botón de eliminar -->
@@ -320,11 +322,13 @@
     </div>
   </div>
 </div>
+
 @if(session('success'))
 <script>
-    $(document).ready(function() {
-        $('#modal-success').modal('show');
-    });
+  $(document).ready(function() {
+    $('#modal-success').modal('show');
+  });
+
 </script>
 @endif
 @endsection
