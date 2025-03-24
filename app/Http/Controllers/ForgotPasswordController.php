@@ -35,19 +35,32 @@ class ForgotPasswordController extends Controller
 
         // Generar una nueva contraseña temporal
         $newPassword = $this->generatePassword();
-        // Opcional: Establecer la fecha de expiración de la contraseña
-        $expiresAt = Carbon::now()->addHours(config('app.reset_password_expiry', 24));
+
+        // Obtener el valor del parámetro de duración de la contraseña desde la tabla pfp_schema.tbl_parametro
+        $parametroDuracion = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 2) // ID=2 corresponde a la duración de la contraseña
+            ->first();
+
+        if (!$parametroDuracion) {
+            return back()->withErrors(['error' => 'No se encontró el parámetro de duración de la contraseña.']);
+        }
+
+        // Convertir el valor del parámetro a entero
+        $duracionDias = (int)$parametroDuracion->valor;
+
+        // Calcular la fecha de vencimiento basada en el valor del parámetro
+        $fechaVencimiento = Carbon::now()->addDays($duracionDias);
 
         // Encriptar la nueva contraseña
         $contrasenaEncriptada = Crypt::encryptString($newPassword);
 
-        // Actualizar la contraseña en la base de datos con la contraseña encriptada y cambiar el estado a 4 (Pendiente)
+        // Actualizar la contraseña en la base de datos con la contraseña encriptada, cambiar el estado a 4 (Pendiente) y asignar la fecha de vencimiento
         DB::table('pfp_schema.tbl_usuario')
             ->where('id_usuario', $user->id_usuario)
             ->update([
                 'contrasena' => $contrasenaEncriptada, // Aquí se usa la contraseña encriptada
                 'id_estado' => 4, // Cambiar el estado a 4 (Pendiente)
-                // 'expira_contrasena' => $expiresAt, // Descomenta si deseas usar este campo
+                'fecha_vencimiento' => $fechaVencimiento, // Asignar la fecha de vencimiento calculada
             ]);
 
         // Enviar un correo con la nueva contraseña

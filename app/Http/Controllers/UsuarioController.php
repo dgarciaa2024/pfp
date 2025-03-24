@@ -53,11 +53,6 @@ class UsuarioController extends Controller
             return view('errors.403');
         }
 
-
-        // Para depuración: Verificar valores antes de retornar la vista
-        // Descomenta esto si quieres depurar.
-        // dd(session('usuario'), $permiso_insercion, $permiso_actualizacion, $permiso_eliminacion);
-
         // Retornar vista con datos y permisos
         $response_mapped = array_map(function ($item) {
             try {
@@ -81,10 +76,15 @@ class UsuarioController extends Controller
     {
         $newPassword = Str::random(10); // Generate a random password
         $estadoPendiente = 4; // Assuming '4' is the ID for 'Pendiente'
-        $duracionContrasena = DB::table('pfp_schema.tbl_parametro')
+
+        // Obtener la duración de la contraseña en minutos desde tbl_parametro (ID=2)
+        $duracionContrasenaMinutos = DB::table('pfp_schema.tbl_parametro')
             ->where('id_parametro', 2)
             ->value('valor');
-        $duracionContrasena = $duracionContrasena ? (int) $duracionContrasena : 0;
+        $duracionContrasenaMinutos = $duracionContrasenaMinutos ? (int) $duracionContrasenaMinutos : 0;
+
+        // Calcular la fecha de vencimiento sumando los minutos a la fecha actual
+        $fechaVencimiento = now()->addMinutes($duracionContrasenaMinutos);
 
         // Obtener el patrón de email desde tbl_parametro
         $emailPattern = DB::table('pfp_schema.tbl_parametro')
@@ -116,8 +116,8 @@ class UsuarioController extends Controller
             'id_rol' => $request->get('rol'),
             'email' => $request->get('correo'),
             'primer_ingreso' => 1, // Se establece como 1 por defecto
-            'id_estado' => 4,
-            'fecha_vencimiento' => now()->addMinutes($duracionContrasena)
+            'id_estado' => $estadoPendiente,
+            'fecha_vencimiento' => $fechaVencimiento
         ]);
 
         // Send email with temporary password
@@ -128,8 +128,6 @@ class UsuarioController extends Controller
         } else {
             return redirect()->back()->with('error', 'Error al realizar la operación.');
         }
-    
-        
     }
 
     public function update(Request $request)
@@ -154,6 +152,24 @@ class UsuarioController extends Controller
             ],
         ]);
 
+        // Obtener el estado actual del usuario
+        $usuario = DB::table('pfp_schema.tbl_usuario')
+            ->where('id_usuario', $request->get('cod'))
+            ->first();
+
+        // Si el estado cambia a activo, actualizar la fecha de vencimiento
+        $nuevoEstado = $request->get('estdo');
+        $fechaVencimiento = $usuario->fecha_vencimiento;
+
+        if ($nuevoEstado == 1 && $usuario->id_estado != 1) {
+            // Obtener la duración de la contraseña en años desde tbl_parametro (ID=12)
+            $duracionContrasenaAnios = DB::table('pfp_schema.tbl_parametro')
+                ->where('id_parametro', 12)
+                ->value('valor');
+            $duracionContrasenaAnios = $duracionContrasenaAnios ? (int) $duracionContrasenaAnios : 0;
+            $fechaVencimiento = now()->addYears($duracionContrasenaAnios);
+        }
+
         $response = Http::put(env('API_URL', 'http://localhost:3002').'/update_usuario', [
             'id_usuario' => $request->get('cod'),
             'usuario' => $request->get('usu'),
@@ -162,14 +178,15 @@ class UsuarioController extends Controller
             'id_rol' => $request->get('rol'),
             'email' => $request->get('correo'),
             'primer_ingreso' => 1, // Mantenemos primer_ingreso como 1 aunque no esté en la vista
-            'id_estado' => $request->get('estdo')
+            'id_estado' => $nuevoEstado,
+            'fecha_vencimiento' => $fechaVencimiento
         ]);
+
         if ($response->successful()) {
             return redirect('Usuarios')->with('success', true);
         } else {
             return redirect()->back()->with('error', 'Error al realizar la operación.');
         }
-    
     }
 
     // Nuevo método para verificar si la contraseña ha expirado

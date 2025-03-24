@@ -69,9 +69,14 @@ class LoginController extends Controller
 
             // Verificar el estado del usuario
             if ($estadoUsuario && $estadoUsuario->id_estado == 1) { // Supongamos que 1 es "ACTIVO"
+                // Validar la fecha de vencimiento de la contraseña
+                if ($estadoUsuario->fecha_vencimiento && $estadoUsuario->fecha_vencimiento <= now()) {
+                    return back()->withErrors(['login' => 'Su usuario o contraseña ha expirado. Por favor, restablezca su contraseña o contacte al administrador.']);
+                }
+
                 // Añadir la verificación de la expiración de la contraseña
                 if (!$this->checkPasswordExpiration($estadoUsuario)) {
-                    return back()->withErrors(['login' => 'Su contraseña ha expirado. Por favor, restablezca su contraseña.']);
+                    return back()->withErrors(['login' => 'Su usuario o contraseña ha expirado. Por favor, restablezca su contraseña o contacte al administrador.']);
                 }
 
                 // Consultar el número de intentos válidos desde la tabla pfp_schema.tbl_parametro
