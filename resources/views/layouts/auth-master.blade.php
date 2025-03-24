@@ -9,8 +9,8 @@
     <title>Signin Template · Bootstrap v5.1</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="{!! url('assets/bootstrap/css/bootstrap.min.css') !!}" rel="stylesheet">
-    <link href="{!! url('assets/css/signin.css') !!}" rel="stylesheet">
+    <link href="{ url('assets/bootstrap/css/bootstrap.min.css') }" rel="stylesheet">
+    <link href="{ url('assets/css/signin.css') }" rel="stylesheet">
     
     <style>
       .bd-placeholder-img {
