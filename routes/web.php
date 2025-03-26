@@ -162,11 +162,14 @@ Route::post('/Pacientes/print', [PacientesController::class, 'print'])->name('Pa
     Route::get('Sucursal', [App\Http\Controllers\SucursalesController::class, 'index']);
     Route::post('agregar_sucursal', [App\Http\Controllers\SucursalesController::class, 'store']);
     Route::put('editar_sucursal', [App\Http\Controllers\SucursalesController::class, 'update']);
-//    Route::get('Sucursal', [App\Http\Controllers\SucursalController::class, 'index'])->name('Sucursal');
+    Route::get('Sucursal', [App\Http\Controllers\SucursalesController::class, 'index'])->name('Sucursal');
 
     //------------------------------------------- FACTURAS
     Route::get('Facturas', [App\Http\Controllers\FacturaController::class, 'index']);
     Route::post('agregar_factura', [App\Http\Controllers\FacturaController::class, 'store']);
+    Route::post('/facturas/export-to-excel', [FacturaController::class, 'exportToExcel'])->name('facturas.exportToExcel');
+Route::post('/facturas/export-to-pdf', [FacturaController::class, 'exportToPdf'])->name('facturas.exportToPdf');
+
 
     //-------------------------------------------CANJES
     Route::get('Canjes', [App\Http\Controllers\CanjeController::class, 'index']);

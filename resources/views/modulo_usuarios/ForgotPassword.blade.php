@@ -1,24 +1,29 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
-    <h1>¿Olvidó su contraseña?</h1>
-    <form action="{{ route('password.sendResetLink') }}" method="POST">
-        @csrf
-        <div class="form-group">
-            <label for="email">Ingrese su email para recuperar su contraseña</label>
-            <input type="email" 
-                   name="email" 
-                   id="email" 
-                   class="form-control" 
-                   required
-                   maxlength="255">
-                   
-            @error('email')
-                <div class="alert alert-danger">{{ $message }}</div>
-            @enderror
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Recuperar Contraseña</div>
+                <div class="card-body">
+                    @if (session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
+                    @if (session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+                    <form method="POST" action="{{ route('forgot.password') }}">
+                        @csrf
+                        <div class="form-group">
+                            <label for="usuario">Usuario</label>
+                            <input type="text" id="usuario" name="usuario" class="form-control" required autofocus>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Enviar Correo de Recuperación</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Enviar</button>
-    </form>
+    </div>
 </div>
 @endsection

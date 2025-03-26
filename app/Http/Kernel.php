@@ -4,6 +4,7 @@ namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
+
 class Kernel extends HttpKernel
 {
     /**
@@ -21,6 +22,11 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\ContentSecurityPolicy::class,
+        \App\Http\Middleware\SecurityHeaders::class,
+        \App\Http\Middleware\SecureHeaders::class,
+        \App\Http\Middleware\RemoveHeaders::class,
+        'cors' => \App\Http\Middleware\Cors::class,
         'log.route' => \App\Http\Middleware\LogRouteAccess::class,
     ];
 
@@ -66,6 +72,9 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'role' => \App\Http\Middleware\RoleMiddleware::class,
+
+        'check.consult' => \App\Http\Middleware\CheckConsultPermission::class,
+        'cors' => \App\Http\Middleware\Cors::class,
     ];
 }
 
