@@ -7,32 +7,32 @@
     <div class="row">
       <div class="col-12">
         <!-- Tarjeta -->
-<div class="card">
-  <!-- Cabecera de la tarjeta -->
-  <div class="card-header">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <h1 class="card-title mb-0">LISTA DE FACTURAS DE PRODUCTOS CANJEABLES</h1>
-      @if ($permiso_insercion == 1)
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+ NUEVO</button>
-      @endif
-    </div>
-    <!-- Fila inferior: Filtros y botones de exportación -->
-    <div class="row">
-      <div class="col d-flex align-items-center flex-wrap">
-        <form id="filterForm" method="GET" action="{{ url('facturas') }}" style="display: inline; margin-right: 10px;">
-          <label for="desde">Desde:</label>
-          <input type="date" name="desde" id="desde" value="{{ $desde ?? '' }}" required>
-          <label for="hasta">Hasta:</label>
-          <input type="date" name="hasta" id="hasta" value="{{ $hasta ?? '' }}" required>
-          <button type="submit" class="btn btn-info">Filtrar</button>
-        </form>
-        <button class="btn btn-success mr-2" onclick="exportToExcel()">Exportar a Excel</button>
-        <button class="btn btn-danger mr-2" onclick="exportToPdf()">Exportar a PDF</button>
-        <button class="btn btn-secondary mr-2" onclick="printTable()">Imprimir</button>
-        <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
-      </div>
-    </div>
-  </div>
+        <div class="card">
+          <!-- Cabecera de la tarjeta -->
+          <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h1 class="card-title mb-0">LISTA DE FACTURAS DE PRODUCTOS CANJEABLES</h1>
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">+ NUEVO</button>
+              @if ($permiso_insercion == 1)
+              @endif
+            </div>
+            <!-- Fila inferior: Filtros y botones de exportación -->
+            <div class="row">
+              <div class="col d-flex align-items-center flex-wrap">
+                <form id="filterForm" method="GET" action="{{ url('facturas') }}" style="display: inline; margin-right: 10px;">
+                  <label for="desde">Desde:</label>
+                  <input type="date" name="desde" id="desde" value="{{ $desde ?? '' }}" required>
+                  <label for="hasta">Hasta:</label>
+                  <input type="date" name="hasta" id="hasta" value="{{ $hasta ?? '' }}" required>
+                  <button type="submit" class="btn btn-info">Filtrar</button>
+                </form>
+                <button class="btn btn-success mr-2" onclick="exportToExcel()">Exportar a Excel</button>
+                <button class="btn btn-danger mr-2" onclick="exportToPdf()">Exportar a PDF</button>
+                <button class="btn btn-secondary mr-2" onclick="printTable()">Imprimir</button>
+                <a href="{{ url('inicio') }}" class="btn btn-secondary">VOLVER</a>
+              </div>
+            </div>
+          </div>
           <!-- Cuerpo de la tarjeta -->
           <div class="card-body">
             <script>
@@ -88,14 +88,14 @@
               }
 
               function printTable() {
-  const desde = document.getElementById('desde').value;
-  const hasta = document.getElementById('hasta').value;
-  if (!desde || !hasta) {
-    alert('Por favor seleccione un rango de fechas.');
-    return;
-  }
-  const facturas = @json($FacturasFiltradas);
-  let tableHTML = `
+                const desde = document.getElementById('desde').value;
+                const hasta = document.getElementById('hasta').value;
+                if (!desde || !hasta) {
+                  alert('Por favor seleccione un rango de fechas.');
+                  return;
+                }
+                const facturas = @json($FacturasFiltradas);
+                let tableHTML = `
     <table>
       <thead>
         <tr>
@@ -109,9 +109,16 @@
       </thead>
       <tbody>
   `;
-  facturas.forEach(factura => {
-    const fecha = factura.fecha_creacion ? new Date(factura.fecha_creacion).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '';
-    tableHTML += `
+                facturas.forEach(factura => {
+                  const fecha = factura.fecha_creacion ? new Date(factura.fecha_creacion).toLocaleString('es-ES', {
+                    day: '2-digit'
+                    , month: '2-digit'
+                    , year: 'numeric'
+                    , hour: '2-digit'
+                    , minute: '2-digit'
+                    , second: '2-digit'
+                  }) : '';
+                  tableHTML += `
       <tr>
         <td>${factura.numero_factura || ''}</td>
         <td>${factura.dni_paciente || ''}</td>
@@ -121,13 +128,13 @@
         <td>${fecha}</td>
       </tr>
     `;
-  });
-  tableHTML += `
+                });
+                tableHTML += `
       </tbody>
     </table>
   `;
-  const printWindow = window.open('', '_blank');
-  printWindow.document.write(`
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
     <html>
       <head>
         <title>Imprimir Facturas</title>
@@ -152,9 +159,10 @@
       </body>
     </html>
   `);
-  printWindow.document.close();
-  printWindow.print();
-}
+                printWindow.document.close();
+                printWindow.print();
+              }
+
             </script>
             <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel">
               <div class="modal-dialog modal-dialog-centered">
@@ -190,8 +198,8 @@
               <tbody>
                 @foreach ($FacturasFiltradas as $Factura)
                 <tr>
-                <td>C{{ str_pad($Factura['id_factura'],5,'0',STR_PAD_LEFT) }}</td>
-                  
+                  <td>C{{ str_pad($Factura['id_factura'],5,'0',STR_PAD_LEFT) }}</td>
+
                   <td>{{ $Factura['numero_factura'] ?? '' }}</td>
                   <td><img src="{{ $Factura['factura'] ?? '' }}" class="img-thumbnail mt-3" style="width: 200px; cursor: pointer;" data-toggle="modal" data-target="#imageModal" onclick="mostrarImagen(this)" /></td>
                   <td>{{ $Factura['dni_paciente'] ?? '' }}</td>
@@ -352,6 +360,7 @@
       $('#statusModal').modal('show');
     }
   });
+
 </script>
 
 <!-- Modal para agregar una factura -->
@@ -361,47 +370,49 @@
       console.log(261, canjeDirecto);
       console.log(facturas, pacientes, productos, canjes, farmacias);
       return {
-        numero: '',
-        mensajeCanje: '',
-        productoSeleccionado: '',
-        nombrePaciente: '',
-        idPaciente: '',
-        idProducto: '',
-        idFarmacia: '',
-        nombreProducto: '',
-        canjeHabilitado: false,
-        registroSeleccionado: false,
-        farmaciaSeleccionada: false,
-        obs: 'NINGUNO',
-        pacienteSeleccionado: false,
-        estadoCanjeSeleccionado: false,
-        comentariosSeleccionado: false,
-        cantidadCanjes: 0,
-        canjeMensaje: '',
-        farmaciaId: '',
-        pacienteId: '',
-        productoId: '',
-        productoNombre: '',
-        pacienteNombre: '',
-        emailPaciente: '',
-        nombre_farmacia: '',
-        rtn_farmacia: '',
-        nombre_paciente: '',
-        apellido_paciente: '',
-        dni_paciente: '',
-        telefono_paciente: '',
-        correo_paciente: '',
-        nombre_producto: '',
-        cantidadProducto: '',
-        cantidad: '',
-        forma_farmaceutica: '',
-        fecha_registro: '',
-        comentarios: '',
-        verificarCanje: function(pacienteId, productoId, farmaciaId, cantidad) {
+        numero: ''
+        , mensajeCanje: ''
+        , productoSeleccionado: ''
+        , nombrePaciente: ''
+        , idPaciente: ''
+        , idProducto: ''
+        , idFarmacia: ''
+        , nombreProducto: ''
+        , canjeHabilitado: false
+        , registroSeleccionado: false
+        , farmaciaSeleccionada: false
+        , obs: 'NINGUNO'
+        , pacienteSeleccionado: false
+        , estadoCanjeSeleccionado: false
+        , comentariosSeleccionado: false
+        , cantidadCanjes: 0
+        , canjeMensaje: ''
+        , farmaciaId: ''
+        , pacienteId: ''
+        , productoId: ''
+        , productoNombre: ''
+        , pacienteNombre: ''
+        , emailPaciente: ''
+        , nombre_farmacia: ''
+        , rtn_farmacia: ''
+        , nombre_paciente: ''
+        , apellido_paciente: ''
+        , dni_paciente: ''
+        , telefono_paciente: ''
+        , correo_paciente: ''
+        , nombre_producto: ''
+        , cantidadProducto: ''
+        , cantidad: ''
+        , forma_farmaceutica: ''
+        , fecha_registro: ''
+        , comentarios: ''
+        , verificarCanje: function(pacienteId, productoId, farmaciaId, cantidad) {
           if (pacienteId && productoId) {
             const pacienteSeleccionado = pacientes.find(p => p.id_paciente == pacienteId) || {};
             const productoSeleccionado = productos.find(p => p.id_producto == productoId) || {};
-            const { escala = 0, canjes_max_anual = 0, canje = 0 } = productoSeleccionado;
+            const {
+              escala = 0, canjes_max_anual = 0, canje = 0
+            } = productoSeleccionado;
             this.emailPaciente = pacienteSeleccionado.email ? pacienteSeleccionado.email.toLowerCase() : '';
             this.pacienteNombre = (pacienteSeleccionado.nombre_paciente || '') + ' ' + (pacienteSeleccionado.apellido_paciente || '');
             this.productoNombre = productoSeleccionado.nombre_producto || '';
@@ -446,24 +457,24 @@
               return;
             }
           }
-        },
-        canjeLabel: function(productoSeleccionado) {
+        }
+        , canjeLabel: function(productoSeleccionado) {
           const producto = productos.find(p => p.id_producto == productoSeleccionado);
           this.mensajeCanje = producto ? 'El producto seleccionado es: ' + producto.nombre_producto : 'Producto no encontrado';
-        },
-        seleccionarPaciente: function(idPaciente, nombrePaciente) {
+        }
+        , seleccionarPaciente: function(idPaciente, nombrePaciente) {
           document.getElementById('searchInput1').value = '';
           filterTable && filterTable();
           this.idPaciente = idPaciente;
           this.nombrePaciente = nombrePaciente;
-        },
-        seleccionarProducto: function(idProducto, nombreProducto) {
+        }
+        , seleccionarProducto: function(idProducto, nombreProducto) {
           document.getElementById('searchInput2').value = '';
           filterTable2 && filterTable2();
           this.idProducto = idProducto;
           this.nombreProducto = nombreProducto;
-        },
-        formatInput() {
+        }
+        , formatInput() {
           let formatted = '';
           let digits = this.numero.replace(/\D/g, '');
           if (digits.length > 16) digits = digits.slice(0, 16);
@@ -475,6 +486,7 @@
         }
       }
     }
+
   </script>
   <div class="modal fade" id="modal-default">
     <div class="modal-dialog">
@@ -600,6 +612,7 @@
                   rows[i].style.display = match ? '' : 'none';
                 }
               }
+
             </script>
             <input class="form-control mb-2" type="search" id="searchInput1" placeholder="Buscar..." onkeyup="filterTable()">
             <table id="myTable" class="table table-bordered table-responsive table-hover">
@@ -665,6 +678,7 @@
                   rows[i].style.display = match ? '' : 'none';
                 }
               }
+
             </script>
             <input class="form-control mb-2" type="search" id="searchInput2" placeholder="Buscar..." onkeyup="filterTable2()">
             <table id="myTable2" class="table table-bordered table-responsive table-hover">

@@ -2139,12 +2139,16 @@ app.put("/update_paciente", (req, res) => {
 
 // Procedimiento para actualizar  registro en la tabla TBL_FACTURA
 app.get("/get_facturas", (req, res) => {
-    const query =
-        "SELECT * FROM pfp_schema.get_factura() spf LEFT JOIN LATERAL (SELECT numero_factura FROM pfp_schema.tbl_factura f WHERE f.id_factura = spf.id_factura) ON TRUE";
+    const {
+        usuario: { id: idUsuario },
+    } = JSON.parse(localStorage.getItem("credenciales"));
+    const query = `SELECT * FROM pfp_schema.get_factura() spf LEFT JOIN LATERAL (SELECT numero_factura FROM pfp_schema.tbl_factura f WHERE f.id_factura = spf.id_factura) ON TRUE`;
 
     pgClient.query(query, (err, result) => {
         if (!err) {
-            res.status(200).json(result.rows); // Devolver el resultado en formato JSON
+            res.status(200).json(
+                result.rows.filter((r) => r.creado_por === idUsuario.toString())
+            ); // Devolver el resultado en formato JSON
         } else {
             console.log(err);
             res.status(500).send(
@@ -2156,6 +2160,9 @@ app.get("/get_facturas", (req, res) => {
 
 // Procedimiento para insertar un registro en la tabla TBL_FACTURA
 app.post("/insert_factura", upload.single("factura"), async (req, res) => {
+    const {
+        usuario: { id: idUsuario },
+    } = JSON.parse(localStorage.getItem("credenciales"));
     const { id_paciente, id_producto, cantidad_producto, numero } = req.body;
     const imagenBase64 = req.file.buffer.toString("base64");
     const tipoImagen = req.file.mimetype;
@@ -2195,15 +2202,15 @@ app.post("/insert_factura", upload.single("factura"), async (req, res) => {
         const result = await pgClient.query(
             "SELECT id_factura FROM pfp_schema.tbl_factura ORDER BY id_factura DESC LIMIT 1"
         );
-        console.log(result.rows);
         await pgClient.query(
-            "UPDATE pfp_schema.tbl_factura SET numero_factura = $1 WHERE id_factura = $2",
-            [numero, result.rows[0].id_factura]
+            "UPDATE pfp_schema.tbl_factura SET numero_factura = $1, creado_por = $2 WHERE id_factura = $3",
+            [numero, idUsuario, result.rows[0].id_factura]
         );
         const mensaje =
             result.rows.id_registro || "Factura insertada exitosamente";
         res.status(201).send(mensaje);
     } catch (e) {
+        console.log(e);
         res.status(500).send("No se pudo ingresar la factura");
     }
 });
@@ -2373,7 +2380,10 @@ app.put("/update_farmacia", (req, res) => {
 
 // Endpoint para obtener todos los registros de la tabla TBL_REGISTRO
 app.get("/get_registro", (req, res) => {
-    const query = "SELECT * FROM pfp_schema.get_registro()"; // Llama a la función almacenada
+    const {
+        usuario: { id: idUsuario },
+    } = JSON.parse(localStorage.getItem("credenciales"));
+    const query = `SELECT * FROM pfp_schema.get_registro() pfp WHERE pfp.creado_por = '${idUsuario}'`; // Llama a la función almacenada
 
     // Ejecuta la consulta en la base de datos
     pgClient.query(query, (err, result) => {
@@ -2381,13 +2391,17 @@ app.get("/get_registro", (req, res) => {
             console.error("Error al obtener los registros:", err);
             res.status(500).send("Error al obtener los registros");
         } else {
+            console.log(result.rows);
             res.status(200).json(result.rows); // Envía los datos como JSON
         }
     });
 });
 
 // Endpoint para insertar un registro en la tabla TBL_REGISTRO
-app.post("/insert_registro", (req, res) => {
+app.post("/insert_registro", async (req, res) => {
+    const {
+        usuario: { id: idUsuario },
+    } = JSON.parse(localStorage.getItem("credenciales"));
     console.log("insert_registro", req.body);
     const {
         id_tipo_registro,
@@ -2402,29 +2416,28 @@ app.post("/insert_registro", (req, res) => {
     const query = `CALL pfp_schema.insert_registro( $1, $2, $3, $4, $5, $6, $7 ) `; // Llama al procedimiento almacenado para insertar
 
     // Ejecuta la consulta en la base de datos
-    pgClient.query(
-        query,
-        [
-            id_tipo_registro,
-            id_farmacia,
-            id_paciente,
-            id_producto,
-            cantidad,
-            id_estado_canje,
-            comentarios,
-        ],
-        (err, result) => {
-            if (err) {
-                console.error("Error al insertar el registro:", err);
-                res.status(500).send("Error al insertar el registro");
-            } else {
-                const {
-                    usuario: { nombreUsuario },
-                } = JSON.parse(localStorage.getItem("credenciales"));
-                res.status(200).send(nombreUsuario);
-            }
-        }
-    );
+    const result = await pgClient.query(query, [
+        id_tipo_registro,
+        id_farmacia,
+        id_paciente,
+        id_producto,
+        cantidad,
+        id_estado_canje,
+        comentarios,
+    ]);
+
+    if (result) {
+        const result = await pgClient.query(
+            "SELECT id_registro FROM pfp_schema.tbl_registro ORDER BY id_registro DESC LIMIT 1"
+        );
+        await pgClient.query(
+            "UPDATE pfp_schema.tbl_registro SET creado_por = $1 WHERE id_registro = $2",
+            [idUsuario, result.rows[0].id_registro]
+        );
+        res.status(201).send("Registro insertado exitosamente");
+    } else {
+        res.status(500).send("Error al insertar el registro");
+    }
 });
 
 // Endpoint para insertar

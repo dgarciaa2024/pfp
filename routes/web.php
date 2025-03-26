@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FacturaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdministrarPerfilController;
@@ -120,8 +121,8 @@ Route::middleware(['auth'])->group(function () {
 
     //exportar reportes de pacientes
     Route::post('/Pacientes/exportToExcel', [PacientesController::class, 'exportToExcel'])->name('Pacientes.exportToExcel');
-Route::post('/Pacientes/exportToPdf', [PacientesController::class, 'exportToPdf'])->name('Pacientes.exportToPdf');
-Route::post('/Pacientes/print', [PacientesController::class, 'print'])->name('Pacientes.print');
+    Route::post('/Pacientes/exportToPdf', [PacientesController::class, 'exportToPdf'])->name('Pacientes.exportToPdf');
+    Route::post('/Pacientes/print', [PacientesController::class, 'print'])->name('Pacientes.print');
 
 
 
@@ -168,7 +169,7 @@ Route::post('/Pacientes/print', [PacientesController::class, 'print'])->name('Pa
     Route::get('Facturas', [App\Http\Controllers\FacturaController::class, 'index']);
     Route::post('agregar_factura', [App\Http\Controllers\FacturaController::class, 'store']);
     Route::post('/facturas/export-to-excel', [FacturaController::class, 'exportToExcel'])->name('facturas.exportToExcel');
-Route::post('/facturas/export-to-pdf', [FacturaController::class, 'exportToPdf'])->name('facturas.exportToPdf');
+    Route::post('/facturas/export-to-pdf', [FacturaController::class, 'exportToPdf'])->name('facturas.exportToPdf');
 
 
     //-------------------------------------------CANJES
@@ -176,11 +177,11 @@ Route::post('/facturas/export-to-pdf', [FacturaController::class, 'exportToPdf']
     Route::post('agregar_registrocanje', [App\Http\Controllers\CanjeController::class, 'store']);
     Route::post('finalizar_canje', [App\Http\Controllers\CanjeController::class, 'finalizar_canje']);
 
-        //exportar canjes a excel y pdf
-        Route::post('/Canjes/exportToExcel', [CanjeController::class, 'exportToExcel'])->name('Canjes.exportToExcel');
-        Route::post('/Canjes/exportToPdf', [CanjeController::class, 'exportToPdf'])->name('Canjes.exportToPdf');
-        Route::post('/Canjes/print', [CanjeController::class, 'print'])->name('Canjes.print');
-        
+    //exportar canjes a excel y pdf
+    Route::post('/Canjes/exportToExcel', [CanjeController::class, 'exportToExcel'])->name('Canjes.exportToExcel');
+    Route::post('/Canjes/exportToPdf', [CanjeController::class, 'exportToPdf'])->name('Canjes.exportToPdf');
+    Route::post('/Canjes/print', [CanjeController::class, 'print'])->name('Canjes.print');
+
 
 
     //MODULO DE OTRAS PAGINAS
@@ -235,7 +236,7 @@ Route::post('/facturas/export-to-pdf', [FacturaController::class, 'exportToPdf']
     Route::post('agregar_objeto', [App\Http\Controllers\ObjetoController::class, 'store']);
     Route::put('editar_objeto', [App\Http\Controllers\ObjetoController::class, 'update']);
     Route::delete('eliminar_objeto/{id_objeto}', [App\Http\Controllers\ObjetoController::class, 'destroy']);
-    
+
 
     //-------------------------------------------permiso
     Route::get('Permisos', [App\Http\Controllers\PermisoController::class, 'index']);
@@ -380,6 +381,12 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 //errores
 
-Route::get('/403', function () { abort(403, 'Acceso prohibido'); });    
-Route::get('/404', function () { abort(404, 'Página no encontrada'); });
-Route::get('/500', function () { throw new \Exception('Error interno'); });
+Route::get('/403', function () {
+    abort(403, 'Acceso prohibido');
+});
+Route::get('/404', function () {
+    abort(404, 'Página no encontrada');
+});
+Route::get('/500', function () {
+    throw new \Exception('Error interno');
+});
