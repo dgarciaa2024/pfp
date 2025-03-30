@@ -26,6 +26,8 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\SecurityHeaders::class,
         \App\Http\Middleware\SecureHeaders::class,
         \App\Http\Middleware\RemoveHeaders::class,
+        \App\Http\Middleware\HideServerHeader::class,
+        \App\Http\Middleware\CacheControlMiddleware::class,
         'cors' => \App\Http\Middleware\Cors::class,
         'log.route' => \App\Http\Middleware\LogRouteAccess::class,
     ];

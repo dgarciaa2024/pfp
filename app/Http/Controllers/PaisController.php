@@ -55,7 +55,7 @@ class PaisController extends Controller
             'tblestado'=> json_decode($tbl_Estado,true),
             'Paises'=> json_decode($response,true),
             'permiso_insercion' => $permiso_insercion,
-            'permiso_edicion' => $permiso_edicion,
+            'permiso_actualizacion' => $permiso_actualizacion,
         ]);
         
     }

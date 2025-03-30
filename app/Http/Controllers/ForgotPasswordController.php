@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str; // Agregado para usar Str::random
 use Illuminate\Support\Facades\Crypt; // Para usar Crypt
 use App\Mail\ResetPasswordMail; // Asegúrate de que este archivo exista
 use Carbon\Carbon;
@@ -34,21 +33,34 @@ class ForgotPasswordController extends Controller
             return back()->withErrors(['email' => 'El email no existe.']);
         }
 
-        // Generar una nueva contraseña temporal (usando la lógica de UsuarioController)
-        $newPassword = Str::random(10); // Cambio solo aquí: reemplaza generatePassword
-        // Opcional: Establecer la fecha de expiración de la contraseña
-        $expiresAt = Carbon::now()->addHours(config('app.reset_password_expiry', 24));
+        // Generar una nueva contraseña temporal
+        $newPassword = $this->generatePassword();
+
+        // Obtener el valor del parámetro de duración de la contraseña desde la tabla pfp_schema.tbl_parametro
+        $parametroDuracion = DB::table('pfp_schema.tbl_parametro')
+            ->where('id_parametro', 2) // ID=2 corresponde a la duración de la contraseña
+            ->first();
+
+        if (!$parametroDuracion) {
+            return back()->withErrors(['error' => 'No se encontró el parámetro de duración de la contraseña.']);
+        }
+
+        // Convertir el valor del parámetro a entero
+        $duracionDias = (int)$parametroDuracion->valor;
+
+        // Calcular la fecha de vencimiento basada en el valor del parámetro
+        $fechaVencimiento = Carbon::now()->addDays($duracionDias);
 
         // Encriptar la nueva contraseña
         $contrasenaEncriptada = Crypt::encryptString($newPassword);
 
-        // Actualizar la contraseña en la base de datos con la contraseña encriptada y cambiar el estado a 4 (Pendiente)
+        // Actualizar la contraseña en la base de datos con la contraseña encriptada, cambiar el estado a 4 (Pendiente) y asignar la fecha de vencimiento
         DB::table('pfp_schema.tbl_usuario')
             ->where('id_usuario', $user->id_usuario)
             ->update([
                 'contrasena' => $contrasenaEncriptada, // Aquí se usa la contraseña encriptada
                 'id_estado' => 4, // Cambiar el estado a 4 (Pendiente)
-                // 'expira_contrasena' => $expiresAt, // Descomenta si deseas usar este campo
+                'fecha_vencimiento' => $fechaVencimiento, // Asignar la fecha de vencimiento calculada
             ]);
 
         // Enviar un correo con la nueva contraseña

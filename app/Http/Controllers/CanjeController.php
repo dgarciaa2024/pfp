@@ -306,30 +306,30 @@ class CanjeController extends Controller
     public function exportToPdf(Request $request)
     {
         Log::info('ExportToPdf called', $request->all());
-
+    
         $canjes = json_decode($request->input('canjes', '[]'), true);
         $desde = $request->input('desde');
         $hasta = $request->input('hasta');
-
+    
         if (empty($canjes) || !$desde || !$hasta) {
             Log::warning('Datos incompletos para exportar a PDF', ['canjes' => $canjes, 'desde' => $desde, 'hasta' => $hasta]);
             return redirect()->back()->with('status_message', 'No hay datos para exportar o faltan fechas.');
         }
-
-        // Contenido del PDF con encabezado, logo y paginación
+    
+        // Contenido del PDF con encabezado, logo y paginación, optimizado para orientación vertical
         $pdfContent = "<!DOCTYPE html><html><head><style>";
-        $pdfContent .= "body { font-family: Arial, sans-serif; margin: 20px; }";
-        $pdfContent .= "table { border-collapse: collapse; width: 100%; }";
-        $pdfContent .= "th, td { border: 1px solid black; padding: 8px; text-align: left; font-size: 12px; }";
-        $pdfContent .= "th { background-color: #f2f2f2; }";
-        $pdfContent .= ".header { display: flex; align-items: center; margin-bottom: 20px; }";
-        $pdfContent .= ".header img { width: 100px; margin-right: 20px; }";
-        $pdfContent .= ".header h1 { font-size: 20px; text-align: center; flex-grow: 1; }";
-        $pdfContent .= ".footer { text-align: center; margin-top: 10px; font-size: 10px; }";
+        $pdfContent .= "body { font-family: Arial, sans-serif; margin: 20px; }"; // Márgenes de 20px como en el ejemplo
+        $pdfContent .= "table { border-collapse: collapse; width: 100%; max-width: 100%; }"; // Tabla limitada al ancho disponible
+        $pdfContent .= "th, td { border: 1px solid black; padding: 8px; text-align: left; font-size: 12px; word-wrap: break-word; }"; // Añadido word-wrap para evitar desbordamiento horizontal
+        $pdfContent .= "th { background-color: #f2f2f2; }"; // Fondo gris claro para encabezados
+        $pdfContent .= ".header { display: flex; align-items: center; margin-bottom: 20px; }"; // Encabezado con flex
+        $pdfContent .= ".header img { width: 100px; margin-right: 20px; }"; // Logo de 100px con margen
+        $pdfContent .= ".header h1 { font-size: 20px; text-align: center; flex-grow: 1; }"; // Título centrado
+        $pdfContent .= ".footer { text-align: center; margin-top: 10px; font-size: 10px; }"; // Pie de página
         $pdfContent .= "</style></head><body>";
-
-        // Variables para paginación
-        $itemsPerPage = 14;
+    
+        // Variables para paginación, optimizadas para vertical
+        $itemsPerPage = 14; // Mismo número de ítems por página que en el ejemplo, adecuado para vertical
         $page = 1;
         $itemCount = 0;
         $totalItems = count(array_filter($canjes, function ($canje) use ($desde, $hasta) {
@@ -338,41 +338,38 @@ class CanjeController extends Controller
             return $fecha >= $desde && $fecha <= $hasta;
         }));
         $totalPages = ceil($totalItems / $itemsPerPage);
-
+    
         foreach ($canjes as $canje) {
             if (!is_array($canje)) continue;
             $fecha = isset($canje['fecha_registro']) ? \Carbon\Carbon::parse($canje['fecha_registro'])->format('Y-m-d') : '';
             if ($desde && $hasta && ($fecha < $desde || $fecha > $hasta)) {
                 continue;
             }
-
+    
             if ($itemCount == 0) {
                 $pdfContent .= "<div class='header'>";
-                $pdfContent .= "<img src='" . public_path('dist/img/Foto_perfil.png') . "' alt='AdminLTE Logo' style='opacity: .8; border-radius: 50%; width: 100px; height: 100px;'>";
+                $pdfContent .= "<img src='" . public_path('dist/img/Foto_perfil.png') . "' alt='AdminLTE Logo' class='brand-image img-circle elevation-3' style='opacity: .8; border-radius: 50%; width: 100px; height: 100px;'>";
                 $pdfContent .= "<h1>LISTA DE CANJES</h1>";
                 $pdfContent .= "</div>";
                 $pdfContent .= "<p>Fechas: Desde $desde hasta $hasta</p>";
-                $pdfContent .= "<table><tr><th>Código</th><th>Fecha Registro</th><th>Tipo Registro</th><th>RTN Farmacia</th><th>Nombre Farmacia</th><th>DNI Paciente</th><th>Nombre Paciente</th><th>Apellido Paciente</th><th>Nombre Producto</th><th>Cantidad</th><th>Estado Canje</th><th>Comentarios</th><th>Fecha Creación</th><th>Creado Por</th></tr>";
+                $pdfContent .= "<table><tr><th>Código</th><th>Fecha Registro</th><th>Nombre Farmacia</th><th>DNI Paciente</th><th>Nombre Paciente</th><th>Apellido Paciente</th><th>Nombre Producto</th><th>Cantidad</th><th>Comentarios</th></tr>";
             }
-
+    
             $codigo = $canje['id_registro'] ?? 'N/A';
             $fechaRegistro = isset($canje['fecha_registro']) ? \Carbon\Carbon::parse($canje['fecha_registro'])->format('d/m/Y H:i:s') : 'N/A';
-            $tipoRegistro = $canje['tipo_registro'] ?? 'N/A';
-            $rtnFarmacia = $canje['rtn_farmacia'] ?? 'N/A';
             $nombreFarmacia = $canje['nombre_farmacia'] ?? 'N/A';
             $dniPaciente = $canje['dni_paciente'] ?? 'N/A';
             $nombrePaciente = $canje['nombre_paciente'] ?? 'N/A';
             $apellidoPaciente = $canje['apellido_paciente'] ?? 'N/A';
             $nombreProducto = $canje['nombre_producto'] ?? 'N/A';
             $cantidad = $canje['cantidad'] ?? 'N/A';
-            $estadoCanje = $canje['estado_canje'] ?? 'N/A';
+            
             $comentarios = $canje['comentarios'] ?? 'N/A';
-            $fechaCreacion = $canje['fecha_creacion'] ?? 'N/A';
-            $creadoPor = $canje['creado_por'] ?? 'N/A';
-            $pdfContent .= "<tr><td>$codigo</td><td>$fechaRegistro</td><td>$tipoRegistro</td><td>$rtnFarmacia</td><td>$nombreFarmacia</td><td>$dniPaciente</td><td>$nombrePaciente</td><td>$apellidoPaciente</td><td>$nombreProducto</td><td>$cantidad</td><td>$estadoCanje</td><td>$comentarios</td><td>$fechaCreacion</td><td>$creadoPor</td></tr>";
-
+    
+            $pdfContent .= "<tr><td>$codigo</td><td>$fechaRegistro</td><td>$nombreFarmacia</td><td>$dniPaciente</td><td>$nombrePaciente</td><td>$apellidoPaciente</td><td>$nombreProducto</td><td>$cantidad</td><td>$comentarios</td></tr>";
+    
             $itemCount++;
-
+    
             if ($itemCount >= $itemsPerPage) {
                 $pdfContent .= "</table>";
                 $pdfContent .= "<div class='footer'>Página $page de $totalPages</div>";
@@ -381,23 +378,22 @@ class CanjeController extends Controller
                 $itemCount = 0;
             }
         }
-
+    
         if ($itemCount > 0) {
             $pdfContent .= "</table>";
             $pdfContent .= "<div class='footer'>Página $page de $totalPages</div>";
         }
-
+    
         $pdfContent .= "</body></html>";
-
+    
         try {
-            $pdf = Pdf::loadHTML($pdfContent)->setPaper('letter', 'portrait');
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($pdfContent)->setPaper('letter', 'portrait'); // Orientación vertical explícita
             return $pdf->download("Canjes_{$desde}_al_{$hasta}.pdf");
         } catch (\Exception $e) {
             Log::error('Error al generar PDF', ['message' => $e->getMessage()]);
             return redirect()->back()->with('status_message', 'Error al generar el PDF: ' . $e->getMessage());
         }
     }
-
     // Nueva funcionalidad: Imprimir
     public function print(Request $request)
     {
@@ -446,24 +442,23 @@ class CanjeController extends Controller
                 $htmlContent .= "<h1>LISTA DE CANJES</h1>";
                 $htmlContent .= "</div>";
                 $htmlContent .= "<p>Fechas: Desde $desde hasta $hasta</p>";
-                $htmlContent .= "<table><tr><th>Código</th><th>Fecha Registro</th><th>Tipo Registro</th><th>RTN Farmacia</th><th>Nombre Farmacia</th><th>DNI Paciente</th><th>Nombre Paciente</th><th>Apellido Paciente</th><th>Nombre Producto</th><th>Cantidad</th><th>Estado Canje</th><th>Comentarios</th><th>Fecha Creación</th><th>Creado Por</th></tr>";
+                $htmlContent .= "<table><tr><th>Código</th><th>Fecha Registro</th><th>Nombre Farmacia</th><th>DNI Paciente</th><th>Nombre Paciente</th><th>Apellido Paciente</th><th>Nombre Producto</th><th>Cantidad</th><th>Comentarios</th></tr>";
             }
 
             $codigo = $canje['id_registro'] ?? 'N/A';
             $fechaRegistro = isset($canje['fecha_registro']) ? \Carbon\Carbon::parse($canje['fecha_registro'])->format('d/m/Y H:i:s') : 'N/A';
-            $tipoRegistro = $canje['tipo_registro'] ?? 'N/A';
-            $rtnFarmacia = $canje['rtn_farmacia'] ?? 'N/A';
+            
             $nombreFarmacia = $canje['nombre_farmacia'] ?? 'N/A';
             $dniPaciente = $canje['dni_paciente'] ?? 'N/A';
             $nombrePaciente = $canje['nombre_paciente'] ?? 'N/A';
             $apellidoPaciente = $canje['apellido_paciente'] ?? 'N/A';
             $nombreProducto = $canje['nombre_producto'] ?? 'N/A';
             $cantidad = $canje['cantidad'] ?? 'N/A';
-            $estadoCanje = $canje['estado_canje'] ?? 'N/A';
+            
             $comentarios = $canje['comentarios'] ?? 'N/A';
             $fechaCreacion = $canje['fecha_creacion'] ?? 'N/A';
-            $creadoPor = $canje['creado_por'] ?? 'N/A';
-            $htmlContent .= "<tr><td>$codigo</td><td>$fechaRegistro</td><td>$tipoRegistro</td><td>$rtnFarmacia</td><td>$nombreFarmacia</td><td>$dniPaciente</td><td>$nombrePaciente</td><td>$apellidoPaciente</td><td>$nombreProducto</td><td>$cantidad</td><td>$estadoCanje</td><td>$comentarios</td><td>$fechaCreacion</td><td>$creadoPor</td></tr>";
+            
+            $htmlContent .= "<tr><td>$codigo</td><td>$fechaRegistro</td><td>$nombreFarmacia</td><td>$dniPaciente</td><td>$nombrePaciente</td><td>$apellidoPaciente</td><td>$nombreProducto</td><td>$cantidad</td><td>$comentarios</td></td></tr>";
 
             $itemCount++;
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FacturaController;
+use App\Http\Controllers\CanjeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdministrarPerfilController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\Backup_RestoreController;
 use App\Http\Controllers\BitacoraController;
 use App\Http\Controllers\ManualController;
 use App\Http\Controllers\ManualTecnicoController;
+
 //RUTAS DEL SISTEMA 
 
 // Ruta pública
@@ -171,13 +173,46 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/facturas/export-to-excel', [FacturaController::class, 'exportToExcel'])->name('facturas.exportToExcel');
     Route::post('/facturas/export-to-pdf', [FacturaController::class, 'exportToPdf'])->name('facturas.exportToPdf');
 
+    // Ruta para mostrar la lista de facturas (index)
+Route::get('/facturas', [FacturaController::class, 'index'])->name('facturas.index');
+
+// Ruta para guardar una nueva factura (store)
+Route::post('/facturas/store', [FacturaController::class, 'store'])->name('facturas.store');
+
+// Ruta para exportar facturas a Excel
+Route::post('/facturas/export/excel', [FacturaController::class, 'exportToExcel'])->name('facturas.export.excel');
+
+// Ruta para exportar facturas a PDF
+Route::post('/facturas/export/pdf', [FacturaController::class, 'exportToPdf'])->name('facturas.export.pdf');
+
+// Ruta para imprimir facturas
+Route::post('/facturas/print', [FacturaController::class, 'print'])->name('facturas.print');
 
     //-------------------------------------------CANJES
+    
     Route::get('Canjes', [App\Http\Controllers\CanjeController::class, 'index']);
     Route::post('agregar_registrocanje', [App\Http\Controllers\CanjeController::class, 'store']);
     Route::post('finalizar_canje', [App\Http\Controllers\CanjeController::class, 'finalizar_canje']);
 
     //exportar canjes a excel y pdf
+    
+// Ruta para mostrar la lista de canjes (index)
+Route::get('/canjes', [CanjeController::class, 'index'])->name('canjes.index');
+
+// Ruta para guardar un nuevo canje (store)
+Route::post('/canjes/store', [CanjeController::class, 'store'])->name('canjes.store');
+
+// Ruta para finalizar un canje y eliminar data.json
+Route::get('/canjes/finalizar', [CanjeController::class, 'finalizar_canje'])->name('canjes.finalizar');
+
+// Ruta para exportar canjes a Excel
+Route::post('/canjes/export/excel', [CanjeController::class, 'exportToExcel'])->name('canjes.export.excel');
+
+// Ruta para exportar canjes a PDF
+Route::post('/canjes/export/pdf', [CanjeController::class, 'exportToPdf'])->name('canjes.export.pdf');
+
+// Ruta para imprimir canjes
+Route::post('/canjes/print', [CanjeController::class, 'print'])->name('canjes.print');
     Route::post('/Canjes/exportToExcel', [CanjeController::class, 'exportToExcel'])->name('Canjes.exportToExcel');
     Route::post('/Canjes/exportToPdf', [CanjeController::class, 'exportToPdf'])->name('Canjes.exportToPdf');
     Route::post('/Canjes/print', [CanjeController::class, 'print'])->name('Canjes.print');
@@ -366,11 +401,11 @@ use App\Http\Controllers\ForgotPasswordController;
 
 
 Route::get('/ForgotPassword', [ForgotPasswordController::class, 'showForgotPasswordForm'])
-    ->middleware(['cors', 'csp'])
+//    ->middleware(['cors', 'csp'])
     ->name('password.request');
 
 Route::post('/ForgotPassword', [ForgotPasswordController::class, 'sendResetLink'])
-    ->middleware(['cors', 'csp'])
+   // ->middleware(['cors', 'csp'])
     ->name('password.sendResetLink');
 
 

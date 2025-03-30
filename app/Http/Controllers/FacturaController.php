@@ -195,7 +195,8 @@ class FacturaController extends Controller
         header("Content-Type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=\"$filename\"");
 
-        echo "Número\tFactura\tDNI Paciente\tNombre Paciente\tNombre Producto\tCantidad Producto\tFecha\n";
+       // echo "Número\tFactura\tDNI Paciente\tNombre Paciente\tNombre Producto\tCantidad Producto\tFecha\n";
+        echo "Número\tDNI Paciente\tNombre Paciente\tNombre Producto\tCantidad Producto\tFecha\n";
         foreach ($facturas as $factura) {
             if (!is_array($factura)) continue;
             $fecha = isset($factura['fecha_creacion']) ? \Carbon\Carbon::parse($factura['fecha_creacion'])->format('Y-m-d') : '';
@@ -203,12 +204,13 @@ class FacturaController extends Controller
                 continue;
             }
             $numero = $factura['numero_factura'] ?? '';
-            $facturaImg = $factura['factura'] ?? '';
+            //$facturaImg = $factura['factura'] ?? '';
             $dni = $factura['dni_paciente'] ?? '';
             $nombre = ($factura['nombre_paciente'] ?? '') . ' ' . ($factura['apellido_paciente'] ?? '');
             $producto = $factura['nombre_producto'] ?? '';
             $cantidad = $factura['cantidad_producto'] ?? '';
-            echo "$numero\t$facturaImg\t$dni\t$nombre\t$producto\t$cantidad\t$fecha\n";
+            echo "$numero\t$dni\t$nombre\t$producto\t$cantidad\t$fecha\n";
+            //echo "$numero\t$facturaImg\t$dni\t$nombre\t$producto\t$cantidad\t$fecha\n";
         }
         exit;
     }

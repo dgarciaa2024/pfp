@@ -12,7 +12,7 @@ class ManualController extends Controller
     public function tecnico()
     {
         // Valor por defecto para el manual técnico (ajusta el enlace si es necesario)
-        $enlaceCompleto = 'https://drive.google.com/file/d/default-tecnico/preview';
+        
 
         try {
             // Consultar el valor del id_parametro = 9 para el manual técnico
@@ -45,7 +45,7 @@ class ManualController extends Controller
     public function usuario()
     {
         // Valor por defecto para el manual de usuario (ajusta el enlace si es necesario)
-        $enlaceCompleto = 'https://drive.google.com/file/d/default-usuario/preview';
+       
 
         try {
             // Consultar el valor del id_parametro = 10 para el manual de usuario (ajusta el ID si es diferente)
@@ -78,7 +78,7 @@ class ManualController extends Controller
     public function instalacion()
     {
         // Enlace por defecto que sabemos que funciona
-        $enlaceCompleto = 'https://drive.google.com/file/d/11wF_AchnRYYJa4van5AVBIo1Q-9V6StB/preview';
+       
 
         try {
             // Consultar el valor del id_parametro = 11 para el manual de instalación

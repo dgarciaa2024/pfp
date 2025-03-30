@@ -11,7 +11,7 @@ class ManualTecnicoController extends Controller
     public function mostrarManual()
     {
         // Enlace por defecto para el manual técnico
-        $enlaceCompleto = 'https://drive.google.com/file/d/default-tecnico/preview';
+       
 
         try {
             // Consultar el valor del id_parametro = 9 para el manual técnico

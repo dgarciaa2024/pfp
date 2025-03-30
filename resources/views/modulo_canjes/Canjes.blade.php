@@ -217,7 +217,7 @@
               <tbody>
                 @foreach ($CanjesFiltrados as $Canje)
                 <tr>
-                  <td>{{ $Canje["id_registro"]}}</td>
+                <td>C{{ str_pad($Canje['id_registro'], 5, '0', STR_PAD_LEFT) }}</td>
                   <td>{{ \Carbon\Carbon::parse($Canje["fecha_registro"])->format('d/m/Y H:i:s');}}</td>
                   <td>{{ $Canje["tipo_registro"]}}</td>
                   <td>{{ $Canje["rtn_farmacia"]}}</td>
