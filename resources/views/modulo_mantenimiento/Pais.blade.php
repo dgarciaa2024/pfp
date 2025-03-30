@@ -53,7 +53,7 @@
                                       
                   <th>
                     <div class="btn-group" role="group" aria-label="Basic example">
-                    @if($permiso_edicion == 2)
+                    @if($permiso_actualizacion == 2)
                         <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-editor-{{$Pais['id_pais']}}"><i class="bi bi-pencil-fill"></i> ACTUALIZAR</a>
                       @endif
                     </div>
