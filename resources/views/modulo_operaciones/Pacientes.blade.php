@@ -179,7 +179,7 @@
                   <label for="">Usuario</label>
                   <select id="usuario" name="usuario" class="form-control" requied>
                     @foreach ($tblusuario as $tbl)
-                    <option value="{{ $tbl['id_usuario']}}">{{$tbl["nombre_usuario"]}}</option>
+                    <option value="{{ $tbl['id_usuario'] }}" @selected($Paciente['nombre_usuario'] == $tbl['nombre_usuario'])> {{$tbl["nombre_usuario"]}}</option>
                     @endforeach
                   </select>
                   <a href="{{ route('Usuarios') }}" class="mb-2 d-block">Agregar nuevo usuario</a>
@@ -192,12 +192,12 @@
                   <label for="">Estado</label>
                   <select id="estdo" name="estdo" class="form-control" requied>
                     @foreach ($tblestado as $tbl)
-                    <option value="{{ $tbl['id_estado']}}">{{$tbl["estado"]}}</option>
+                    <option value="{{ $tbl['id_estado'] }}" @selected($Paciente['estado'] == $tbl['estado'])> {{$tbl["estado"]}}</option>
                     @endforeach
                   </select>
                 </div>
               </div>
-
+  
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Genero</label>

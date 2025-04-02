@@ -121,7 +121,8 @@
                 <label for="">Pais</label>
                 <select id="pais" name="pais" class="form-control" requied>
                   @foreach ($tblpais as $tbl)
-                  <option value="{{ $tbl['id_pais']}}" selected> {{$tbl["nombre_pais"]}}</option>
+                  <option value="{{ $tbl['id_pais'] }}" @selected($Distribuidor['nombre_pais']== $tbl['nombre_pais'])>{{$tbl["nombre_pais"]}}</option>
+                  
                   @endforeach
                 </select>
               </div>
@@ -141,7 +142,8 @@
                 
                 <select id="usuario" name="usuario" class="form-control" requied>
                   @foreach ($tblusuario as $tbl)
-                  <option value="{{ $tbl['id_usuario']}}">{{$tbl["nombre_usuario"]}}</option>
+                  
+                  <option value="{{ $tbl['id_usuario'] }}" @selected($Distribuidor['nombre_usuario']== $tbl['nombre_usuario'])>{{$tbl["nombre_usuario"]}}</option>
                   
                   @endforeach
                 </select>
@@ -154,7 +156,8 @@
                 <label for="">Contacto</label>
                 <select id="contacto" name="contacto" class="form-control" requied>
                   @foreach ($tblcontacto as $tbl)
-                  <option value="{{ $tbl['id_contacto']}}">{{$tbl["nombre_contacto"]}}</option>
+                  
+                  <option value="{{ $tbl['id_contacto'] }}" @selected($Distribuidor['nombre_contacto']== $tbl['nombre_contacto'])>{{$tbl["nombre_contacto"]}}</option>
                   @endforeach
                 </select>
                 <a href="{{ route('Contacto') }}" class="mb-2 d-block">Agregar nuevo contacto</a>
@@ -166,7 +169,9 @@
                 <label for="">Estado</label>
                 <select id="estdo" name="estdo" class="form-control" requied>
                   @foreach ($tblestado as $tbl)
-                  <option value="{{ $tbl['id_estado'] }}" selected>{{$tbl["estado"]}}</option>
+                
+                  <option value="{{ $tbl['id_estado'] }}" @selected($Distribuidor['estado']== $tbl['estado'])>{{$tbl["estado"]}}</option>
+                  
                   @endforeach
                 </select>
               </div>
@@ -225,7 +230,8 @@
                 <select id="pais" name="pais" class="form-control" requied>
                 <option>Selecciona</option>
                   @foreach ($tblpais as $tbl)
-                  <option value="{{ $tbl['id_pais']}}" selected> {{$tbl["nombre_pais"]}}</option>
+                  <option value="{{ $tbl['id_pais']}}" > {{$tbl["nombre_pais"]}}</option>
+                  
                   @endforeach
                 </select>
               </div>
@@ -273,6 +279,7 @@
                   <option>Selecciona</option>
                   @foreach ($tblestado as $tbl)
                   <option value="{{ $tbl['id_estado']}}">{{$tbl["estado"]}}</option>
+                  
                   @endforeach
                 </select>
               </div>

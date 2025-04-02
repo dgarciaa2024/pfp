@@ -90,7 +90,7 @@ class ObjetoController extends Controller
             'descripcion' => $request->get('des'),
             'id_estado' => $request->get('estdo')
             
-        ]);
+        ]); 
         if ($response->successful()) {
             return redirect('Objetos')->with('success', true);
         } else {

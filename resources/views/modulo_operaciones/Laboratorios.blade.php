@@ -119,7 +119,7 @@
                   <label for="">Pais</label>
                   <select id="pais" name="pais" class="form-control" requied>
                     @foreach ($tblpais as $tbl)
-                    <option value="{{ $tbl['id_pais']}}">{{$tbl["nombre_pais"]}}</option>
+                    <option value="{{ $tbl['id_pais'] }}" @selected($Laboratorio['nombre_pais'] == $tbl['nombre_pais'])>{{$tbl["nombre_pais"]}}</option>
                     @endforeach
                   </select>
                 </div>
@@ -130,7 +130,7 @@
                   <label>Tipo Entidad</label>
                   <select id="entidad" name="entidad" class="form-control" requied>
                     @foreach ($tblentidad as $tbl)
-                    <option value="{{ $tbl['id_tipo_entidad']}}">{{$tbl["tipo_entidad"]}}</option>
+                    <option value="{{ $tbl['id_tipo_entidad'] }}" @selected($Laboratorio['tipo_entidad'] == $tbl['tipo_entidad'])>{{$tbl["tipo_entidad"]}}</option>
                     @endforeach
                   </select>
                 </div>
@@ -141,7 +141,7 @@
                   <label for="">Usuario</label>
                   <select id="usuario" name="usuario" class="form-control" requied>
                     @foreach ($tblusuario as $tbl)
-                    <option value="{{ $tbl['id_usuario']}}">{{$tbl["nombre_usuario"]}}</option>
+                    <option value="{{ $tbl['id_usuario'] }}" @selected($Laboratorio['nombre_usuario'] == $tbl['nombre_usuario'])>{{$tbl["nombre_usuario"]}}</option>
                     @endforeach
                   </select>
                 </div>
@@ -152,7 +152,7 @@
                   <label for="">Contacto</label>
                   <select id="contacto" name="contacto" class="form-control" requied>
                     @foreach ($tblcontacto as $tbl)
-                    <option value="{{ $tbl['id_contacto']}}">{{$tbl["nombre_contacto"]}}</option>
+                    <option value="{{ $tbl['id_contacto'] }}" @selected($Laboratorio['nombre_contacto'] == $tbl['nombre_contacto'])>{{$tbl["nombre_contacto"]}}</option>
                     @endforeach
                   </select>
                 </div>
@@ -163,7 +163,7 @@
                   <label for="">Estado</label>
                   <select id="estdo" name="estdo" class="form-control" requied>
                     @foreach ($tblestado as $tbl)
-                    <option value="{{ $tbl['id_estado']}}">{{$tbl["estado"]}}</option>
+                    <option value="{{ $tbl['id_estado'] }}" @selected($Laboratorio['estado'] == $tbl['estado'])>{{$tbl["estado"]}}</option>
                     @endforeach
                   </select>
                 </div>

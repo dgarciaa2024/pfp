@@ -115,7 +115,7 @@
                 <label for="">Estado</label>
                 <select id="estdo" name="estdo" class="form-control" requied>
                   @foreach ($tblestado as $tbl)
-                  <option value="{{ $tbl['id_estado']}}">{{$tbl["estado"]}}</option>
+                  <option value="{{ $tbl['id_estado'] }}" @selected($Rol['id_estado'] == $tbl['id_estado'])>{{$tbl["estado"]}}</option>
                   @endforeach
                 </select>
               </div>

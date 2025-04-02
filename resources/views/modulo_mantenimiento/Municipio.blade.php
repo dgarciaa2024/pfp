@@ -97,7 +97,7 @@
                 <label for="">Departamento</label>
                 <select id="depto" name="depto" class="form-control" requied>
                   @foreach ($tbldepto as $tbl)
-                  <option value="{{ $tbl['id_departamento']}}">{{$tbl["nombre_departamento"]}}</option>
+                  <option value="{{ $tbl['id_departamento'] }}" @selected($Municipio['nombre_departamento'] == $tbl['nombre_departamento'])>{{$tbl["nombre_departamento"]}}</option>
                   @endforeach
                 </select>
               </div>
@@ -115,7 +115,7 @@
                 <label for="">Estado</label>
                 <select id="estdo" name="estdo" class="form-control" requied>
                   @foreach ($tblestado as $tbl)
-                  <option value="{{ $tbl['id_estado']}}">{{$tbl["estado"]}}</option>
+                  <option value="{{ $tbl['id_estado'] }}" @selected($Municipio['estado'] == $tbl['estado'])>{{$tbl["estado"]}}</option>
                   @endforeach
                 </select>
               </div>
