@@ -48,7 +48,7 @@
                     <td>{{ $permiso['permiso_actualizacion'] == 1 ? 'Sí' : 'No' }}</td>
                     <td>{{ $permiso['permiso_eliminacion'] == 1 ? 'Sí' : 'No' }}</td>
                     <td>{{ $permiso['estado'] }}</td>
-                    <td>{{ new DateTime($permiso['fecha_creacion'])->format('d/m/Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($permiso['fecha_creacion'])->format('d/m/Y') }}</td>
                     <td>{{ $permiso['creado_por'] }}</td>
 
                     <td>
@@ -97,7 +97,7 @@
                   <label for="">Rol</label>
                   <select id="rol" name="rol" class="form-control" requied>
                     @foreach ($tblrol as $tbl)
-                    <option value="{{ $tbl['id_rol']}}" selected> {{$tbl["rol"]}}</option>
+                    <option value="{{ $tbl['id_rol'] }}" @selected($permiso['rol'] == $tbl['rol'])>{{$tbl["rol"]}}</option>
                     @endforeach
                   </select>
                 </div>
@@ -108,7 +108,8 @@
                   <label for="">Objeto</label>
                   <select id="objeto" name="objeto" class="form-control" requied>
                     @foreach ($tblobjeto as $tbl)
-                    <option value="{{ $tbl['id_objeto']}}" selected> {{$tbl["nombre_objeto"]}}</option>
+                    <option value="{{ $tbl['id_objeto'] }}" @selected($permiso['objeto'] == $tbl['nombre_objeto'])>{{$tbl["nombre_objeto"]}}</option>
+                    
                     @endforeach
                   </select>
                 </div>
@@ -119,8 +120,9 @@
                 <div class="form-group">
                   <label for="">Permiso Creación</label>
                   <select id="permiso_creacion" name="permiso_creacion" class="form-control" required>
+                  <option value="0" {{ $permiso['permiso_creacion'] == 0 ? 'selected' : '' }}>No</option>
                     <option value="1" {{ $permiso['permiso_creacion'] == 1 ? 'selected' : '' }}>Sí</option>
-                    <option value="0" {{ $permiso['permiso_creacion'] == 0 ? 'selected' : '' }}>No</option>
+                    
                   </select>
                 </div>
               </div>
@@ -164,7 +166,8 @@
                   <label for="">Estado</label>
                   <select id="estdo" name="estdo" class="form-control" requied>
                     @foreach ($tblestado as $tbl)
-                    <option value="{{ $tbl['id_estado']}}" selected>{{$tbl["estado"]}}</option>
+                    <option value="{{ $tbl['id_estado'] }}" @selected($permiso['estado'] == $tbl['estado'])>{{$tbl["estado"]}}</option>
+                    
                     @endforeach
                   </select>
                 </div>
@@ -237,7 +240,8 @@
                   <select id="rol" name="rol" class="form-control" requied>
                     <option>SELECCIONA</option>
                     @foreach ($tblrol as $tbl)
-                    <option value="{{ $tbl['id_rol']}}" selected> {{$tbl["rol"]}}</option>
+                    <option value="{{ $tbl['id_rol']}}">{{$tbl["rol"]}}</option>
+                    
                     @endforeach
                   </select>
                 </div>
@@ -249,7 +253,8 @@
                   <select id="objeto" name="objeto" class="form-control" requied>
                     <option>SELECCIONA</option>
                     @foreach ($tblobjeto as $tbl)
-                    <option value="{{ $tbl['id_objeto']}}" selected> {{$tbl["nombre_objeto"]}}</option>
+                    
+                    <option value="{{ $tbl['id_objeto']}}">{{$tbl["nombre_objeto"]}}</option>
                     @endforeach
                   </select>
                 </div>
@@ -259,9 +264,10 @@
               <div class="col-12">
                 <div class="form-group">
                   <label for="">Permiso Creación</label>
+                  
                   <select id="permiso_creacion" name="permiso_creacion" class="form-control" required>
-                    <option value="1">Sí</option>
-                    <option value="0">No</option>
+                  <option value="0">No</option>
+                  <option value="1">Sí</option>
                   </select>
                 </div>
               </div>
@@ -271,8 +277,8 @@
                 <div class="form-group">
                   <label for="">Permiso Actualización</label>
                   <select id="permiso_actualizacion" name="permiso_actualizacion" class="form-control" required>
-                    <option value="1">Sí</option>
-                    <option value="0">No</option>
+                  <option value="0">No</option>
+                  <option value="1">Sí</option>
                   </select>
                 </div>
               </div>
@@ -282,8 +288,8 @@
                 <div class="form-group">
                   <label for="">Permiso Eliminación</label>
                   <select id="permiso_eliminacion" name="permiso_eliminacion" class="form-control" required>
-                    <option value="1">Sí</option>
-                    <option value="0">No</option>
+                  <option value="0">No</option>
+                  <option value="1">Sí</option>
                   </select>
                 </div>
               </div>
@@ -293,8 +299,9 @@
                 <div class="form-group">
                   <label for="">Permiso Consultar</label>
                   <select id="permiso_consultar" name="permiso_consultar" class="form-control" required>
-                    <option value="1">Sí</option>
+              
                     <option value="0">No</option>
+                    <option value="1">Sí</option>
                   </select>
                 </div>
               </div>
@@ -306,7 +313,8 @@
                   <select id="estdo" name="estdo" class="form-control" requied>
                     <option>SELECCIONA</option>
                     @foreach ($tblestado as $tbl)
-                    <option value="{{ $tbl['id_estado']}}" selected>{{$tbl["estado"]}}</option>
+                    <option value="{{ $tbl['id_estado']}}">{{$tbl["estado"]}}</option>
+                    
                     @endforeach
                   </select>
                 </div>
