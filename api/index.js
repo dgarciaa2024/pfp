@@ -83,7 +83,26 @@ const requestLogger = (req, res, next) => {
 
 // Usar el middleware en todas las rutas
 app.use(requestLogger);
-app.post("/save_credential", (req, res) => {
+app.post("/save_credential", async (req, res) => {
+    const user = req.body;
+    const rol_response = await pgClient.query(
+        "SELECT rol FROM pfp_schema.get_roles() pfp WHERE pfp.id_rol = $1",
+        [req.body.usuario.idRol]
+    );
+    const user_response = await pgClient.query(
+        "SELECT id_paciente FROM pfp_schema.tbl_paciente pfp WHERE pfp.id_usuario = $1",
+        [req.body.usuario.id]
+    );
+    console.log(user_response.rows);
+    if (rol_response.rows.length) {
+        user.usuario.rol = rol_response.rows[0].rol;
+        if (rol_response.rows[0].rol.toUpperCase() == "CLIENTE") {
+            if (user_response.rows.length) {
+                console.log(user.usuario.id, "-", user_response.rows[0]);
+                user.usuario.id = user_response.rows[0].id_paciente;
+            }
+        }
+    }
     console.log("salvar credenciales", req.body);
     localStorage.setItem("credenciales", JSON.stringify(req.body));
     res.status(200).send("Credenciales guardadas exitosamente");
@@ -2140,14 +2159,27 @@ app.put("/update_paciente", (req, res) => {
 // Procedimiento para actualizar  registro en la tabla TBL_FACTURA
 app.get("/get_facturas", (req, res) => {
     const {
-        usuario: { id: idUsuario },
+        usuario: { id: idUsuario, rol },
     } = JSON.parse(localStorage.getItem("credenciales"));
-    const query = `SELECT * FROM pfp_schema.get_factura() spf LEFT JOIN LATERAL (SELECT numero_factura FROM pfp_schema.tbl_factura f WHERE f.id_factura = spf.id_factura) ON TRUE`;
-
+    const query = `SELECT * FROM pfp_schema.get_factura() spf LEFT JOIN LATERAL (SELECT numero_factura, id_paciente, farmacia FROM pfp_schema.tbl_factura f WHERE f.id_factura = spf.id_factura) ON TRUE`;
+    const upperRol = rol.toUpperCase();
     pgClient.query(query, (err, result) => {
         if (!err) {
             res.status(200).json(
-                result.rows.filter((r) => r.creado_por === idUsuario.toString())
+                result.rows.filter((r) => {
+                    if (upperRol === "FARMACIA")
+                        return r.creado_por === idUsuario.toString();
+                    if (upperRol === "CLIENTE")
+                        return r.id_paciente === idUsuario.toString();
+                    if (
+                        [
+                            "ADMINISTRADOR",
+                            "LABORATORIO",
+                            "DISTRIBUIDOR",
+                        ].includes(upperRol)
+                    )
+                        return true;
+                })
             ); // Devolver el resultado en formato JSON
         } else {
             console.log(err);
@@ -2163,7 +2195,13 @@ app.post("/insert_factura", upload.single("factura"), async (req, res) => {
     const {
         usuario: { id: idUsuario },
     } = JSON.parse(localStorage.getItem("credenciales"));
-    const { id_paciente, id_producto, cantidad_producto, numero } = req.body;
+    const {
+        id_paciente,
+        id_producto,
+        cantidad_producto,
+        numero,
+        nombre_farmacia,
+    } = req.body;
     const imagenBase64 = req.file.buffer.toString("base64");
     const tipoImagen = req.file.mimetype;
     const imagenBase64ConTipo = `data:${tipoImagen};base64,${imagenBase64}`;
@@ -2203,8 +2241,8 @@ app.post("/insert_factura", upload.single("factura"), async (req, res) => {
             "SELECT id_factura FROM pfp_schema.tbl_factura ORDER BY id_factura DESC LIMIT 1"
         );
         await pgClient.query(
-            "UPDATE pfp_schema.tbl_factura SET numero_factura = $1, creado_por = $2 WHERE id_factura = $3",
-            [numero, idUsuario, result.rows[0].id_factura]
+            "UPDATE pfp_schema.tbl_factura SET numero_factura = $1, creado_por = $2, farmacia = $3 WHERE id_factura = $4",
+            [numero, idUsuario, nombre_farmacia, result.rows[0].id_factura]
         );
         const mensaje =
             result.rows.id_registro || "Factura insertada exitosamente";
@@ -2381,10 +2419,18 @@ app.put("/update_farmacia", (req, res) => {
 // Endpoint para obtener todos los registros de la tabla TBL_REGISTRO
 app.get("/get_registro", (req, res) => {
     const {
-        usuario: { id: idUsuario },
+        usuario: { id: idUsuario, rol },
     } = JSON.parse(localStorage.getItem("credenciales"));
-    const query = `SELECT * FROM pfp_schema.get_registro() pfp WHERE pfp.creado_por = '${idUsuario}'`; // Llama a la función almacenada
-
+    const upperRol = rol.toUpperCase();
+    let query = "";
+    if (upperRol == "FARMACIA")
+        query = `SELECT * FROM pfp_schema.get_registro() pfp WHERE pfp.creado_por = '${idUsuario}'`; // Llama a la función almacenada
+    else if (upperRol == "PACIENTE")
+        query = `SELECT * FROM pfp_schema.get_registro() pfp WHERE pfp.id_paciente = '${idUsuario}'`; // Llama a la función almacenada
+    else if (
+        ["ADMINISTRADOR", "LABORATORIO", "DISTRIBUIDOR"].includes(upperRol)
+    )
+        query = `SELECT * FROM pfp_schema.get_registro()`; // Llama a la función almacenada
     // Ejecuta la consulta en la base de datos
     pgClient.query(query, (err, result) => {
         if (err) {

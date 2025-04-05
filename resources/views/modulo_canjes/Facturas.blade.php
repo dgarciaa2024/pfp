@@ -186,6 +186,7 @@
                   <th>ID</th>
                   <th>Número</th>
                   <th>Factura</th>
+                  <th>Farmacia</th>
                   <th>Dni Paciente</th>
                   <th>Nombre Paciente</th>
                   <th>Apellido Paciente</th>
@@ -202,6 +203,7 @@
 
                   <td>{{ $Factura['numero_factura'] ?? '' }}</td>
                   <td><img src="{{ $Factura['factura'] ?? '' }}" class="img-thumbnail mt-3" style="width: 200px; cursor: pointer;" data-toggle="modal" data-target="#imageModal" onclick="mostrarImagen(this)" /></td>
+                  <td>{{ $Factura['farmacia'] ?? 'N/D' }}</td>
                   <td>{{ $Factura['dni_paciente'] ?? '' }}</td>
                   <td>{{ $Factura['nombre_paciente'] ?? '' }}</td>
                   <td>{{ $Factura['apellido_paciente'] ?? '' }}</td>

@@ -65,9 +65,9 @@ class FacturaController extends Controller
 
         if ($desde && $hasta) {
             $facturasFiltradas = array_filter($facturasFiltradas, function ($factura) use ($desde, $hasta) {
-                return is_array($factura) && isset($factura['fecha_creacion']) && 
-                       \Carbon\Carbon::parse($factura['fecha_creacion'])->format('Y-m-d') >= $desde && 
-                       \Carbon\Carbon::parse($factura['fecha_creacion'])->format('Y-m-d') <= $hasta;
+                return is_array($factura) && isset($factura['fecha_creacion']) &&
+                    \Carbon\Carbon::parse($factura['fecha_creacion'])->format('Y-m-d') >= $desde &&
+                    \Carbon\Carbon::parse($factura['fecha_creacion'])->format('Y-m-d') <= $hasta;
             });
         }
 
@@ -120,6 +120,7 @@ class FacturaController extends Controller
                 'id_paciente' => $paciente,
                 'id_producto' => $producto,
                 'cantidad_producto' => $request->input('cantidad'),
+                'nombre_farmacia' => $nombre_farmacia
             ]);
 
             if ($response->successful()) {
@@ -195,10 +196,11 @@ class FacturaController extends Controller
         header("Content-Type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=\"$filename\"");
 
-       // echo "Número\tFactura\tDNI Paciente\tNombre Paciente\tNombre Producto\tCantidad Producto\tFecha\n";
+        // echo "Número\tFactura\tDNI Paciente\tNombre Paciente\tNombre Producto\tCantidad Producto\tFecha\n";
         echo "Número\tDNI Paciente\tNombre Paciente\tNombre Producto\tCantidad Producto\tFecha\n";
         foreach ($facturas as $factura) {
-            if (!is_array($factura)) continue;
+            if (!is_array($factura))
+                continue;
             $fecha = isset($factura['fecha_creacion']) ? \Carbon\Carbon::parse($factura['fecha_creacion'])->format('Y-m-d') : '';
             if ($desde && $hasta && ($fecha < $desde || $fecha > $hasta)) {
                 continue;
@@ -245,14 +247,16 @@ class FacturaController extends Controller
         $page = 1;
         $itemCount = 0;
         $totalItems = count(array_filter($facturas, function ($factura) use ($desde, $hasta) {
-            if (!is_array($factura)) return false;
+            if (!is_array($factura))
+                return false;
             $fecha = isset($factura['fecha_creacion']) ? \Carbon\Carbon::parse($factura['fecha_creacion'])->format('Y-m-d') : '';
             return $fecha >= $desde && $fecha <= $hasta;
         }));
         $totalPages = ceil($totalItems / $itemsPerPage);
 
         foreach ($facturas as $factura) {
-            if (!is_array($factura)) continue;
+            if (!is_array($factura))
+                continue;
             $fecha = isset($factura['fecha_creacion']) ? \Carbon\Carbon::parse($factura['fecha_creacion'])->format('Y-m-d') : '';
             if ($desde && $hasta && ($fecha < $desde || $fecha > $hasta)) {
                 continue;
@@ -329,14 +333,16 @@ class FacturaController extends Controller
         $page = 1;
         $itemCount = 0;
         $totalItems = count(array_filter($facturas, function ($factura) use ($desde, $hasta) {
-            if (!is_array($factura)) return false;
+            if (!is_array($factura))
+                return false;
             $fecha = isset($factura['fecha_creacion']) ? \Carbon\Carbon::parse($factura['fecha_creacion'])->format('Y-m-d') : '';
             return $fecha >= $desde && $fecha <= $hasta;
         }));
         $totalPages = ceil($totalItems / $itemsPerPage);
 
         foreach ($facturas as $factura) {
-            if (!is_array($factura)) continue;
+            if (!is_array($factura))
+                continue;
             $fecha = isset($factura['fecha_creacion']) ? \Carbon\Carbon::parse($factura['fecha_creacion'])->format('Y-m-d') : '';
             if ($desde && $hasta && ($fecha < $desde || $fecha > $hasta)) {
                 continue;
