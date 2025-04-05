@@ -240,9 +240,35 @@ class CanjeController extends Controller
             </html>';
 
             $mail->send();
+            Log::info("Correo enviado exitosamente a: " . $email);
         } catch (Exception $e) {
+            Log::error("No se pudo enviar el correo. Error: {$mail->ErrorInfo}");
             echo "No se pudo enviar el correo. Error: {$mail->ErrorInfo}";
         }
+
+        // Envío de WhatsApp con Twilio (Ajustado para Honduras)
+        try {
+            $twilio = new \Twilio\Rest\Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
+            $telefono_paciente = preg_replace('/[^0-9]/', '', $telefono_paciente); // Elimina caracteres no numéricos
+            if (strlen($telefono_paciente) == 8) { // Formato hondureño sin código de país (ej. 94590791 o 88911685)
+                $telefono_paciente_formatted = '+504' . $telefono_paciente; // Resultado: +50494590791 o +50488911685
+            } else {
+                $telefono_paciente_formatted = $telefono_paciente; // Si ya tiene +, no modificar
+            }
+            Log::info('Teléfono formateado para WhatsApp:', ['telefono' => $telefono_paciente_formatted]);
+
+            $message = $twilio->messages->create(
+                "whatsapp:" . $telefono_paciente_formatted,
+                [
+                    "from" => env('TWILIO_WHATSAPP_FROM'),
+                    "body" => "¡Felicidades, " . strtoupper($paciente) . "! Tu canje de " . strtoupper($producto) . " se ha realizado con éxito. Gracias por participar en nuestro programa de recompensas."
+                ]
+            );
+            Log::info("Mensaje de WhatsApp enviado con SID: " . $message->sid);
+        } catch (\Exception $e) {
+            Log::error("Error al enviar mensaje de WhatsApp: " . $e->getMessage());
+        }
+
         if ($response->successful()) {
             if (Storage::exists('data.json')) {
                 Storage::delete('data.json');
