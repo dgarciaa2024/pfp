@@ -97,8 +97,9 @@ app.post("/save_credential", async (req, res) => {
     if (rol_response.rows.length) {
         user.usuario.rol = rol_response.rows[0].rol;
         if (rol_response.rows[0].rol.toUpperCase() == "CLIENTE") {
+            console.log(100, rol_response.rows[0].rol);
+            console.log(101, user_response.rows);
             if (user_response.rows.length) {
-                console.log(user.usuario.id, "-", user_response.rows[0]);
                 user.usuario.id = user_response.rows[0].id_paciente;
             }
         }
@@ -2165,22 +2166,24 @@ app.get("/get_facturas", (req, res) => {
     const upperRol = rol.toUpperCase();
     pgClient.query(query, (err, result) => {
         if (!err) {
-            res.status(200).json(
-                result.rows.filter((r) => {
-                    if (upperRol === "FARMACIA")
-                        return r.creado_por === idUsuario.toString();
-                    if (upperRol === "CLIENTE")
-                        return r.id_paciente === idUsuario.toString();
-                    if (
-                        [
-                            "ADMINISTRADOR",
-                            "LABORATORIO",
-                            "DISTRIBUIDOR",
-                        ].includes(upperRol)
+            console.log(2169, upperRol);
+            const filterRows = result.rows.filter((r) => {
+                if (upperRol === "FARMACIA") {
+                    return r.creado_por.toString() === idUsuario.toString();
+                }
+                if (upperRol === "CLIENTE") {
+                    return r.id_paciente.toString() === idUsuario.toString();
+                }
+                if (
+                    ["ADMINISTRADOR", "LABORATORIO", "DISTRIBUIDOR"].includes(
+                        upperRol.toString()
                     )
-                        return true;
-                })
-            ); // Devolver el resultado en formato JSON
+                ) {
+                    return true;
+                }
+            });
+            console.log(2185, filterRows);
+            res.status(200).json(filterRows);
         } else {
             console.log(err);
             res.status(500).send(
