@@ -2162,11 +2162,10 @@ app.get("/get_facturas", (req, res) => {
     const {
         usuario: { id: idUsuario, rol },
     } = JSON.parse(localStorage.getItem("credenciales"));
-    const query = `SELECT * FROM pfp_schema.get_factura() spf LEFT JOIN LATERAL (SELECT numero_factura, id_paciente, farmacia FROM pfp_schema.tbl_factura f WHERE f.id_factura = spf.id_factura) ON TRUE`;
+    const query = `SELECT * FROM pfp_schema.get_factura() spf LEFT JOIN LATERAL (SELECT numero_factura, id_paciente, atendio, farmacia FROM pfp_schema.tbl_factura f WHERE f.id_factura = spf.id_factura) ON TRUE`;
     const upperRol = rol.toUpperCase();
     pgClient.query(query, (err, result) => {
         if (!err) {
-            console.log(2169, upperRol);
             const filterRows = result.rows.filter((r) => {
                 if (upperRol === "FARMACIA") {
                     return r.creado_por.toString() === idUsuario.toString();
@@ -2182,7 +2181,6 @@ app.get("/get_facturas", (req, res) => {
                     return true;
                 }
             });
-            console.log(2185, filterRows);
             res.status(200).json(filterRows);
         } else {
             console.log(err);
@@ -2196,7 +2194,7 @@ app.get("/get_facturas", (req, res) => {
 // Procedimiento para insertar un registro en la tabla TBL_FACTURA
 app.post("/insert_factura", upload.single("factura"), async (req, res) => {
     const {
-        usuario: { id: idUsuario },
+        usuario: { id: idUsuario, nombreUsuario },
     } = JSON.parse(localStorage.getItem("credenciales"));
     const {
         id_paciente,
@@ -2244,8 +2242,14 @@ app.post("/insert_factura", upload.single("factura"), async (req, res) => {
             "SELECT id_factura FROM pfp_schema.tbl_factura ORDER BY id_factura DESC LIMIT 1"
         );
         await pgClient.query(
-            "UPDATE pfp_schema.tbl_factura SET numero_factura = $1, creado_por = $2, farmacia = $3 WHERE id_factura = $4",
-            [numero, idUsuario, nombre_farmacia, result.rows[0].id_factura]
+            "UPDATE pfp_schema.tbl_factura SET numero_factura = $1, creado_por = $2, atendio = $3, farmacia = $4 WHERE id_factura = $5",
+            [
+                numero,
+                idUsuario,
+                nombreUsuario,
+                nombre_farmacia,
+                result.rows[0].id_factura,
+            ]
         );
         const mensaje =
             result.rows.id_registro || "Factura insertada exitosamente";
@@ -2433,7 +2437,7 @@ app.get("/get_registro", (req, res) => {
     else if (
         ["ADMINISTRADOR", "LABORATORIO", "DISTRIBUIDOR"].includes(upperRol)
     )
-        query = `SELECT * FROM pfp_schema.get_registro()`; // Llama a la función almacenada
+        query = `SELECT * FROM pfp_schema.get_registro() pfp LEFT JOIN LATERAL (SELECT atendio FROM pfp_schema.tbl_registro f WHERE f.id_registro = pfp.id_registro) ON TRUE`; // Llama a la función almacenada
     // Ejecuta la consulta en la base de datos
     pgClient.query(query, (err, result) => {
         if (err) {
@@ -2449,7 +2453,7 @@ app.get("/get_registro", (req, res) => {
 // Endpoint para insertar un registro en la tabla TBL_REGISTRO
 app.post("/insert_registro", async (req, res) => {
     const {
-        usuario: { id: idUsuario },
+        usuario: { id: idUsuario, nombreUsuario },
     } = JSON.parse(localStorage.getItem("credenciales"));
     console.log("insert_registro", req.body);
     const {
@@ -2480,8 +2484,8 @@ app.post("/insert_registro", async (req, res) => {
             "SELECT id_registro FROM pfp_schema.tbl_registro ORDER BY id_registro DESC LIMIT 1"
         );
         await pgClient.query(
-            "UPDATE pfp_schema.tbl_registro SET creado_por = $1 WHERE id_registro = $2",
-            [idUsuario, result.rows[0].id_registro]
+            "UPDATE pfp_schema.tbl_registro SET creado_por = $1, atendio = $2 WHERE id_registro = $3",
+            [idUsuario, nombreUsuario, result.rows[0].id_registro]
         );
         res.status(201).send("Registro insertado exitosamente");
     } else {
