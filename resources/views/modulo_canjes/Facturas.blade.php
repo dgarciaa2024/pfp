@@ -210,7 +210,7 @@
                   <td>{{ $Factura['nombre_producto'] ?? '' }}</td>
                   <td>{{ $Factura['cantidad_producto'] ?? '' }}</td>
                   <td>{{ isset($Factura['fecha_creacion']) ? \Carbon\Carbon::parse($Factura['fecha_creacion'])->format('d/m/Y H:i:s') : '' }}</td>
-                  <td>{{ $Factura['creado_por'] ?? '' }}</td>
+                  <td>{{ $Factura['atendio'] ?? '' }}</td>
                 </tr>
                 @endforeach
               </tbody>

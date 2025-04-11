@@ -247,7 +247,7 @@
                   'estado_canje'=>$Canje["estado_canje"],
                   'comentarios'=>$Canje["comentarios"],
                   'fecha_creacion'=>$Canje["fecha_creacion"],
-                  'creado_por'=>$Canje["creado_por"]]) 
+                  'creado_por'=>$Canje["atendio"]]) 
                   }}" class="btn">Descargar PDF</a></td>
                 </tr>
                 @endforeach
@@ -265,6 +265,7 @@
   <script>
     function dataHandler(_canjeGuardado, facturas, pacientes, productos, canjes, farmacias) {
       console.log(_canjeGuardado)
+      console.log(canjes)
       const canjeGuardado = _canjeGuardado || {}
       return {
         canjeHabilitado: !!_canjeGuardado
